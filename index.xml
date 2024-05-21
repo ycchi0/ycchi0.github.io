@@ -6,14 +6,6 @@
     <description>Recent content on Ycchi0 Blog</description>
     <generator>Hugo -- 0.123.7</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 21 May 2024 12:19:15 +0000</lastBuildDate>
     <atom:link href="https://ycchi0.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Hello</title>
-      <link>https://ycchi0.github.io/posts/hello/</link>
-      <pubDate>Tue, 21 May 2024 12:19:15 +0000</pubDate>
-      <guid>https://ycchi0.github.io/posts/hello/</guid>
-      <description>Hello Hugo 测试测试测试测试测试测试测试测试测试测试测试测试测试测试</description>
-    </item>
   </channel>
 </rss>
