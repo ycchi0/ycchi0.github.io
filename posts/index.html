@@ -134,14 +134,35 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">Hello
+    <h2 class="entry-hint-parent">Javascript Module 详解
     </h2>
   </header>
   <div class="entry-content">
-    <p>Hello Hugo 测试测试测试测试测试测试测试测试测试测试测试测试测试测试</p>
+    <p>什么是模块(Module) 模块，在 Js 可以看成一个一个局部作用域的代码块。
+我们写代码时需要注意高内聚，低耦合，这就需要用到模块系统。它能帮助我们更好的划分代码功能，增加代码复用性，便于维护程序。
+引入模块系统的好处：
+代码模块化管理，便于复用 消除过多全局变量 管理加载顺序 Module 基本用法 一个文件就是一个模块。 如下是一个基本的用法： person.js
+class Person { constructor(name) { this.name = name; } sayHi() { console.log(&#34;hi&#34;); } } export default Person; student.js
+import Person from &#34;./person&#34;; class Student extends Person { constructor(name, age) { super(name); this.age = age; } } export default Student; index.js
+import Student from &#34;./student&#34;; let s = new Student(&#34;zs&#34;,10); script 标签加载的时候，需要加上 type=“module” demo.html
+&lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1....</p>
   </div>
-  <footer class="entry-footer"><span title='2024-05-21 12:19:15 +0000 UTC'>May 21, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to Hello" href="https://ycchi0.github.io/posts/hello/"></a>
+  <footer class="entry-footer"><span title='2024-05-22 12:26:48 +0000 UTC'>May 22, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to Javascript Module 详解" href="https://ycchi0.github.io/posts/javascript_module/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Javascript ES6 Class 深入浅出
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>初识 Class Javascript 中的类基于 Prototype 创建，一般类需要大写。 下面是一个简单的 Person 类示例，constructor 是构造函数，用来给类的对象进行初始化。
+class Person { constructor(name, age) { //this 代表实例对象，上面定义的是实例属性/方法 this.name = name; this.age = age; } // 各实例共享的方法 sayHi() { console.log(&#34;sayHi&#34;); } } let zs = new Person(&#34;zhangsan&#34;, 18); zs.sayHi(); 上面的 Person 类等同于下面 Prototype-based 写法
+function Person(name, age) { this.name = name; this.age = age; } Person.prototype.sayHi = function () { console.log(&#34;Prototype-based&#34;); }; let zs = new Person(&#34;zhangsan&#34;, 18); zs.sayHi(); 立即执行的匿名类 new (class { constructor() { console....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-22 01:29:33 +0000 UTC'>May 22, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to Javascript ES6 Class 深入浅出" href="https://ycchi0.github.io/posts/javascript_es6_class/"></a>
 </article>
     </main>
     

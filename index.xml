@@ -6,6 +6,30 @@
     <description>Recent content on Ycchi0 Blog</description>
     <generator>Hugo -- 0.123.7</generator>
     <language>zh-CN</language>
+    <lastBuildDate>Wed, 22 May 2024 12:26:48 +0000</lastBuildDate>
     <atom:link href="https://ycchi0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Javascript Module 详解</title>
+      <link>https://ycchi0.github.io/posts/javascript_module/</link>
+      <pubDate>Wed, 22 May 2024 12:26:48 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/javascript_module/</guid>
+      <description>什么是模块(Module) 模块，在 Js 可以看成一个一个局部作用域的代码块。
+我们写代码时需要注意高内聚，低耦合，这就需要用到模块系统。它能帮助我们更好的划分代码功能，增加代码复用性，便于维护程序。
+引入模块系统的好处：
+代码模块化管理，便于复用 消除过多全局变量 管理加载顺序 Module 基本用法 一个文件就是一个模块。 如下是一个基本的用法： person.js
+class Person { constructor(name) { this.name = name; } sayHi() { console.log(&amp;#34;hi&amp;#34;); } } export default Person; student.js
+import Person from &amp;#34;./person&amp;#34;; class Student extends Person { constructor(name, age) { super(name); this.age = age; } } export default Student; index.js
+import Student from &amp;#34;./student&amp;#34;; let s = new Student(&amp;#34;zs&amp;#34;,10); script 标签加载的时候，需要加上 type=&amp;ldquo;module&amp;rdquo; demo.html
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;en&amp;#34;&amp;gt; &amp;lt;head&amp;gt; &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34; /&amp;gt; &amp;lt;meta name=&amp;#34;viewport&amp;#34; content=&amp;#34;width=device-width, initial-scale=1.</description>
+    </item>
+    <item>
+      <title>Javascript ES6 Class 深入浅出</title>
+      <link>https://ycchi0.github.io/posts/javascript_es6_class/</link>
+      <pubDate>Wed, 22 May 2024 01:29:33 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/javascript_es6_class/</guid>
+      <description>初识 Class Javascript 中的类基于 Prototype 创建，一般类需要大写。 下面是一个简单的 Person 类示例，constructor 是构造函数，用来给类的对象进行初始化。
+class Person { constructor(name, age) { //this 代表实例对象，上面定义的是实例属性/方法 this.name = name; this.age = age; } // 各实例共享的方法 sayHi() { console.log(&amp;#34;sayHi&amp;#34;); } } let zs = new Person(&amp;#34;zhangsan&amp;#34;, 18); zs.sayHi(); 上面的 Person 类等同于下面 Prototype-based 写法
+function Person(name, age) { this.name = name; this.age = age; } Person.prototype.sayHi = function () { console.log(&amp;#34;Prototype-based&amp;#34;); }; let zs = new Person(&amp;#34;zhangsan&amp;#34;, 18); zs.sayHi(); 立即执行的匿名类 new (class { constructor() { console.</description>
+    </item>
   </channel>
 </rss>
