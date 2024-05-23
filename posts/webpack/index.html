@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Webpack 从入门到放弃 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Webpack 是什么 首先，webpack 是一个打包工具，它会根据代码的内容解析模块依赖，帮助我们把多个模块的代码打包。
+借助一个官网的截图，让你感受一下 webpack 的强大。
+日常使用的前端开发环境应该是怎样的？我们可以尝试着把基本前端开发环境的需求列一下：
+构建我们发布需要的 HTML、CSS、JS 文件 使用 CSS 预处理器来编写样式 使用 Babel 来支持 ES 新特性 本地提供静态服务以方便开发调试 &hellip;. 这些需求，使用 webpack 都可以较好的满足。
+webpack 官方手册地址
+先从一个简单的项目开始 1.初始化项目
+npm init 2.安装 webpack 需要的包
+npm install --save-dev webpack-cli@3.3.12 webpack@4.44.1 3.配置 webpack
+在工程文件夹内新建 webpack.config.js
+const path = require(&#34;path&#34;); module.exports = { entry: &#34;./src/index.js&#34;, output: { path: path.resolve(__dirname, &#34;dist&#34;), filename: &#34;bundle.js&#34;, }, }; 在 package.json 文件添加script命令：
+&#34;webpack&#34;: &#34;webpack --config webpack.config.js&#34; 此时工程目录如下： 4.编译并测试
+npm run webpack 执行命令后会发现工程目录下生成了 dist/bundle.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/webpack/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/webpack/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Webpack 从入门到放弃" />
+<meta property="og:description" content="Webpack 是什么 首先，webpack 是一个打包工具，它会根据代码的内容解析模块依赖，帮助我们把多个模块的代码打包。
+借助一个官网的截图，让你感受一下 webpack 的强大。
+日常使用的前端开发环境应该是怎样的？我们可以尝试着把基本前端开发环境的需求列一下：
+构建我们发布需要的 HTML、CSS、JS 文件 使用 CSS 预处理器来编写样式 使用 Babel 来支持 ES 新特性 本地提供静态服务以方便开发调试 &hellip;. 这些需求，使用 webpack 都可以较好的满足。
+webpack 官方手册地址
+先从一个简单的项目开始 1.初始化项目
+npm init 2.安装 webpack 需要的包
+npm install --save-dev webpack-cli@3.3.12 webpack@4.44.1 3.配置 webpack
+在工程文件夹内新建 webpack.config.js
+const path = require(&#34;path&#34;); module.exports = { entry: &#34;./src/index.js&#34;, output: { path: path.resolve(__dirname, &#34;dist&#34;), filename: &#34;bundle.js&#34;, }, }; 在 package.json 文件添加script命令：
+&#34;webpack&#34;: &#34;webpack --config webpack.config.js&#34; 此时工程目录如下： 4.编译并测试
+npm run webpack 执行命令后会发现工程目录下生成了 dist/bundle." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/webpack/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-23T08:05:20+00:00" />
+<meta property="article:modified_time" content="2024-05-23T08:05:20+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Webpack 从入门到放弃"/>
+<meta name="twitter:description" content="Webpack 是什么 首先，webpack 是一个打包工具，它会根据代码的内容解析模块依赖，帮助我们把多个模块的代码打包。
+借助一个官网的截图，让你感受一下 webpack 的强大。
+日常使用的前端开发环境应该是怎样的？我们可以尝试着把基本前端开发环境的需求列一下：
+构建我们发布需要的 HTML、CSS、JS 文件 使用 CSS 预处理器来编写样式 使用 Babel 来支持 ES 新特性 本地提供静态服务以方便开发调试 &hellip;. 这些需求，使用 webpack 都可以较好的满足。
+webpack 官方手册地址
+先从一个简单的项目开始 1.初始化项目
+npm init 2.安装 webpack 需要的包
+npm install --save-dev webpack-cli@3.3.12 webpack@4.44.1 3.配置 webpack
+在工程文件夹内新建 webpack.config.js
+const path = require(&#34;path&#34;); module.exports = { entry: &#34;./src/index.js&#34;, output: { path: path.resolve(__dirname, &#34;dist&#34;), filename: &#34;bundle.js&#34;, }, }; 在 package.json 文件添加script命令：
+&#34;webpack&#34;: &#34;webpack --config webpack.config.js&#34; 此时工程目录如下： 4.编译并测试
+npm run webpack 执行命令后会发现工程目录下生成了 dist/bundle."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Webpack 从入门到放弃",
+      "item": "https://ycchi0.github.io/posts/webpack/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Webpack 从入门到放弃",
+  "name": "Webpack 从入门到放弃",
+  "description": "Webpack 是什么 首先，webpack 是一个打包工具，它会根据代码的内容解析模块依赖，帮助我们把多个模块的代码打包。\n借助一个官网的截图，让你感受一下 webpack 的强大。\n日常使用的前端开发环境应该是怎样的？我们可以尝试着把基本前端开发环境的需求列一下：\n构建我们发布需要的 HTML、CSS、JS 文件 使用 CSS 预处理器来编写样式 使用 Babel 来支持 ES 新特性 本地提供静态服务以方便开发调试 \u0026hellip;. 这些需求，使用 webpack 都可以较好的满足。\nwebpack 官方手册地址\n先从一个简单的项目开始 1.初始化项目\nnpm init 2.安装 webpack 需要的包\nnpm install --save-dev webpack-cli@3.3.12 webpack@4.44.1 3.配置 webpack\n在工程文件夹内新建 webpack.config.js\nconst path = require(\u0026#34;path\u0026#34;); module.exports = { entry: \u0026#34;./src/index.js\u0026#34;, output: { path: path.resolve(__dirname, \u0026#34;dist\u0026#34;), filename: \u0026#34;bundle.js\u0026#34;, }, }; 在 package.json 文件添加script命令：\n\u0026#34;webpack\u0026#34;: \u0026#34;webpack --config webpack.config.js\u0026#34; 此时工程目录如下： 4.编译并测试\nnpm run webpack 执行命令后会发现工程目录下生成了 dist/bundle.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Webpack 是什么 首先，webpack 是一个打包工具，它会根据代码的内容解析模块依赖，帮助我们把多个模块的代码打包。\n借助一个官网的截图，让你感受一下 webpack 的强大。\n日常使用的前端开发环境应该是怎样的？我们可以尝试着把基本前端开发环境的需求列一下：\n构建我们发布需要的 HTML、CSS、JS 文件 使用 CSS 预处理器来编写样式 使用 Babel 来支持 ES 新特性 本地提供静态服务以方便开发调试 …. 这些需求，使用 webpack 都可以较好的满足。\nwebpack 官方手册地址\n先从一个简单的项目开始 1.初始化项目\nnpm init 2.安装 webpack 需要的包\nnpm install --save-dev webpack-cli@3.3.12 webpack@4.44.1 3.配置 webpack\n在工程文件夹内新建 webpack.config.js\nconst path = require(\"path\"); module.exports = { entry: \"./src/index.js\", output: { path: path.resolve(__dirname, \"dist\"), filename: \"bundle.js\", }, }; 在 package.json 文件添加script命令：\n\"webpack\": \"webpack --config webpack.config.js\" 此时工程目录如下： 4.编译并测试\nnpm run webpack 执行命令后会发现工程目录下生成了 dist/bundle.js 文件，这就是 webpack 帮我们做的事。 Webpack 核心概念 webpack 主要有四个核心概念\nentry output loader plugins entry entry 指定入口文件，既可以指定单入口，也可以指定多入口。\n多入口写法如下：\nentry: { button1: \"./js/button1.js\", button2: \"./js/button2.js\", }, output 当有多个入口文件时，output 就需要进行相应的调整,如下：\nconst path = require(\"path\"); module.exports = { entry: { index:\"./src/index.js\", index1:\"./src/index1.js\", }, output: { path: path.resolve(__dirname, \"dist\"), filename: \"[name].js\", }, }; 执行webpack 命令\nnpm run webpack loader loader 让 webpack 能够去处理那些非 JS 文件的模块\n下面是 webpack 结合 babel 的一个示例：\nBabel: Babel 是一个JavaScript 编译器, 它能让开发者在开发过程中, 直接使用各类方言（如TS、Flow、JSX）或新的语法特性, 而不需要考虑运行环境, 因为Babel 可以做到按需转换为低版本支持的代码\nwebpack 整合 babel 需要先安装 babel 和babel-loader\nnpm install --save-dev babel-loader@8.1.0 @babel/core @babel/preset-env 关于babel的配置详细可以查看babel的文档\n这里指提一下本次用到的，安装完babel后需要在工程文件下新建 .babelrc 文件用来配置babel。\n下面这段话来自官网的解释：\n@babel/preset-env 是一个“聪明”的预设（preset），它能让你使用最新的 JavaScript 语法而无需操心对目标环境所支持的语法设置相应的语法转换插件（以及可选的 polyfills）。这样能让你的工作更轻松，也能让打出来的 JavaScript 包更小！\n.babelrc 文件\n{ \"presets\": [\"@babel/preset-env\"] } 配置 loader loader 的配置在 module 这个对象中，如下所示：\nconst path = require(\"path\"); module.exports = { mode: \"development\", entry: { index: \"./src/index.js\", }, output: { path: path.resolve(__dirname, \"dist\"), filename: \"[name].js\", }, module: { rules: [ { test: /\\.js$/, exclude: /node_modules/, loader: \"babel-loader\", }, ], }, }; 这里添加 mode: “development” 是便于我们测试，生产环境中不应该添加。\n我们在 index.js 中添加部分 ES6 才有的代码\nlet a = \"aaaa\"; const b = 1111; console.log(a, b); const add = (x, y) =\u003e x + y; console.log(add(1, 1)); 运行 webpack 结果如下： plugins 插件 是 webpack 的支柱功能。插件目的在于解决 loader 无法实现的其他事。\nwebpack 有许多插件，在webpackjs可以看到，可以根据项目的需要选择需要的插件 比如说：HtmlWebpackPlugin插件， 这个插件可以帮我们简化 HTML 文件的创建。\nnpm install --save-dev html-webpack-plugin@4.3.0 配置插件\nconst path = require(\"path\"); const HtmlWebpackPlugin = require('html-webpack-plugin'); module.exports = { mode: \"development\", entry: { index: \"./src/index.js\", }, output: { path: path.resolve(__dirname, \"dist\"), filename: \"[name].js\", }, module: { rules: [ { test: /\\.js$/, exclude: /node_modules/, loader: \"babel-loader\", }, ], }, plugins: [ new HtmlWebpackPlugin({ template: './demo.html' }) ] }; 执行webpack命令，生成结果如下，可以看到 dist 目录下多了 index.html，文件，这意味着后续的部署我们只需要将dist目录上传至服务器即可，无须再手动从源代码挑选我们需要的html文件。 当我们需要一个插件更多的用法时，我们可以去这个插件的开源地址查看文档。\nhtml-webpack-plugin 地址\nwebpack 处理 css 文件 比如说我们有一个场景，在一个js文件中引入css文件,工程结构如下： 安装 css-loader\nnpm install --save-dev css-loader@4.1.1 style-loader@1.2.1 webpack 配置如下：\nconst path = require(\"path\"); const HtmlWebpackPlugin = require(\"html-webpack-plugin\"); module.exports = { mode: \"development\", entry: { index: \"./src/index.js\", }, output: { path: path.resolve(__dirname, \"dist\"), filename: \"[name].js\", }, module: { rules: [ { test: /\\.js$/, exclude: /node_modules/, loader: \"babel-loader\", }, { test: /\\.css$/, use:['style-loader','css-loader'] }, ], }, plugins: [ new HtmlWebpackPlugin({ template: \"./demo.html\", }), ], }; 执行webpack命令,打开浏览器，可以发现页面成功展示为黄色背景 使用 link 标签方式\n首先需要添加一个插件\nnpm install --save-dev mini-css-extract-plugin@0.9.0 webpack 配置如下：\nconst path = require(\"path\"); const HtmlWebpackPlugin = require(\"html-webpack-plugin\"); const MiniCssExtractPlugin = require('mini-css-extract-plugin'); module.exports = { mode: \"development\", entry: { index: \"./src/index.js\", }, output: { path: path.resolve(__dirname, \"dist\"), filename: \"[name].js\", }, module: { rules: [ { test: /\\.js$/, exclude: /node_modules/, loader: \"babel-loader\", }, { test: /\\.css$/, use:[MiniCssExtractPlugin.loader,'css-loader'] }, ], }, plugins: [ new HtmlWebpackPlugin({ template: \"./demo.html\", }), new MiniCssExtractPlugin({ filename: 'css/[name].css' }) ], }; 结果如图： 处理 css 文件中的图片 css 代码添加图片\nbody { /* background-color: yellow; */ background-image: url(img/image.png); background-repeat: no-repeat; } 安装 file-loader\nnpm install --save-dev file-loader@6.0.0 webpack 配置：\nconst path = require(\"path\"); const HtmlWebpackPlugin = require(\"html-webpack-plugin\"); const MiniCssExtractPlugin = require(\"mini-css-extract-plugin\"); module.exports = { mode: \"development\", entry: { index: \"./src/index.js\", }, output: { path: path.resolve(__dirname, \"dist\"), filename: \"[name].js\", }, module: { rules: [ { test: /\\.js$/, exclude: /node_modules/, loader: \"babel-loader\", }, { test: /\\.css$/, use: [ { loader: MiniCssExtractPlugin.loader, options: { publicPath: \"../\", }, }, \"css-loader\", ], }, { test: /\\.(jpg|png|gif)$/, use: { loader: \"file-loader\", options: { name: \"img/[name].[ext]\", }, }, }, ], }, plugins: [ new HtmlWebpackPlugin({ template: \"./demo.html\", }), new MiniCssExtractPlugin({ filename: \"css/[name].css\", }), ], }; 这个部分是我们新增的\n{ test: /\\.(jpg|png|gif)$/, use: { loader: \"file-loader\", options: { name: \"img/[name].[ext]\", }, }, }, 这个部分我们进行了调整，因为 dist 目录中 img 跟 css 是同级文件夹。\n{ test: /\\.css$/, use: [ { loader: MiniCssExtractPlugin.loader, options: { publicPath: \"../\", }, }, \"css-loader\", ], }, 结果如下： 使用 file-loader 处理js中的图片 前面提到了 file-loader 处理 css 中的图片, 顺便提提 file-loader 如何处理 js 中的图片\n调整 css 中的代码为：\nbody { background-color: blue; /* background-image: url(img/image.png); background-repeat: no-repeat; */ } js 代码添加：\nimport img from './img/image.png' console.log(img) 结果如下： 这里输出的路径是根据 webpack 中 file-loader 配置得出的 我们在 js 中添加一些操作 dom 节点代码，让结果更清晰一些，调整代码后如下：\nimport './index.css'; import img from './img/image.png' console.log(img) const el = document.createElement('img') el.src = img document.body.append(el) 处理 html 中的图片 移除 js 中的代码\n// import img from './img/image.png' // console.log(img) // const el = document.createElement('img') // el.src = img // document.body.append(el) html 代码调整如下：\n\u003c!DOCTYPE html\u003e \u003chtml lang=\"en\"\u003e \u003chead\u003e \u003cmeta charset=\"UTF-8\"\u003e \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"\u003e \u003ctitle\u003eDocument\u003c/title\u003e \u003c/head\u003e \u003cbody\u003e \u003cimg src=\"./src/img/image.png\" alt=\"\" class=\"sr\"\u003e \u003c/body\u003e \u003c/html\u003e 我们需要引入新的 loader\nnpm install --save-dev html-withimg-loader@0.1.16 配置 loader 执行webpack命令,发现生成的 html 中 img 的路径是存在问题的， 这是因为 html-withimg-loader 只是用来解析 html，具体解析图片的工作还是 file-loader 进行处理，这种情况的出现时因为 file-loader 默认是按照 es6 模块导出，即 export default 这种方式。\n所以我们需要在 webpack file-loader 配置中关闭这个特性。 如下： 当前项目完整配置如下:\nconst path = require(\"path\"); const HtmlWebpackPlugin = require(\"html-webpack-plugin\"); const MiniCssExtractPlugin = require(\"mini-css-extract-plugin\"); module.exports = { mode: \"development\", entry: { index: \"./src/index.js\", }, output: { path: path.resolve(__dirname, \"dist\"), filename: \"[name].js\", }, module: { rules: [ { test: /\\.js$/, exclude: /node_modules/, loader: \"babel-loader\", }, { test: /\\.css$/, use: [ { loader: MiniCssExtractPlugin.loader, options: { publicPath: \"../\", }, }, \"css-loader\", ], }, { test: /\\.(jpg|png|gif)$/, use: { loader: \"file-loader\", options: { name: \"img/[name].[ext]\", esModule: false, }, }, }, { test: /\\.(htm|html)$/, loader: \"html-withimg-loader\", }, ], }, plugins: [ new HtmlWebpackPlugin({ template: \"./demo.html\", }), new MiniCssExtractPlugin({ filename: \"css/[name].css\", }), ], }; 再次执行，已经可以正常工作了 使用 url-loader 处理图片 url-loader 的功能比 file-loader 丰富一些。 比如遇到小图片的时候， url-loader 可以将图片转为 base64编码直接嵌入代码中，从而减少了向后台的请求，在实际场景中是非常实用的。\n有了 url-loader 就可以不用使用file-loader了.\n安装 url-loader\nnpm install --save-dev url-loader@4.1.0 配置 url-loader，直接将原有的file-loader改成 url-loader 即可 将图片转化 base64 图片 添加 limit 属性，这里举一个夸张的例子 意思是小于 30000 大小的图片都会被转成 base64\n我们执行一下，结果为： 可以看到，图片被转成了base64。\n使用 webpack-dev-server 搭建开发环境 安装 webpack-dev-server\nnpm install --save-dev webpack-dev-server@3.11.0 在package.json添加命令 webpack中可以添加 dev-server 配置，如下：\nmodule.exports = { ...... devServer: { compress: true, port: 9000, }, }; 更多配置可参考配置手册\n执行成功如下图： 修改代码后，webpack-dev-server 会监听代码改动，从而减少手动运行，从此解放双手 ",
+  "wordCount" : "923",
+  "inLanguage": "en",
+  "datePublished": "2024-05-23T08:05:20Z",
+  "dateModified": "2024-05-23T08:05:20Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/webpack/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Webpack 从入门到放弃
+    </h1>
+    <div class="post-meta"><span title='2024-05-23 08:05:20 +0000 UTC'>May 23, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="webpack-是什么">Webpack 是什么<a hidden class="anchor" aria-hidden="true" href="#webpack-是什么">#</a></h2>
+<p>首先，webpack 是一个打包工具，它会根据代码的内容解析模块依赖，帮助我们把多个模块的代码打包。</p>
+<p>借助一个官网的截图，让你感受一下 webpack 的强大。</p>
+<p><img loading="lazy" src="image.png" alt="alt text"  />
+</p>
+<p>日常使用的前端开发环境应该是怎样的？我们可以尝试着把基本前端开发环境的需求列一下：</p>
+<ul>
+<li>构建我们发布需要的 HTML、CSS、JS 文件</li>
+<li>使用 CSS 预处理器来编写样式</li>
+<li>使用 Babel 来支持 ES 新特性</li>
+<li>本地提供静态服务以方便开发调试</li>
+<li>&hellip;.</li>
+</ul>
+<p>这些需求，使用 webpack 都可以较好的满足。</p>
+<p><a href="https://webpack.docschina.org/guides/getting-started/">webpack 官方手册地址</a></p>
+<h2 id="先从一个简单的项目开始">先从一个简单的项目开始<a hidden class="anchor" aria-hidden="true" href="#先从一个简单的项目开始">#</a></h2>
+<p><strong>1.初始化项目</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">init</span>
+</span></span></code></pre></div><p><strong>2.安装 webpack 需要的包</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">webpack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cli</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">3.3</span>.<span style="color:#ae81ff">12</span> <span style="color:#a6e22e">webpack</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">4.44</span>.<span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p><strong>3.配置 webpack</strong></p>
+<p>在工程文件夹内新建 webpack.config.js</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">__dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;bundle.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>在 package.json 文件添加script命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#e6db74">&#34;webpack&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;webpack --config webpack.config.js&#34;</span>
+</span></span></code></pre></div><p>此时工程目录如下：
+<img loading="lazy" src="image-2.png" alt="alt text"  />
+</p>
+<p><strong>4.编译并测试</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">run</span> <span style="color:#a6e22e">webpack</span>
+</span></span></code></pre></div><p>执行命令后会发现工程目录下生成了 dist/bundle.js 文件，这就是 webpack 帮我们做的事。
+<img loading="lazy" src="image-3.png" alt="alt text"  />
+</p>
+<h2 id="webpack-核心概念">Webpack 核心概念<a hidden class="anchor" aria-hidden="true" href="#webpack-核心概念">#</a></h2>
+<p>webpack 主要有四个核心概念</p>
+<ol>
+<li>entry</li>
+<li>output</li>
+<li>loader</li>
+<li>plugins</li>
+</ol>
+<h3 id="entry">entry<a hidden class="anchor" aria-hidden="true" href="#entry">#</a></h3>
+<p>entry 指定入口文件，既可以指定单入口，也可以指定多入口。</p>
+<p>多入口写法如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">button1</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./js/button1.js&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">button2</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./js/button2.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span></code></pre></div><h3 id="output">output<a hidden class="anchor" aria-hidden="true" href="#output">#</a></h3>
+<p>当有多个入口文件时，output 就需要进行相应的调整,如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;./src/index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">index1</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;./src/index1.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">__dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;[name].js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>执行webpack 命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">run</span> <span style="color:#a6e22e">webpack</span>
+</span></span></code></pre></div><p><img loading="lazy" src="image-4.png" alt="alt text"  />
+</p>
+<h3 id="loader">loader<a hidden class="anchor" aria-hidden="true" href="#loader">#</a></h3>
+<p>loader 让 webpack 能够去处理那些非 JS 文件的模块</p>
+<p>下面是 webpack 结合 babel 的一个示例：</p>
+<blockquote>
+<p>Babel:
+Babel 是一个JavaScript 编译器, 它能让开发者在开发过程中, 直接使用各类方言（如TS、Flow、JSX）或新的语法特性, 而不需要考虑运行环境, 因为Babel 可以做到按需转换为低版本支持的代码</p>
+</blockquote>
+<p>webpack 整合 babel 需要先安装 babel 和babel-loader</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span> <span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">babel</span><span style="color:#f92672">-</span><span style="color:#a6e22e">loader</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">8.1</span>.<span style="color:#ae81ff">0</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">babel</span><span style="color:#f92672">/</span><span style="color:#a6e22e">core</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">babel</span><span style="color:#f92672">/</span><span style="color:#a6e22e">preset</span><span style="color:#f92672">-</span><span style="color:#a6e22e">env</span>
+</span></span></code></pre></div><p>关于babel的配置详细可以查看babel的<a href="https://www.babeljs.cn/docs/configuration">文档</a></p>
+<p>这里指提一下本次用到的，安装完babel后需要在工程文件下新建 .babelrc 文件用来配置babel。</p>
+<p>下面这段话来自官网的解释：</p>
+<blockquote>
+<p>@babel/preset-env 是一个“聪明”的预设（preset），它能让你使用最新的 JavaScript 语法而无需操心对目标环境所支持的语法设置相应的语法转换插件（以及可选的 polyfills）。这样能让你的工作更轻松，也能让打出来的 JavaScript 包更小！</p>
+</blockquote>
+<p>.babelrc 文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;presets&#34;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;@babel/preset-env&#34;</span>]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="配置-loader">配置 loader<a hidden class="anchor" aria-hidden="true" href="#配置-loader">#</a></h4>
+<p>loader 的配置在 module 这个对象中，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">mode</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;development&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">__dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;[name].js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">module</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.js$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;babel-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><strong>这里添加 mode: &ldquo;development&rdquo; 是便于我们测试，生产环境中不应该添加</strong>。</p>
+<p>我们在 index.js 中添加部分 ES6 才有的代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;aaaa&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1111</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">add</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>) =&gt; <span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">y</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>));
+</span></span></code></pre></div><p>运行 webpack 结果如下：
+<img loading="lazy" src="babel.png" alt="alt text"  />
+</p>
+<h3 id="plugins">plugins<a hidden class="anchor" aria-hidden="true" href="#plugins">#</a></h3>
+<p>插件 是 webpack 的支柱功能。插件目的在于解决 loader 无法实现的其他事。</p>
+<p>webpack 有许多插件，在<a href="https://www.webpackjs.com/plugins/">webpackjs</a>可以看到，可以根据项目的需要选择需要的插件
+<img loading="lazy" src="image-1.png" alt="alt text"  />
+</p>
+<p>比如说：<strong>HtmlWebpackPlugin</strong>插件，
+这个插件可以帮我们简化 HTML 文件的创建。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">html</span><span style="color:#f92672">-</span><span style="color:#a6e22e">webpack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">plugin</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">4.3</span>.<span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>配置插件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;html-webpack-plugin&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">mode</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;development&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">__dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;[name].js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">module</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.js$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;babel-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">template</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;./demo.html&#39;</span>
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>执行webpack命令，生成结果如下，可以看到 dist 目录下多了 index.html，文件，这意味着后续的部署我们只需要将dist目录上传至服务器即可，无须再手动从源代码挑选我们需要的html文件。
+<img loading="lazy" src="image-5.png" alt="alt text"  />
+</p>
+<p>当我们需要一个插件更多的用法时，我们可以去这个插件的开源地址查看文档。</p>
+<p><a href="https://github.com/jantimon/html-webpack-plugin">html-webpack-plugin 地址</a></p>
+<p><img loading="lazy" src="image-6.png" alt="alt text"  />
+</p>
+<h2 id="webpack-处理-css-文件">webpack 处理 css 文件<a hidden class="anchor" aria-hidden="true" href="#webpack-处理-css-文件">#</a></h2>
+<p>比如说我们有一个场景，在一个js文件中引入css文件,工程结构如下：
+<img loading="lazy" src="image-7.png" alt="alt text"  />
+</p>
+<p>安装 css-loader</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">css</span><span style="color:#f92672">-</span><span style="color:#a6e22e">loader</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">4.1</span>.<span style="color:#ae81ff">1</span> <span style="color:#a6e22e">style</span><span style="color:#f92672">-</span><span style="color:#a6e22e">loader</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">1.2</span>.<span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>webpack 配置如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;html-webpack-plugin&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">mode</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;development&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">__dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;[name].js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">module</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.js$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;babel-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.css$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span>[<span style="color:#e6db74">&#39;style-loader&#39;</span>,<span style="color:#e6db74">&#39;css-loader&#39;</span>]
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">template</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./demo.html&#34;</span>,
+</span></span><span style="display:flex;"><span>    }),
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>执行webpack命令,打开浏览器，可以发现页面成功展示为黄色背景
+<img loading="lazy" src="image-8.png" alt="alt text"  />
+</p>
+<p><strong>使用 link 标签方式</strong></p>
+<p>首先需要添加一个插件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">mini</span><span style="color:#f92672">-</span><span style="color:#a6e22e">css</span><span style="color:#f92672">-</span><span style="color:#a6e22e">extract</span><span style="color:#f92672">-</span><span style="color:#a6e22e">plugin</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">0.9</span>.<span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>webpack 配置如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;html-webpack-plugin&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;mini-css-extract-plugin&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">mode</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;development&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">__dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;[name].js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">module</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.js$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;babel-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.css$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span>[<span style="color:#a6e22e">MiniCssExtractPlugin</span>.<span style="color:#a6e22e">loader</span>,<span style="color:#e6db74">&#39;css-loader&#39;</span>]
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">template</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./demo.html&#34;</span>,
+</span></span><span style="display:flex;"><span>    }),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;css/[name].css&#39;</span>
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>结果如图：
+<img loading="lazy" src="image-9.png" alt="alt text"  />
+</p>
+<h2 id="处理-css-文件中的图片">处理 css 文件中的图片<a hidden class="anchor" aria-hidden="true" href="#处理-css-文件中的图片">#</a></h2>
+<p>css 代码添加图片</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-css" data-lang="css"><span style="display:flex;"><span><span style="color:#f92672">body</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* background-color: yellow; */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">background-image</span>: url(<span style="color:#e6db74">img/image.png</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">background-repeat</span>: <span style="color:#66d9ef">no-repeat</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  
+</span></span></code></pre></div><p>安装 file-loader</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">file</span><span style="color:#f92672">-</span><span style="color:#a6e22e">loader</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">6.0</span>.<span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>webpack 配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;html-webpack-plugin&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;mini-css-extract-plugin&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">mode</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;development&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">__dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;[name].js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">module</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.js$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;babel-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.css$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>          {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span>.<span style="color:#a6e22e">loader</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>              <span style="color:#a6e22e">publicPath</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;../&#34;</span>,
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;css-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.(jpg|png|gif)$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;file-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;img/[name].[ext]&#34;</span>,
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">template</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./demo.html&#34;</span>,
+</span></span><span style="display:flex;"><span>    }),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;css/[name].css&#34;</span>,
+</span></span><span style="display:flex;"><span>    }),
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>这个部分是我们新增的</p>
+<pre tabindex="0"><code>      {
+        test: /\.(jpg|png|gif)$/,
+        use: {
+          loader: &#34;file-loader&#34;,
+          options: {
+            name: &#34;img/[name].[ext]&#34;,
+          },
+        },
+      },
+</code></pre><p>这个部分我们进行了调整，因为 dist 目录中 img 跟 css 是同级文件夹。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.css$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>          {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span>.<span style="color:#a6e22e">loader</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>              <span style="color:#a6e22e">publicPath</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;../&#34;</span>,
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;css-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>      },
+</span></span></code></pre></div><p><img loading="lazy" src="image-11.png" alt="alt text"  />
+</p>
+<p>结果如下：
+<img loading="lazy" src="image-10.png" alt="alt text"  />
+</p>
+<h2 id="使用-file-loader-处理js中的图片">使用 file-loader 处理js中的图片<a hidden class="anchor" aria-hidden="true" href="#使用-file-loader-处理js中的图片">#</a></h2>
+<p>前面提到了 file-loader 处理 css 中的图片, 顺便提提 file-loader 如何处理 js 中的图片</p>
+<p>调整 css 中的代码为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-css" data-lang="css"><span style="display:flex;"><span><span style="color:#f92672">body</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">background-color</span>: <span style="color:#66d9ef">blue</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* background-image: url(img/image.png);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    background-repeat: no-repeat; */</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p>js 代码添加：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">img</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;./img/image.png&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">img</span>)
+</span></span></code></pre></div><p>结果如下：
+<img loading="lazy" src="image-13.png" alt="alt text"  />
+</p>
+<p>这里输出的路径是根据 webpack 中 file-loader 配置得出的
+<img loading="lazy" src="image-12.png" alt="alt text"  />
+</p>
+<p>我们在 js 中添加一些操作 dom 节点代码，让结果更清晰一些，调整代码后如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#e6db74">&#39;./index.css&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">img</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;./img/image.png&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">img</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">el</span> <span style="color:#f92672">=</span> document.<span style="color:#a6e22e">createElement</span>(<span style="color:#e6db74">&#39;img&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">el</span>.<span style="color:#a6e22e">src</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">img</span> 
+</span></span><span style="display:flex;"><span>document.<span style="color:#a6e22e">body</span>.<span style="color:#a6e22e">append</span>(<span style="color:#a6e22e">el</span>)
+</span></span></code></pre></div><p><img loading="lazy" src="image-14.png" alt="alt text"  />
+</p>
+<h2 id="处理-html-中的图片">处理 html 中的图片<a hidden class="anchor" aria-hidden="true" href="#处理-html-中的图片">#</a></h2>
+<p>移除 js 中的代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// import img from &#39;./img/image.png&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// console.log(img)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// const el = document.createElement(&#39;img&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// el.src = img 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// document.body.append(el)
+</span></span></span></code></pre></div><p>html 代码调整如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;UTF-8&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;viewport&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width=device-width, initial-scale=1.0&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">title</span>&gt;Document&lt;/<span style="color:#f92672">title</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">img</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;./src/img/image.png&#34;</span> <span style="color:#a6e22e">alt</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sr&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">html</span>&gt;
+</span></span></code></pre></div><p>我们需要引入新的 loader</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">html</span><span style="color:#f92672">-</span><span style="color:#a6e22e">withimg</span><span style="color:#f92672">-</span><span style="color:#a6e22e">loader</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">0.1</span>.<span style="color:#ae81ff">16</span>
+</span></span></code></pre></div><p>配置 loader
+<img loading="lazy" src="image-15.png" alt="alt text"  />
+</p>
+<p>执行webpack命令,发现生成的 html 中 img 的路径是存在问题的，
+<img loading="lazy" src="image-16.png" alt="alt text"  />
+</p>
+<p>这是因为 html-withimg-loader 只是用来解析 html，具体解析图片的工作还是 file-loader 进行处理，这种情况的出现时因为 file-loader 默认是按照 es6 模块导出，即 export default 这种方式。</p>
+<p>所以我们需要在 webpack file-loader 配置中关闭这个特性。
+如下：
+<img loading="lazy" src="image-17.png" alt="alt text"  />
+</p>
+<p>当前项目完整配置如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;html-webpack-plugin&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;mini-css-extract-plugin&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">mode</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;development&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">__dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;[name].js&#34;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">module</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.js$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;babel-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.css$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>          {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span>.<span style="color:#a6e22e">loader</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>              <span style="color:#a6e22e">publicPath</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;../&#34;</span>,
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;css-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.(jpg|png|gif)$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;file-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;img/[name].[ext]&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">esModule</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.(htm|html)$/</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;html-withimg-loader&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">template</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./demo.html&#34;</span>,
+</span></span><span style="display:flex;"><span>    }),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;css/[name].css&#34;</span>,
+</span></span><span style="display:flex;"><span>    }),
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>再次执行，已经可以正常工作了
+<img loading="lazy" src="image-18.png" alt="alt text"  />
+
+<img loading="lazy" src="image-19.png" alt="alt text"  />
+</p>
+<h2 id="使用-url-loader-处理图片">使用 url-loader 处理图片<a hidden class="anchor" aria-hidden="true" href="#使用-url-loader-处理图片">#</a></h2>
+<p>url-loader 的功能比 file-loader 丰富一些。
+比如遇到小图片的时候， url-loader 可以将图片转为 base64编码直接嵌入代码中，从而减少了向后台的请求，在实际场景中是非常实用的。</p>
+<p>有了 url-loader 就可以不用使用file-loader了.</p>
+<p>安装 url-loader</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">url</span><span style="color:#f92672">-</span><span style="color:#a6e22e">loader</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">4.1</span>.<span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>配置 url-loader，直接将原有的file-loader改成 url-loader 即可
+<img loading="lazy" src="image-20.png" alt="alt text"  />
+</p>
+<h3 id="将图片转化-base64-图片">将图片转化 base64 图片<a hidden class="anchor" aria-hidden="true" href="#将图片转化-base64-图片">#</a></h3>
+<p>添加 limit 属性，这里举一个夸张的例子
+<img loading="lazy" src="image-21.png" alt="alt text"  />
+
+意思是小于 30000 大小的图片都会被转成 base64</p>
+<p>我们执行一下，结果为：
+<img loading="lazy" src="image-22.png" alt="alt text"  />
+
+<img loading="lazy" src="image-23.png" alt="alt text"  />
+
+可以看到，图片被转成了base64。</p>
+<h2 id="使用-webpack-dev-server-搭建开发环境">使用 webpack-dev-server 搭建开发环境<a hidden class="anchor" aria-hidden="true" href="#使用-webpack-dev-server-搭建开发环境">#</a></h2>
+<p>安装 webpack-dev-server</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">install</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">save</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span> <span style="color:#a6e22e">webpack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">dev</span><span style="color:#f92672">-</span><span style="color:#a6e22e">server</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#ae81ff">3.11</span>.<span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>在package.json添加命令
+<img loading="lazy" src="image-24.png" alt="alt text"  />
+</p>
+<p>webpack中可以添加 dev-server 配置，如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>......
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">devServer</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">compress</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">port</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">9000</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>更多配置可参考<a href="https://www.webpackjs.com/configuration/dev-server/">配置手册</a></p>
+<p>执行成功如下图：
+<img loading="lazy" src="image-25.png" alt="alt text"  />
+</p>
+<p>修改代码后，webpack-dev-server 会监听代码改动，从而减少手动运行，从此解放双手
+<img loading="lazy" src="image-27.png" alt="alt text"  />
+
+<img loading="lazy" src="image-26.png" alt="alt text"  />
+</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
