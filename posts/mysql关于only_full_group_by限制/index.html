@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>MySQL关于only_full_group_by限制 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="先上结论
+如果 only_full_group_by 被启用，那么在查询时，如果某个列不在group by 列表中，此时如果不对该列进行聚合处理，则该列不能出现在 select 列表，having 条件中及order by 列表中
+MySQL 8.0 默认启用了sql_mode，我们可以通过 select @@session.sql_mode 查看会话中的 sql_mode 配置。
+mysql&gt; SELECT @@session.sql_mode; &#43;-----------------------------------------------------------------------------------------------------------------------&#43; | @@session.sql_mode | &#43;-----------------------------------------------------------------------------------------------------------------------&#43; | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | &#43;-----------------------------------------------------------------------------------------------------------------------&#43; 1 row in set (0.00 sec) 有这么一张表
+CREATE TABLE `mytable` ( `id` int unsigned NOT NULL, `a` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL, `b` int DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci; INSERT INTO mytable VALUES (1, &#39;abc&#39;, 1000), (2, &#39;abc&#39;, 2000), (3, &#39;def&#39;, 4000); 当我们执行的 SQL 语句包含聚合函数时，MYSQL 提示需要使用 GROUP BY 进行分组。">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/mysql%E5%85%B3%E4%BA%8Eonly_full_group_by%E9%99%90%E5%88%B6/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/mysql%E5%85%B3%E4%BA%8Eonly_full_group_by%E9%99%90%E5%88%B6/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="MySQL关于only_full_group_by限制" />
+<meta property="og:description" content="先上结论
+如果 only_full_group_by 被启用，那么在查询时，如果某个列不在group by 列表中，此时如果不对该列进行聚合处理，则该列不能出现在 select 列表，having 条件中及order by 列表中
+MySQL 8.0 默认启用了sql_mode，我们可以通过 select @@session.sql_mode 查看会话中的 sql_mode 配置。
+mysql&gt; SELECT @@session.sql_mode; &#43;-----------------------------------------------------------------------------------------------------------------------&#43; | @@session.sql_mode | &#43;-----------------------------------------------------------------------------------------------------------------------&#43; | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | &#43;-----------------------------------------------------------------------------------------------------------------------&#43; 1 row in set (0.00 sec) 有这么一张表
+CREATE TABLE `mytable` ( `id` int unsigned NOT NULL, `a` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL, `b` int DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci; INSERT INTO mytable VALUES (1, &#39;abc&#39;, 1000), (2, &#39;abc&#39;, 2000), (3, &#39;def&#39;, 4000); 当我们执行的 SQL 语句包含聚合函数时，MYSQL 提示需要使用 GROUP BY 进行分组。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/mysql%E5%85%B3%E4%BA%8Eonly_full_group_by%E9%99%90%E5%88%B6/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-28T10:56:23+00:00" />
+<meta property="article:modified_time" content="2024-05-28T10:56:23+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL关于only_full_group_by限制"/>
+<meta name="twitter:description" content="先上结论
+如果 only_full_group_by 被启用，那么在查询时，如果某个列不在group by 列表中，此时如果不对该列进行聚合处理，则该列不能出现在 select 列表，having 条件中及order by 列表中
+MySQL 8.0 默认启用了sql_mode，我们可以通过 select @@session.sql_mode 查看会话中的 sql_mode 配置。
+mysql&gt; SELECT @@session.sql_mode; &#43;-----------------------------------------------------------------------------------------------------------------------&#43; | @@session.sql_mode | &#43;-----------------------------------------------------------------------------------------------------------------------&#43; | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | &#43;-----------------------------------------------------------------------------------------------------------------------&#43; 1 row in set (0.00 sec) 有这么一张表
+CREATE TABLE `mytable` ( `id` int unsigned NOT NULL, `a` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL, `b` int DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci; INSERT INTO mytable VALUES (1, &#39;abc&#39;, 1000), (2, &#39;abc&#39;, 2000), (3, &#39;def&#39;, 4000); 当我们执行的 SQL 语句包含聚合函数时，MYSQL 提示需要使用 GROUP BY 进行分组。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "MySQL关于only_full_group_by限制",
+      "item": "https://ycchi0.github.io/posts/mysql%E5%85%B3%E4%BA%8Eonly_full_group_by%E9%99%90%E5%88%B6/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MySQL关于only_full_group_by限制",
+  "name": "MySQL关于only_full_group_by限制",
+  "description": "先上结论\n如果 only_full_group_by 被启用，那么在查询时，如果某个列不在group by 列表中，此时如果不对该列进行聚合处理，则该列不能出现在 select 列表，having 条件中及order by 列表中\nMySQL 8.0 默认启用了sql_mode，我们可以通过 select @@session.sql_mode 查看会话中的 sql_mode 配置。\nmysql\u0026gt; SELECT @@session.sql_mode; +-----------------------------------------------------------------------------------------------------------------------+ | @@session.sql_mode | +-----------------------------------------------------------------------------------------------------------------------+ | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | +-----------------------------------------------------------------------------------------------------------------------+ 1 row in set (0.00 sec) 有这么一张表\nCREATE TABLE `mytable` ( `id` int unsigned NOT NULL, `a` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL, `b` int DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci; INSERT INTO mytable VALUES (1, \u0026#39;abc\u0026#39;, 1000), (2, \u0026#39;abc\u0026#39;, 2000), (3, \u0026#39;def\u0026#39;, 4000); 当我们执行的 SQL 语句包含聚合函数时，MYSQL 提示需要使用 GROUP BY 进行分组。",
+  "keywords": [
+    
+  ],
+  "articleBody": "先上结论\n如果 only_full_group_by 被启用，那么在查询时，如果某个列不在group by 列表中，此时如果不对该列进行聚合处理，则该列不能出现在 select 列表，having 条件中及order by 列表中\nMySQL 8.0 默认启用了sql_mode，我们可以通过 select @@session.sql_mode 查看会话中的 sql_mode 配置。\nmysql\u003e SELECT @@session.sql_mode; +-----------------------------------------------------------------------------------------------------------------------+ | @@session.sql_mode | +-----------------------------------------------------------------------------------------------------------------------+ | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | +-----------------------------------------------------------------------------------------------------------------------+ 1 row in set (0.00 sec) 有这么一张表\nCREATE TABLE `mytable` ( `id` int unsigned NOT NULL, `a` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL, `b` int DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci; INSERT INTO mytable VALUES (1, 'abc', 1000), (2, 'abc', 2000), (3, 'def', 4000); 当我们执行的 SQL 语句包含聚合函数时，MYSQL 提示需要使用 GROUP BY 进行分组。\nmysql\u003e SELECT a,SUM(b) FROM mytable; ERROR 1140 (42000): In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'study.mytable.a'; this is incompatible with sql_mode=only_full_group_by 如果我们关掉 only_full_group_by 限制，SQL 语句就正常执行了，但又没有完全正常执行。 mysql\u003e SET sql_mode = ''; Query OK, 0 rows affected (0.00 sec) mysql\u003e SELECT a,SUM(b) FROM mytable; +------+--------+ | a | SUM(b) | +------+--------+ | abc | 7000 | +------+--------+ 1 row in set (0.00 sec) 可以看到，虽然我们得到了 SUM(b) 的值为 7000 是期望的，但是 a 的值为 abc 不是我们期望的。\nMySQL 8.0 里的文档提到这么一句话\nthe query is processed by treating all rows as a single group, but the value selected for each named column is nondeterministic 在这个例子中，a 的值就是不确定的\n当 WHERE 过滤条件中包含了 SELECT 列表中全部非聚合列的字段，则在开启 only_full_group_by 下也可以正常工作\nIn this case, every such column must be limited to a single value in theWHEREclause, and all such limiting conditions must be joined by logicalAND mysql\u003e SET SESSION sql_mode = sys.list_add(@@session.sql_mode, 'ONLY_FULL_GROUP_BY'); Query OK, 0 rows affected (0.01 sec) mysql\u003e SELECT a,SUM(b) FROM mytable; ERROR 1140 (42000): In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'study.mytable.a'; this is incompatible with sql_mode=only_full_group_by mysql\u003e SELECT a, SUM(b) FROM mytable WHERE a = 'abc'; +------+--------+ | a | SUM(b) | +------+--------+ | abc | 3000 | +------+--------+ 1 row in set (0.00 sec) mysql\u003e SELECT * FROM mytable1; +----+------+------+-------+ | id | a | b | c | +----+------+------+-------+ | 1 | abc | qrs | 1000 | | 2 | abc | tuv | 2000 | | 3 | def | qrs | 4000 | | 4 | def | tuv | 8000 | | 5 | abc | qrs | 16000 | | 6 | def | tuv | 32000 | +----+------+------+-------+ 6 rows in set (0.00 sec) mysql\u003e SELECT a, b, SUM(c) FROM mytable1 WHERE a = 'abc' OR b = 'qrs'; ERROR 1140 (42000): In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'study.mytable1.a'; this is incompatible with sql_mode=only_full_group_by mysql\u003e SELECT a, b, SUM(c) FROM mytable1 WHERE a = 'abc' AND b = 'qrs'; +------+------+--------+ | a | b | SUM(c) | +------+------+--------+ | abc | qrs | 17000 | +------+------+--------+ 1 row in set (0.00 sec) 这种方式可以理解为通过条件限制确定了分组条件。因为没有指名分组时，MySQL 将所有字段视为一个组处理。\n在开启 only_full_group_by 限制时，也可以通过 ANY_VALUE 函数，使MySQL 正常执行语句，显而易见的是，我们得到的值是不确切的。\nmysql\u003e SELECT a,SUM(b) FROM mytable; ERROR 1140 (42000): In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'study.mytable.a'; this is incompatible with sql_mode=only_full_group_by mysql\u003e SELECT ANY_VALUE(a),SUM(b) FROM mytable; +--------------+--------+ | ANY_VALUE(a) | SUM(b) | +--------------+--------+ | abc | 7000 | +--------------+--------+ 1 row in set (0.00 sec) 综上，在使用聚合函数的场景中，使用 GROUP BY 进行分组可以确保逻辑严谨性。\n推荐阅读： https://dev.mysql.com/doc/refman/8.0/en/counting-rows.html https://dev.mysql.com/doc/refman/8.0/en/group-by-handling.html\n",
+  "wordCount" : "518",
+  "inLanguage": "en",
+  "datePublished": "2024-05-28T10:56:23Z",
+  "dateModified": "2024-05-28T10:56:23Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/mysql%E5%85%B3%E4%BA%8Eonly_full_group_by%E9%99%90%E5%88%B6/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      MySQL关于only_full_group_by限制
+    </h1>
+    <div class="post-meta"><span title='2024-05-28 10:56:23 +0000 UTC'>May 28, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>先上结论</p>
+<p>如果 only_full_group_by 被启用，那么在查询时，如果某个列不在group by 列表中，此时如果不对该列进行聚合处理，则该列不能出现在 select 列表，having 条件中及order by 列表中</p>
+<p>MySQL 8.0 默认启用了sql_mode，我们可以通过 select @@session.sql_mode 查看会话中的 sql_mode 配置。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">@@</span><span style="color:#66d9ef">session</span>.sql_mode;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">-----------------------------------------------------------------------------------------------------------------------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> <span style="color:#f92672">@@</span><span style="color:#66d9ef">session</span>.sql_mode
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">-----------------------------------------------------------------------------------------------------------------------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">-----------------------------------------------------------------------------------------------------------------------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">row</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">set</span> (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">00</span> sec)
+</span></span></code></pre></div><p>有这么一张表</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#f92672">`</span>mytable<span style="color:#f92672">`</span>
+</span></span><span style="display:flex;"><span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">`</span>id<span style="color:#f92672">`</span> int unsigned <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">`</span>a<span style="color:#f92672">`</span>  varchar(<span style="color:#ae81ff">10</span>) <span style="color:#66d9ef">COLLATE</span> utf8mb4_general_ci <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">`</span>b<span style="color:#f92672">`</span>  int                                    <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> (<span style="color:#f92672">`</span>id<span style="color:#f92672">`</span>)
+</span></span><span style="display:flex;"><span>) ENGINE <span style="color:#f92672">=</span> InnoDB
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">DEFAULT</span> CHARSET <span style="color:#f92672">=</span> utf8mb4
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">COLLATE</span> <span style="color:#f92672">=</span> utf8mb4_general_ci;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> mytable
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">VALUES</span> (<span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;abc&#39;</span>, <span style="color:#ae81ff">1000</span>),
+</span></span><span style="display:flex;"><span>       (<span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#39;abc&#39;</span>, <span style="color:#ae81ff">2000</span>),
+</span></span><span style="display:flex;"><span>       (<span style="color:#ae81ff">3</span>, <span style="color:#e6db74">&#39;def&#39;</span>, <span style="color:#ae81ff">4000</span>);
+</span></span></code></pre></div><p>当我们执行的 SQL 语句包含聚合函数时，MYSQL 提示需要使用 GROUP BY 进行分组。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> a,<span style="color:#66d9ef">SUM</span>(b) <span style="color:#66d9ef">FROM</span> mytable;
+</span></span><span style="display:flex;"><span>ERROR <span style="color:#ae81ff">1140</span> (<span style="color:#ae81ff">42000</span>): <span style="color:#66d9ef">In</span> aggregated query <span style="color:#66d9ef">without</span> <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span>, 
+</span></span><span style="display:flex;"><span>expression <span style="color:#f92672">#</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">SELECT</span> list <span style="color:#66d9ef">contains</span> nonaggregated <span style="color:#66d9ef">column</span> <span style="color:#e6db74">&#39;study.mytable.a&#39;</span>; 
+</span></span><span style="display:flex;"><span>this <span style="color:#66d9ef">is</span> incompatible <span style="color:#66d9ef">with</span> sql_mode<span style="color:#f92672">=</span>only_full_group_by
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">如果我们关掉</span> only_full_group_by <span style="color:#960050;background-color:#1e0010">限制，</span><span style="color:#66d9ef">SQL</span> <span style="color:#960050;background-color:#1e0010">语句就正常执行了，但又没有完全正常执行。</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SET</span> sql_mode <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>;
+</span></span><span style="display:flex;"><span>Query OK, <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">rows</span> affected (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">00</span> sec)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> a,<span style="color:#66d9ef">SUM</span>(b) <span style="color:#66d9ef">FROM</span> mytable;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> a    <span style="color:#f92672">|</span> <span style="color:#66d9ef">SUM</span>(b) <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> abc  <span style="color:#f92672">|</span>   <span style="color:#ae81ff">7000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">row</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">set</span> (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">00</span> sec)
+</span></span></code></pre></div><p>可以看到，虽然我们得到了 SUM(b) 的值为 7000 是期望的，但是 a 的值为 abc 不是我们期望的。</p>
+<p>MySQL 8.0 里的文档提到这么一句话</p>
+<p>the query is processed by treating all rows as a single group, but the value selected for each named column is nondeterministic
+在这个例子中，a 的值就是不确定的</p>
+<p>当 WHERE 过滤条件中包含了 SELECT 列表中全部非聚合列的字段，则在开启 only_full_group_by 下也可以正常工作</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">In</span> this <span style="color:#66d9ef">case</span>, <span style="color:#66d9ef">every</span> such <span style="color:#66d9ef">column</span> must be limited <span style="color:#66d9ef">to</span> a single value <span style="color:#66d9ef">in</span> theWHEREclause, <span style="color:#66d9ef">and</span> <span style="color:#66d9ef">all</span> such limiting conditions must be joined <span style="color:#66d9ef">by</span> logicalAND
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">SESSION</span> sql_mode <span style="color:#f92672">=</span> sys.list_add(<span style="color:#f92672">@@</span><span style="color:#66d9ef">session</span>.sql_mode, <span style="color:#e6db74">&#39;ONLY_FULL_GROUP_BY&#39;</span>);
+</span></span><span style="display:flex;"><span>Query OK, <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">rows</span> affected (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">01</span> sec)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> a,<span style="color:#66d9ef">SUM</span>(b) <span style="color:#66d9ef">FROM</span> mytable;
+</span></span><span style="display:flex;"><span>ERROR <span style="color:#ae81ff">1140</span> (<span style="color:#ae81ff">42000</span>): <span style="color:#66d9ef">In</span> aggregated query <span style="color:#66d9ef">without</span> <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span>, expression <span style="color:#f92672">#</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">SELECT</span> list <span style="color:#66d9ef">contains</span> nonaggregated <span style="color:#66d9ef">column</span> <span style="color:#e6db74">&#39;study.mytable.a&#39;</span>; this <span style="color:#66d9ef">is</span> incompatible <span style="color:#66d9ef">with</span> sql_mode<span style="color:#f92672">=</span>only_full_group_by
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> a, <span style="color:#66d9ef">SUM</span>(b) <span style="color:#66d9ef">FROM</span> mytable <span style="color:#66d9ef">WHERE</span> a <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;abc&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> a    <span style="color:#f92672">|</span> <span style="color:#66d9ef">SUM</span>(b) <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> abc  <span style="color:#f92672">|</span>   <span style="color:#ae81ff">3000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">row</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">set</span> (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">00</span> sec)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> mytable1;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+------+------+-------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> id <span style="color:#f92672">|</span> a    <span style="color:#f92672">|</span> b    <span style="color:#f92672">|</span> <span style="color:#66d9ef">c</span>     <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+------+------+-------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">1</span> <span style="color:#f92672">|</span> abc  <span style="color:#f92672">|</span> qrs  <span style="color:#f92672">|</span>  <span style="color:#ae81ff">1000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">2</span> <span style="color:#f92672">|</span> abc  <span style="color:#f92672">|</span> tuv  <span style="color:#f92672">|</span>  <span style="color:#ae81ff">2000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">3</span> <span style="color:#f92672">|</span> def  <span style="color:#f92672">|</span> qrs  <span style="color:#f92672">|</span>  <span style="color:#ae81ff">4000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">4</span> <span style="color:#f92672">|</span> def  <span style="color:#f92672">|</span> tuv  <span style="color:#f92672">|</span>  <span style="color:#ae81ff">8000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">5</span> <span style="color:#f92672">|</span> abc  <span style="color:#f92672">|</span> qrs  <span style="color:#f92672">|</span> <span style="color:#ae81ff">16000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span>  <span style="color:#ae81ff">6</span> <span style="color:#f92672">|</span> def  <span style="color:#f92672">|</span> tuv  <span style="color:#f92672">|</span> <span style="color:#ae81ff">32000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+------+------+-------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">6</span> <span style="color:#66d9ef">rows</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">set</span> (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">00</span> sec)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> a, b, <span style="color:#66d9ef">SUM</span>(<span style="color:#66d9ef">c</span>) <span style="color:#66d9ef">FROM</span> mytable1 <span style="color:#66d9ef">WHERE</span> a <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;abc&#39;</span> <span style="color:#66d9ef">OR</span> b <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;qrs&#39;</span>;
+</span></span><span style="display:flex;"><span>ERROR <span style="color:#ae81ff">1140</span> (<span style="color:#ae81ff">42000</span>): <span style="color:#66d9ef">In</span> aggregated query <span style="color:#66d9ef">without</span> <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span>, expression <span style="color:#f92672">#</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">SELECT</span> list <span style="color:#66d9ef">contains</span> nonaggregated <span style="color:#66d9ef">column</span> <span style="color:#e6db74">&#39;study.mytable1.a&#39;</span>; this <span style="color:#66d9ef">is</span> incompatible <span style="color:#66d9ef">with</span> sql_mode<span style="color:#f92672">=</span>only_full_group_by
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> a, b, <span style="color:#66d9ef">SUM</span>(<span style="color:#66d9ef">c</span>) <span style="color:#66d9ef">FROM</span> mytable1 <span style="color:#66d9ef">WHERE</span> a <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;abc&#39;</span> <span style="color:#66d9ef">AND</span> b <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;qrs&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> a    <span style="color:#f92672">|</span> b    <span style="color:#f92672">|</span> <span style="color:#66d9ef">SUM</span>(<span style="color:#66d9ef">c</span>) <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> abc  <span style="color:#f92672">|</span> qrs  <span style="color:#f92672">|</span>  <span style="color:#ae81ff">17000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">------+------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">row</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">set</span> (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">00</span> sec)
+</span></span></code></pre></div><p>这种方式可以理解为通过条件限制确定了分组条件。因为没有指名分组时，MySQL 将所有字段视为一个组处理。</p>
+<p>在开启 only_full_group_by 限制时，也可以通过 ANY_VALUE 函数，使MySQL 正常执行语句，显而易见的是，我们得到的值是不确切的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> a,<span style="color:#66d9ef">SUM</span>(b) <span style="color:#66d9ef">FROM</span> mytable;
+</span></span><span style="display:flex;"><span>ERROR <span style="color:#ae81ff">1140</span> (<span style="color:#ae81ff">42000</span>): <span style="color:#66d9ef">In</span> aggregated query <span style="color:#66d9ef">without</span> <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span>, expression <span style="color:#f92672">#</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">SELECT</span> list <span style="color:#66d9ef">contains</span> nonaggregated <span style="color:#66d9ef">column</span> <span style="color:#e6db74">&#39;study.mytable.a&#39;</span>; this <span style="color:#66d9ef">is</span> incompatible <span style="color:#66d9ef">with</span> sql_mode<span style="color:#f92672">=</span>only_full_group_by
+</span></span><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> ANY_VALUE(a),<span style="color:#66d9ef">SUM</span>(b) <span style="color:#66d9ef">FROM</span> mytable;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">--------------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> ANY_VALUE(a) <span style="color:#f92672">|</span> <span style="color:#66d9ef">SUM</span>(b) <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">--------------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> abc          <span style="color:#f92672">|</span>   <span style="color:#ae81ff">7000</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">--------------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">row</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">set</span> (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">00</span> sec)
+</span></span></code></pre></div><p>综上，在使用聚合函数的场景中，使用 GROUP BY 进行分组可以确保逻辑严谨性。</p>
+<p>推荐阅读：
+<a href="https://dev.mysql.com/doc/refman/8.0/en/counting-rows.html">https://dev.mysql.com/doc/refman/8.0/en/counting-rows.html</a>
+<a href="https://dev.mysql.com/doc/refman/8.0/en/group-by-handling.html">https://dev.mysql.com/doc/refman/8.0/en/group-by-handling.html</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

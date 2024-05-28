@@ -6,8 +6,70 @@
     <description>Recent content on Ycchi0 Blog</description>
     <generator>Hugo -- 0.123.7</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 28 May 2024 08:50:13 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 28 May 2024 11:11:22 +0000</lastBuildDate>
     <atom:link href="https://ycchi0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>常见的限流算法</title>
+      <link>https://ycchi0.github.io/posts/%E5%B8%B8%E8%A7%81%E7%9A%84%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Tue, 28 May 2024 11:11:22 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/%E5%B8%B8%E8%A7%81%E7%9A%84%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/</guid>
+      <description>限流 通过限制并发访问数或者限制一个时间窗口内允许处理的请求数量来保护系统，例如，通过限流，你可以过滤掉产生流量峰值的客户和服务。
+令牌桶算法 令牌桶算法是常见的一种限流算法。假设有一个桶，以固定速度（rate）往桶里加入令牌（token）。当桶满了时停止加入。服务收到请求时尝试从桶里取出令牌。如果成功取出，则可以响应本次请求。如果没有取到，可以进行有限时间的等待或者返回超时错误。
+特点 遇到流量洪峰时可以应对部分突发流量，但由于桶有容量上限，当消耗完桶里堆积的令牌之后只能根据令牌的生成速率提供服务，从而起到限流的作用。
+Golang 实现 Golang rate包提供了 token limiter 的实现,具体可以点击链接查看rate package
+漏桶算法 一个固定容量的漏桶，按照常量固定速率流出水滴，这里的水滴指的就是能进行响应的请求。当漏桶满了时，请求就会被丢弃，返回一个限流标志。
+特点 流量均匀，一般作为计量工具，可以用于流量整形和流量控制。比方说对数据库的操作。经过一层漏桶控制，可以有效控制对数据库的请求，避免数据库被打挂。流量稳定，但是无法应对突发流量。
+Golang 实现 uber 开源了一个基于漏桶的限流器ratelimit
+func main() { rl := ratelimit.New(1) // per second for i := 0; i &amp;lt; 10; i++ { now := rl.Take() if i &amp;gt; 0 { fmt.Println(i, now) } } } 1 2022-03-24 02:24:51.57952663 2 2022-03-24 02:24:52.579526624 3 2022-03-24 02:24:53.579526623 4 2022-03-24 02:24:54.579526617 5 2022-03-24 02:24:55.579526616 6 2022-03-24 02:24:56.</description>
+    </item>
+    <item>
+      <title>Golang异常处理</title>
+      <link>https://ycchi0.github.io/posts/golang%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</link>
+      <pubDate>Tue, 28 May 2024 11:02:44 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/golang%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</guid>
+      <description>从error的定义说起 type error interface { Error() string } Go 的error类型是一个接口。在Go中，只要实现了接口约定的方法，就等同于实现了这个接口。在日常的业务代码编写中，我们经常使用 errors 包下的New 方法来生成一个error对象。
+func main() { err := errors.New(&amp;#34;a error&amp;#34;) fmt.Println(reflect.TypeOf(err))//*errors.errorString } 可以发现，err 是一个指针类型，为什么这里的 err 需要是一个指针呢？
+// Each call to New returns a distinct error value even if the text is identical. func New(text string) error { return &amp;amp;errorString{text} } 查看errors包的代码，我们知道返回指针是为了确保err的唯一性。
+以下的代码是返回一个变量会引起的问题。
+type ValueError string func (ve ValueError) Error() string { return string(ve) } func New(text string) error { return ValueError(text) } func main() { simpleError := New(&amp;#34;error&amp;#34;) complexError := New(&amp;#34;error&amp;#34;) if simpleError == complexError { fmt.</description>
+    </item>
+    <item>
+      <title>服务治理之布隆过滤器</title>
+      <link>https://ycchi0.github.io/posts/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</link>
+      <pubDate>Tue, 28 May 2024 11:01:20 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</guid>
+      <description>布隆过滤器 布隆过滤器（英语：Bloom Filter）是1970年由布隆提出的。它实际上是一个很长的二进制向量和一系列随机映射函数。元素可以添加到集合中，但不能删除(计数布鲁姆过滤器变体支持删除);
+作用 布隆过滤器可以用于判断一个元素可能存在或者一定不存在。
+参考文章 Bloom filter https://segmentfault.com/a/1190000021136424 go-zero 中的实现 go-zero 中基于 redis 实现了布隆过滤器 通过 lua 脚本 setbit 和 getbit
+setScript = ` for _, offset in ipairs(ARGV) do redis.call(&amp;#34;setbit&amp;#34;, KEYS[1], offset, 1) end ` testScript = ` for _, offset in ipairs(ARGV) do if tonumber(redis.call(&amp;#34;getbit&amp;#34;, KEYS[1], offset)) == 0 then return false end end 使用 package main import ( &amp;#34;fmt&amp;#34; &amp;#34;github.com/zeromicro/go-zero/core/bloom&amp;#34; &amp;#34;github.com/zeromicro/go-zero/core/stores/redis&amp;#34; ) func main() { store := redis.</description>
+    </item>
+    <item>
+      <title>MySQL关于only_full_group_by限制</title>
+      <link>https://ycchi0.github.io/posts/mysql%E5%85%B3%E4%BA%8Eonly_full_group_by%E9%99%90%E5%88%B6/</link>
+      <pubDate>Tue, 28 May 2024 10:56:23 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/mysql%E5%85%B3%E4%BA%8Eonly_full_group_by%E9%99%90%E5%88%B6/</guid>
+      <description>先上结论
+如果 only_full_group_by 被启用，那么在查询时，如果某个列不在group by 列表中，此时如果不对该列进行聚合处理，则该列不能出现在 select 列表，having 条件中及order by 列表中
+MySQL 8.0 默认启用了sql_mode，我们可以通过 select @@session.sql_mode 查看会话中的 sql_mode 配置。
+mysql&amp;gt; SELECT @@session.sql_mode; +-----------------------------------------------------------------------------------------------------------------------+ | @@session.sql_mode | +-----------------------------------------------------------------------------------------------------------------------+ | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | +-----------------------------------------------------------------------------------------------------------------------+ 1 row in set (0.00 sec) 有这么一张表
+CREATE TABLE `mytable` ( `id` int unsigned NOT NULL, `a` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL, `b` int DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci; INSERT INTO mytable VALUES (1, &amp;#39;abc&amp;#39;, 1000), (2, &amp;#39;abc&amp;#39;, 2000), (3, &amp;#39;def&amp;#39;, 4000); 当我们执行的 SQL 语句包含聚合函数时，MYSQL 提示需要使用 GROUP BY 进行分组。</description>
+    </item>
+    <item>
+      <title>SQL基础</title>
+      <link>https://ycchi0.github.io/posts/sql%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Tue, 28 May 2024 10:51:29 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/sql%E5%9F%BA%E7%A1%80/</guid>
+      <description>前言 在平时的工作中，大家可能是 ORM 战士。但是 ORM 之下，还是原生的 SQL。这是整理 SQL 基础时的一些记录。
+DDL 数据定义语言,用来定义数据库对象，包括数据库、数据表和列。
+DML 数据操作语言，用来操作和数据库相关的记录，比如增加、删除、修改数据表中的记录。
+DCL 数据控制语言，用来定义访问权限和安全级别。
+DQL 数据查询语言，用来查询想要的记录。
+SQL语句书写规范 参考：
+表名、表别名、字段名、字段别名等都小写
+SQL 保留字、函数名、绑定变量等都大写
+SQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推。 ORDER BY 后面可以注明排序规则，ASC 代表递增排序，DESC 代表递减排序。默认情况下是按照 ASC 递增排序。 ORDER BY 可以使用非选择列进行排序，即使在 SELECT 后面没有这个列名，同样可以放到 ORDER BY 后面进行排序。 SELECT 的执行顺序 1.关键字语法顺序 SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... 其中 WHERE 和 HAVING 的区别在于，WHERE 是对数据行进行过滤，而 HAVING 是对分组数据进行过滤。
+2.语句的执行顺序(以MySQL为例) FROM &amp;gt; WHERE &amp;gt; GROUP BY &amp;gt; HAVING &amp;gt; SELECT 的字段 &amp;gt; DISTINCT &amp;gt; ORDER BY &amp;gt; LIMIT (5)SELECT DISTINCT &amp;lt;select_list&amp;gt; (1)FROM &amp;lt;left_table&amp;gt; &amp;lt;join_type&amp;gt; JOIN &amp;lt;right_table&amp;gt; ON &amp;lt;on_predicate&amp;gt; (2)WHERE &amp;lt;where_predicate&amp;gt; (3)GROUP BY &amp;lt;group_by_specification&amp;gt; (4)HAVING &amp;lt;having_predicate&amp;gt; (6)ORDER BY &amp;lt;order_by_list&amp;gt; (7)LIMIT n, m 这些步骤执行时，每个步骤都会产生一个虚拟表，该虚拟表被用作下一个步骤的输入。这些虚拟表对调用者（客户端应用程序或者外部查询）无感知的。只有最后一步生成的表才会返回给调用者。如果没有在查询中指定某一子句，将跳过相应的步骤。</description>
+    </item>
     <item>
       <title>CSS清除浮动</title>
       <link>https://ycchi0.github.io/posts/css%E6%B8%85%E9%99%A4%E6%B5%AE%E5%8A%A8/</link>

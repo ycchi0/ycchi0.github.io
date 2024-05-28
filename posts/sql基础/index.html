@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>SQL基础 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="前言 在平时的工作中，大家可能是 ORM 战士。但是 ORM 之下，还是原生的 SQL。这是整理 SQL 基础时的一些记录。
+DDL 数据定义语言,用来定义数据库对象，包括数据库、数据表和列。
+DML 数据操作语言，用来操作和数据库相关的记录，比如增加、删除、修改数据表中的记录。
+DCL 数据控制语言，用来定义访问权限和安全级别。
+DQL 数据查询语言，用来查询想要的记录。
+SQL语句书写规范 参考：
+表名、表别名、字段名、字段别名等都小写
+SQL 保留字、函数名、绑定变量等都大写
+SQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推。 ORDER BY 后面可以注明排序规则，ASC 代表递增排序，DESC 代表递减排序。默认情况下是按照 ASC 递增排序。 ORDER BY 可以使用非选择列进行排序，即使在 SELECT 后面没有这个列名，同样可以放到 ORDER BY 后面进行排序。 SELECT 的执行顺序 1.关键字语法顺序 SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... 其中 WHERE 和 HAVING 的区别在于，WHERE 是对数据行进行过滤，而 HAVING 是对分组数据进行过滤。
+2.语句的执行顺序(以MySQL为例) FROM &gt; WHERE &gt; GROUP BY &gt; HAVING &gt; SELECT 的字段 &gt; DISTINCT &gt; ORDER BY &gt; LIMIT (5)SELECT DISTINCT &lt;select_list&gt; (1)FROM &lt;left_table&gt; &lt;join_type&gt; JOIN &lt;right_table&gt; ON &lt;on_predicate&gt; (2)WHERE &lt;where_predicate&gt; (3)GROUP BY &lt;group_by_specification&gt; (4)HAVING &lt;having_predicate&gt; (6)ORDER BY &lt;order_by_list&gt; (7)LIMIT n, m 这些步骤执行时，每个步骤都会产生一个虚拟表，该虚拟表被用作下一个步骤的输入。这些虚拟表对调用者（客户端应用程序或者外部查询）无感知的。只有最后一步生成的表才会返回给调用者。如果没有在查询中指定某一子句，将跳过相应的步骤。">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/sql%E5%9F%BA%E7%A1%80/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/sql%E5%9F%BA%E7%A1%80/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="SQL基础" />
+<meta property="og:description" content="前言 在平时的工作中，大家可能是 ORM 战士。但是 ORM 之下，还是原生的 SQL。这是整理 SQL 基础时的一些记录。
+DDL 数据定义语言,用来定义数据库对象，包括数据库、数据表和列。
+DML 数据操作语言，用来操作和数据库相关的记录，比如增加、删除、修改数据表中的记录。
+DCL 数据控制语言，用来定义访问权限和安全级别。
+DQL 数据查询语言，用来查询想要的记录。
+SQL语句书写规范 参考：
+表名、表别名、字段名、字段别名等都小写
+SQL 保留字、函数名、绑定变量等都大写
+SQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推。 ORDER BY 后面可以注明排序规则，ASC 代表递增排序，DESC 代表递减排序。默认情况下是按照 ASC 递增排序。 ORDER BY 可以使用非选择列进行排序，即使在 SELECT 后面没有这个列名，同样可以放到 ORDER BY 后面进行排序。 SELECT 的执行顺序 1.关键字语法顺序 SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... 其中 WHERE 和 HAVING 的区别在于，WHERE 是对数据行进行过滤，而 HAVING 是对分组数据进行过滤。
+2.语句的执行顺序(以MySQL为例) FROM &gt; WHERE &gt; GROUP BY &gt; HAVING &gt; SELECT 的字段 &gt; DISTINCT &gt; ORDER BY &gt; LIMIT (5)SELECT DISTINCT &lt;select_list&gt; (1)FROM &lt;left_table&gt; &lt;join_type&gt; JOIN &lt;right_table&gt; ON &lt;on_predicate&gt; (2)WHERE &lt;where_predicate&gt; (3)GROUP BY &lt;group_by_specification&gt; (4)HAVING &lt;having_predicate&gt; (6)ORDER BY &lt;order_by_list&gt; (7)LIMIT n, m 这些步骤执行时，每个步骤都会产生一个虚拟表，该虚拟表被用作下一个步骤的输入。这些虚拟表对调用者（客户端应用程序或者外部查询）无感知的。只有最后一步生成的表才会返回给调用者。如果没有在查询中指定某一子句，将跳过相应的步骤。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/sql%E5%9F%BA%E7%A1%80/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-28T10:51:29+00:00" />
+<meta property="article:modified_time" content="2024-05-28T10:51:29+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SQL基础"/>
+<meta name="twitter:description" content="前言 在平时的工作中，大家可能是 ORM 战士。但是 ORM 之下，还是原生的 SQL。这是整理 SQL 基础时的一些记录。
+DDL 数据定义语言,用来定义数据库对象，包括数据库、数据表和列。
+DML 数据操作语言，用来操作和数据库相关的记录，比如增加、删除、修改数据表中的记录。
+DCL 数据控制语言，用来定义访问权限和安全级别。
+DQL 数据查询语言，用来查询想要的记录。
+SQL语句书写规范 参考：
+表名、表别名、字段名、字段别名等都小写
+SQL 保留字、函数名、绑定变量等都大写
+SQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推。 ORDER BY 后面可以注明排序规则，ASC 代表递增排序，DESC 代表递减排序。默认情况下是按照 ASC 递增排序。 ORDER BY 可以使用非选择列进行排序，即使在 SELECT 后面没有这个列名，同样可以放到 ORDER BY 后面进行排序。 SELECT 的执行顺序 1.关键字语法顺序 SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... 其中 WHERE 和 HAVING 的区别在于，WHERE 是对数据行进行过滤，而 HAVING 是对分组数据进行过滤。
+2.语句的执行顺序(以MySQL为例) FROM &gt; WHERE &gt; GROUP BY &gt; HAVING &gt; SELECT 的字段 &gt; DISTINCT &gt; ORDER BY &gt; LIMIT (5)SELECT DISTINCT &lt;select_list&gt; (1)FROM &lt;left_table&gt; &lt;join_type&gt; JOIN &lt;right_table&gt; ON &lt;on_predicate&gt; (2)WHERE &lt;where_predicate&gt; (3)GROUP BY &lt;group_by_specification&gt; (4)HAVING &lt;having_predicate&gt; (6)ORDER BY &lt;order_by_list&gt; (7)LIMIT n, m 这些步骤执行时，每个步骤都会产生一个虚拟表，该虚拟表被用作下一个步骤的输入。这些虚拟表对调用者（客户端应用程序或者外部查询）无感知的。只有最后一步生成的表才会返回给调用者。如果没有在查询中指定某一子句，将跳过相应的步骤。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SQL基础",
+      "item": "https://ycchi0.github.io/posts/sql%E5%9F%BA%E7%A1%80/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SQL基础",
+  "name": "SQL基础",
+  "description": "前言 在平时的工作中，大家可能是 ORM 战士。但是 ORM 之下，还是原生的 SQL。这是整理 SQL 基础时的一些记录。\nDDL 数据定义语言,用来定义数据库对象，包括数据库、数据表和列。\nDML 数据操作语言，用来操作和数据库相关的记录，比如增加、删除、修改数据表中的记录。\nDCL 数据控制语言，用来定义访问权限和安全级别。\nDQL 数据查询语言，用来查询想要的记录。\nSQL语句书写规范 参考：\n表名、表别名、字段名、字段别名等都小写\nSQL 保留字、函数名、绑定变量等都大写\nSQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推。 ORDER BY 后面可以注明排序规则，ASC 代表递增排序，DESC 代表递减排序。默认情况下是按照 ASC 递增排序。 ORDER BY 可以使用非选择列进行排序，即使在 SELECT 后面没有这个列名，同样可以放到 ORDER BY 后面进行排序。 SELECT 的执行顺序 1.关键字语法顺序 SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... 其中 WHERE 和 HAVING 的区别在于，WHERE 是对数据行进行过滤，而 HAVING 是对分组数据进行过滤。\n2.语句的执行顺序(以MySQL为例) FROM \u0026gt; WHERE \u0026gt; GROUP BY \u0026gt; HAVING \u0026gt; SELECT 的字段 \u0026gt; DISTINCT \u0026gt; ORDER BY \u0026gt; LIMIT (5)SELECT DISTINCT \u0026lt;select_list\u0026gt; (1)FROM \u0026lt;left_table\u0026gt; \u0026lt;join_type\u0026gt; JOIN \u0026lt;right_table\u0026gt; ON \u0026lt;on_predicate\u0026gt; (2)WHERE \u0026lt;where_predicate\u0026gt; (3)GROUP BY \u0026lt;group_by_specification\u0026gt; (4)HAVING \u0026lt;having_predicate\u0026gt; (6)ORDER BY \u0026lt;order_by_list\u0026gt; (7)LIMIT n, m 这些步骤执行时，每个步骤都会产生一个虚拟表，该虚拟表被用作下一个步骤的输入。这些虚拟表对调用者（客户端应用程序或者外部查询）无感知的。只有最后一步生成的表才会返回给调用者。如果没有在查询中指定某一子句，将跳过相应的步骤。",
+  "keywords": [
+    
+  ],
+  "articleBody": "前言 在平时的工作中，大家可能是 ORM 战士。但是 ORM 之下，还是原生的 SQL。这是整理 SQL 基础时的一些记录。\nDDL 数据定义语言,用来定义数据库对象，包括数据库、数据表和列。\nDML 数据操作语言，用来操作和数据库相关的记录，比如增加、删除、修改数据表中的记录。\nDCL 数据控制语言，用来定义访问权限和安全级别。\nDQL 数据查询语言，用来查询想要的记录。\nSQL语句书写规范 参考：\n表名、表别名、字段名、字段别名等都小写\nSQL 保留字、函数名、绑定变量等都大写\nSQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推。 ORDER BY 后面可以注明排序规则，ASC 代表递增排序，DESC 代表递减排序。默认情况下是按照 ASC 递增排序。 ORDER BY 可以使用非选择列进行排序，即使在 SELECT 后面没有这个列名，同样可以放到 ORDER BY 后面进行排序。 SELECT 的执行顺序 1.关键字语法顺序 SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... 其中 WHERE 和 HAVING 的区别在于，WHERE 是对数据行进行过滤，而 HAVING 是对分组数据进行过滤。\n2.语句的执行顺序(以MySQL为例) FROM \u003e WHERE \u003e GROUP BY \u003e HAVING \u003e SELECT 的字段 \u003e DISTINCT \u003e ORDER BY \u003e LIMIT (5)SELECT DISTINCT \u003cselect_list\u003e (1)FROM \u003cleft_table\u003e \u003cjoin_type\u003e JOIN \u003cright_table\u003e ON \u003con_predicate\u003e (2)WHERE \u003cwhere_predicate\u003e (3)GROUP BY \u003cgroup_by_specification\u003e (4)HAVING \u003chaving_predicate\u003e (6)ORDER BY \u003corder_by_list\u003e (7)LIMIT n, m 这些步骤执行时，每个步骤都会产生一个虚拟表，该虚拟表被用作下一个步骤的输入。这些虚拟表对调用者（客户端应用程序或者外部查询）无感知的。只有最后一步生成的表才会返回给调用者。如果没有在查询中指定某一子句，将跳过相应的步骤。\nSQL 函数 SQL 提供了许多常用的内置函数，分别有算数函数、字符串函数、日期函数、转换函数等。\n比如说：\nSELECT CONCAT('abc', 123) SELECT DATE('2022-03-21 12:00:05'); SELECT CURRENT_TIMESTAMP() 使用内置函数的一个好处是可以简化我们的SQL语句，但同样的，可能会使索引不生效而走全表扫描。这块内容将在索引部分进行分析。\n子查询 子查询又分为关联子查询和非关联子查询。\n关联子查询 子查询从数据表中查询了数据结果。如果这个子查询只执行一次，然后得到的数据结果作为主查询的条件进行执行，那么这样的子查询叫做非关联子查询\n非关联子查询 如果子查询需要执行多次，即采用循环的方式，先从外部查询开始，每次都传入子查询进行查询，然后再将结果反馈给外部，这种嵌套的执行方式就称为关联子查询。\n原则 使用子查询时需要遵循一个原则，小表驱动大表，即小的数据集驱动大的数据集。\nselect * from A where A.id in （select B.id from B） in 后的括号的表达式结果要求先输出一列字段。与之前的搜索字段匹配，匹配到相同则返回对应行。mysql的执行顺序是先执行子查询，然后执行主查询，用子查询的结果按条匹配主查询。\nselect * from A where exists（select * from B where B.id= A.id） exist后的括号无输出要求，exist判断后面的结果集中有没有行，有行则返回外层查询对应的行。mysql的执行顺序是先执行主查询，将主查询的数据放在子查询中做条件验证。\n通常来讲，不管 Oracle 还是 MySQL，优化的目标都是尽可能的减少关联的循环次数，保证小表驱动大表\n主要原因有：\n1.小表驱动大表，相当于在一次连接中做多次操作，减少连接请求时的消耗\n2.不论是大表驱动小表还是小表驱动大表，对同一情况的查询语句而言，扫描行数都是一样的，两者的差距在于大表上如果有索引，走可以走索引，其次是大表做全表扫描时，读取磁盘一次性可以读出多条数据。相当于作了批量操作。\n视图 视图（view）本身是不具有数据的，是一种虚拟存在的表，是一个逻辑表。虚拟表可以连接一个或多个数据表，不同的查询应用都可以建立在虚拟表之上。\n视图的这一特点，可以帮我们简化复杂的 SQL 查询。比如在编写视图后，我们就可以直接重用它，不需要再考虑视图中包含的基础查询细节。\n比如说：我们创建一个 view_heros 的视图，数据来源于 heros\nCREATE VIEW view_heros AS SELECT * FROM heros 之后对 heros 的查询操作都可以从视图查询，当heros 数据有变化时，视图上的数据也会跟着修改。\n存储过程 视图是虚拟表，通常不对底层数据表直接操作。存储过程是程序化的 SQL，可以直接操作底层数据表，可以满足一些复杂的数据处理需求。\n存储过程是 SQL 语句的封装。一旦存储过程被创建出来，使用它就像使用函数一样，直接通过调用存储过程名即可。\n定义一个存储过程\nCREATE PROCEDURE 存储过程名称 ([参数列表]) BEGIN 需要执行的语句 END 比如：\nDELIMITER // MySQL 中默认情况下 SQL 采用（；）做为结束符，临时定义新的 DELIMITER，新的结束符可以用（//） CREATE PROCEDURE `add_num`(IN n INT) BEGIN DECLARE i INT; DECLARE sum INT; SET i = 1; SET sum = 0; WHILE i \u003c= n DO SET sum = sum + i; SET i = i +1; END WHILE; SELECT sum; END // DELIMITER ; 将结束符还原 call add_num(10); 调用存储过程， 查询结果为 55 更多关于存储过程，可以查看 mysql存储过程 变量和参数类型\n",
+  "wordCount" : "263",
+  "inLanguage": "en",
+  "datePublished": "2024-05-28T10:51:29Z",
+  "dateModified": "2024-05-28T10:51:29Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/sql%E5%9F%BA%E7%A1%80/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      SQL基础
+    </h1>
+    <div class="post-meta"><span title='2024-05-28 10:51:29 +0000 UTC'>May 28, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="前言">前言<a hidden class="anchor" aria-hidden="true" href="#前言">#</a></h2>
+<p>在平时的工作中，大家可能是 ORM 战士。但是 ORM 之下，还是原生的 SQL。这是整理 SQL 基础时的一些记录。</p>
+<h3 id="ddl">DDL<a hidden class="anchor" aria-hidden="true" href="#ddl">#</a></h3>
+<p>数据定义语言,用来定义数据库对象，包括数据库、数据表和列。</p>
+<h3 id="dml">DML<a hidden class="anchor" aria-hidden="true" href="#dml">#</a></h3>
+<p>数据操作语言，用来操作和数据库相关的记录，比如增加、删除、修改数据表中的记录。</p>
+<h3 id="dcl">DCL<a hidden class="anchor" aria-hidden="true" href="#dcl">#</a></h3>
+<p>数据控制语言，用来定义访问权限和安全级别。</p>
+<h3 id="dql">DQL<a hidden class="anchor" aria-hidden="true" href="#dql">#</a></h3>
+<p>数据查询语言，用来查询想要的记录。</p>
+<h2 id="sql语句书写规范">SQL语句书写规范<a hidden class="anchor" aria-hidden="true" href="#sql语句书写规范">#</a></h2>
+<p>参考：</p>
+<p>表名、表别名、字段名、字段别名等都小写</p>
+<p>SQL 保留字、函数名、绑定变量等都大写</p>
+<h2 id="sql-排序">SQL 排序<a hidden class="anchor" aria-hidden="true" href="#sql-排序">#</a></h2>
+<h3 id="order-by">ORDER BY<a hidden class="anchor" aria-hidden="true" href="#order-by">#</a></h3>
+<ol>
+<li>ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推。</li>
+<li>ORDER BY 后面可以注明排序规则，ASC 代表递增排序，DESC 代表递减排序。默认情况下是按照 ASC 递增排序。</li>
+<li>ORDER BY 可以使用非选择列进行排序，即使在 SELECT 后面没有这个列名，同样可以放到 ORDER BY 后面进行排序。</li>
+</ol>
+<h2 id="select-的执行顺序">SELECT 的执行顺序<a hidden class="anchor" aria-hidden="true" href="#select-的执行顺序">#</a></h2>
+<h3 id="1关键字语法顺序">1.关键字语法顺序<a hidden class="anchor" aria-hidden="true" href="#1关键字语法顺序">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">FROM</span> ... <span style="color:#66d9ef">WHERE</span> ... <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> ... <span style="color:#66d9ef">HAVING</span> ... <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> ...
+</span></span></code></pre></div><p>其中 WHERE 和 HAVING 的区别在于，WHERE 是对数据行进行过滤，而 HAVING 是对分组数据进行过滤。</p>
+<h3 id="2语句的执行顺序以mysql为例">2.语句的执行顺序(以MySQL为例)<a hidden class="anchor" aria-hidden="true" href="#2语句的执行顺序以mysql为例">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">WHERE</span> <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">HAVING</span> <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> <span style="color:#960050;background-color:#1e0010">的字段</span> <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">DISTINCT</span> <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">LIMIT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">5</span>)<span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">DISTINCT</span> <span style="color:#f92672">&lt;</span>select_list<span style="color:#f92672">&gt;</span>                     
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">1</span>)<span style="color:#66d9ef">FROM</span> <span style="color:#f92672">&lt;</span>left_table<span style="color:#f92672">&gt;</span> <span style="color:#f92672">&lt;</span>join_type<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">JOIN</span> <span style="color:#f92672">&lt;</span>right_table<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">ON</span> <span style="color:#f92672">&lt;</span>on_predicate<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">2</span>)<span style="color:#66d9ef">WHERE</span> <span style="color:#f92672">&lt;</span>where_predicate<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">3</span>)<span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> <span style="color:#f92672">&lt;</span>group_by_specification<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">4</span>)<span style="color:#66d9ef">HAVING</span> <span style="color:#f92672">&lt;</span>having_predicate<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">6</span>)<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#f92672">&lt;</span>order_by_list<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">7</span>)<span style="color:#66d9ef">LIMIT</span> n, m
+</span></span></code></pre></div><p>这些步骤执行时，每个步骤都会产生一个虚拟表，该虚拟表被用作下一个步骤的输入。这些虚拟表对调用者（客户端应用程序或者外部查询）无感知的。只有最后一步生成的表才会返回给调用者。如果没有在查询中指定某一子句，将跳过相应的步骤。</p>
+<h2 id="sql-函数">SQL 函数<a hidden class="anchor" aria-hidden="true" href="#sql-函数">#</a></h2>
+<p>SQL 提供了许多常用的内置函数，分别有算数函数、字符串函数、日期函数、转换函数等。</p>
+<p>比如说：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> CONCAT(<span style="color:#e6db74">&#39;abc&#39;</span>, <span style="color:#ae81ff">123</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> DATE(<span style="color:#e6db74">&#39;2022-03-21 12:00:05&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>()
+</span></span></code></pre></div><p>使用内置函数的一个好处是可以简化我们的SQL语句，但同样的，可能会使索引不生效而走全表扫描。这块内容将在索引部分进行分析。</p>
+<h2 id="子查询">子查询<a hidden class="anchor" aria-hidden="true" href="#子查询">#</a></h2>
+<p>子查询又分为关联子查询和非关联子查询。</p>
+<h3 id="关联子查询">关联子查询<a hidden class="anchor" aria-hidden="true" href="#关联子查询">#</a></h3>
+<p>子查询从数据表中查询了数据结果。如果这个子查询只执行一次，然后得到的数据结果作为主查询的条件进行执行，那么这样的子查询叫做非关联子查询</p>
+<h3 id="非关联子查询">非关联子查询<a hidden class="anchor" aria-hidden="true" href="#非关联子查询">#</a></h3>
+<p>如果子查询需要执行多次，即采用循环的方式，先从外部查询开始，每次都传入子查询进行查询，然后再将结果反馈给外部，这种嵌套的执行方式就称为关联子查询。</p>
+<h3 id="原则">原则<a hidden class="anchor" aria-hidden="true" href="#原则">#</a></h3>
+<p>使用子查询时需要遵循一个原则，小表驱动大表，即小的数据集驱动大的数据集。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> A <span style="color:#66d9ef">where</span> A.id <span style="color:#66d9ef">in</span> <span style="color:#960050;background-color:#1e0010">（</span><span style="color:#66d9ef">select</span> B.id <span style="color:#66d9ef">from</span> B<span style="color:#960050;background-color:#1e0010">）</span>
+</span></span></code></pre></div><p>in 后的括号的表达式结果要求先输出一列字段。与之前的搜索字段匹配，匹配到相同则返回对应行。mysql的执行顺序是先执行子查询，然后执行主查询，用子查询的结果按条匹配主查询。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> A <span style="color:#66d9ef">where</span> <span style="color:#66d9ef">exists</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> B <span style="color:#66d9ef">where</span> B.id<span style="color:#f92672">=</span> A.id<span style="color:#960050;background-color:#1e0010">）</span>
+</span></span></code></pre></div><p>exist后的括号无输出要求，exist判断后面的结果集中有没有行，有行则返回外层查询对应的行。mysql的执行顺序是先执行主查询，将主查询的数据放在子查询中做条件验证。</p>
+<p>通常来讲，不管 Oracle 还是 MySQL，优化的目标都是尽可能的减少关联的循环次数，保证小表驱动大表</p>
+<p>主要原因有：</p>
+<p>1.小表驱动大表，相当于在一次连接中做多次操作，减少连接请求时的消耗</p>
+<p>2.不论是大表驱动小表还是小表驱动大表，对同一情况的查询语句而言，扫描行数都是一样的，两者的差距在于大表上如果有索引，走可以走索引，其次是大表做全表扫描时，读取磁盘一次性可以读出多条数据。相当于作了批量操作。</p>
+<h3 id="视图">视图<a hidden class="anchor" aria-hidden="true" href="#视图">#</a></h3>
+<p>视图（view）本身是不具有数据的，是一种虚拟存在的表，是一个逻辑表。虚拟表可以连接一个或多个数据表，不同的查询应用都可以建立在虚拟表之上。</p>
+<p>视图的这一特点，可以帮我们简化复杂的 SQL 查询。比如在编写视图后，我们就可以直接重用它，不需要再考虑视图中包含的基础查询细节。</p>
+<p>比如说：我们创建一个 view_heros 的视图，数据来源于 heros</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">VIEW</span> view_heros <span style="color:#66d9ef">AS</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> heros                         
+</span></span></code></pre></div><p>之后对 heros 的查询操作都可以从视图查询，当heros 数据有变化时，视图上的数据也会跟着修改。</p>
+<h2 id="存储过程">存储过程<a hidden class="anchor" aria-hidden="true" href="#存储过程">#</a></h2>
+<p>视图是虚拟表，通常不对底层数据表直接操作。存储过程是程序化的 SQL，可以直接操作底层数据表，可以满足一些复杂的数据处理需求。</p>
+<p>存储过程是 SQL 语句的封装。一旦存储过程被创建出来，使用它就像使用函数一样，直接通过调用存储过程名即可。</p>
+<p>定义一个存储过程</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">PROCEDURE</span> <span style="color:#960050;background-color:#1e0010">存储过程名称</span> ([<span style="color:#960050;background-color:#1e0010">参数列表</span>])
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">需要执行的语句</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">END</span>    
+</span></span></code></pre></div><p>比如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">DELIMITER</span> <span style="color:#f92672">//</span>    MySQL <span style="color:#960050;background-color:#1e0010">中默认情况下</span> <span style="color:#66d9ef">SQL</span> <span style="color:#960050;background-color:#1e0010">采用（；）做为结束符，临时定义新的</span> <span style="color:#66d9ef">DELIMITER</span><span style="color:#960050;background-color:#1e0010">，新的结束符可以用（</span><span style="color:#f92672">//</span><span style="color:#960050;background-color:#1e0010">）</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">PROCEDURE</span> <span style="color:#f92672">`</span>add_num<span style="color:#f92672">`</span>(<span style="color:#66d9ef">IN</span> n INT)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">DECLARE</span> i INT;
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">DECLARE</span> <span style="color:#66d9ef">sum</span> INT;
+</span></span><span style="display:flex;"><span>       
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">SET</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">sum</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>       WHILE i <span style="color:#f92672">&lt;=</span> n <span style="color:#66d9ef">DO</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">sum</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">sum</span> <span style="color:#f92672">+</span> i;
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">SET</span> i <span style="color:#f92672">=</span> i <span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">END</span> WHILE;
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">sum</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">END</span> <span style="color:#f92672">//</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">DELIMITER</span> ; <span style="color:#960050;background-color:#1e0010">将结束符还原</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">call</span> add_num(<span style="color:#ae81ff">10</span>);  <span style="color:#960050;background-color:#1e0010">调用存储过程，</span> <span style="color:#960050;background-color:#1e0010">查询结果为</span> <span style="color:#ae81ff">55</span> 
+</span></span></code></pre></div><p>更多关于存储过程，可以查看 <a href="https://link.zhihu.com/?target=https%3A//blog.csdn.net/jxpxlinkui/article/details/79709037">mysql存储过程 变量和参数类型</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
