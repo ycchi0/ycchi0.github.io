@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Box Sizing | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="CSS 中的 box-sizing 属性定义了 user agent 应该如何计算一个元素的总宽度和总高度。
+怎么理解呢？
+首先先明确一点，默认情况下，元素的宽度(width) 和高度(height)计算方式为：
+width(宽度) &#43; padding(内边距) &#43; border(边框) = 元素实际宽度 height(高度) &#43; padding(内边距) &#43; border(边框) = 元素实际高度
+而 box-sizing 属性可以被用来调整这些表现
+content-box 是默认值。如果你设置一个元素的宽为 100px，那么这个元素的内容区会有 100px 宽，并且任何边框和内边距的宽度都会被增加到最后绘制出来的元素宽度中。 border-box ：设置的边框和内边距的值是包含在 width 内的。也就是说，如果你将一个元素的 width 设为 100px，那么这 100px 会包含它的 border 和 padding，内容区的实际宽度是 width 减去 (border &#43; padding) 的值。大多数情况下，这使得我们更容易地设定一个元素的宽高。 我们来看下面的图： content-box 情况： border-box 情况： 浏览器兼容性如下： 参考文档MDN box-sizing">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/box-sizing/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/box-sizing/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Box Sizing" />
+<meta property="og:description" content="CSS 中的 box-sizing 属性定义了 user agent 应该如何计算一个元素的总宽度和总高度。
+怎么理解呢？
+首先先明确一点，默认情况下，元素的宽度(width) 和高度(height)计算方式为：
+width(宽度) &#43; padding(内边距) &#43; border(边框) = 元素实际宽度 height(高度) &#43; padding(内边距) &#43; border(边框) = 元素实际高度
+而 box-sizing 属性可以被用来调整这些表现
+content-box 是默认值。如果你设置一个元素的宽为 100px，那么这个元素的内容区会有 100px 宽，并且任何边框和内边距的宽度都会被增加到最后绘制出来的元素宽度中。 border-box ：设置的边框和内边距的值是包含在 width 内的。也就是说，如果你将一个元素的 width 设为 100px，那么这 100px 会包含它的 border 和 padding，内容区的实际宽度是 width 减去 (border &#43; padding) 的值。大多数情况下，这使得我们更容易地设定一个元素的宽高。 我们来看下面的图： content-box 情况： border-box 情况： 浏览器兼容性如下： 参考文档MDN box-sizing" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/box-sizing/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-24T02:53:44+00:00" />
+<meta property="article:modified_time" content="2024-05-24T02:53:44+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Box Sizing"/>
+<meta name="twitter:description" content="CSS 中的 box-sizing 属性定义了 user agent 应该如何计算一个元素的总宽度和总高度。
+怎么理解呢？
+首先先明确一点，默认情况下，元素的宽度(width) 和高度(height)计算方式为：
+width(宽度) &#43; padding(内边距) &#43; border(边框) = 元素实际宽度 height(高度) &#43; padding(内边距) &#43; border(边框) = 元素实际高度
+而 box-sizing 属性可以被用来调整这些表现
+content-box 是默认值。如果你设置一个元素的宽为 100px，那么这个元素的内容区会有 100px 宽，并且任何边框和内边距的宽度都会被增加到最后绘制出来的元素宽度中。 border-box ：设置的边框和内边距的值是包含在 width 内的。也就是说，如果你将一个元素的 width 设为 100px，那么这 100px 会包含它的 border 和 padding，内容区的实际宽度是 width 减去 (border &#43; padding) 的值。大多数情况下，这使得我们更容易地设定一个元素的宽高。 我们来看下面的图： content-box 情况： border-box 情况： 浏览器兼容性如下： 参考文档MDN box-sizing"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Box Sizing",
+      "item": "https://ycchi0.github.io/posts/box-sizing/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Box Sizing",
+  "name": "Box Sizing",
+  "description": "CSS 中的 box-sizing 属性定义了 user agent 应该如何计算一个元素的总宽度和总高度。\n怎么理解呢？\n首先先明确一点，默认情况下，元素的宽度(width) 和高度(height)计算方式为：\nwidth(宽度) + padding(内边距) + border(边框) = 元素实际宽度 height(高度) + padding(内边距) + border(边框) = 元素实际高度\n而 box-sizing 属性可以被用来调整这些表现\ncontent-box 是默认值。如果你设置一个元素的宽为 100px，那么这个元素的内容区会有 100px 宽，并且任何边框和内边距的宽度都会被增加到最后绘制出来的元素宽度中。 border-box ：设置的边框和内边距的值是包含在 width 内的。也就是说，如果你将一个元素的 width 设为 100px，那么这 100px 会包含它的 border 和 padding，内容区的实际宽度是 width 减去 (border + padding) 的值。大多数情况下，这使得我们更容易地设定一个元素的宽高。 我们来看下面的图： content-box 情况： border-box 情况： 浏览器兼容性如下： 参考文档MDN box-sizing",
+  "keywords": [
+    
+  ],
+  "articleBody": "CSS 中的 box-sizing 属性定义了 user agent 应该如何计算一个元素的总宽度和总高度。\n怎么理解呢？\n首先先明确一点，默认情况下，元素的宽度(width) 和高度(height)计算方式为：\nwidth(宽度) + padding(内边距) + border(边框) = 元素实际宽度 height(高度) + padding(内边距) + border(边框) = 元素实际高度\n而 box-sizing 属性可以被用来调整这些表现\ncontent-box 是默认值。如果你设置一个元素的宽为 100px，那么这个元素的内容区会有 100px 宽，并且任何边框和内边距的宽度都会被增加到最后绘制出来的元素宽度中。 border-box ：设置的边框和内边距的值是包含在 width 内的。也就是说，如果你将一个元素的 width 设为 100px，那么这 100px 会包含它的 border 和 padding，内容区的实际宽度是 width 减去 (border + padding) 的值。大多数情况下，这使得我们更容易地设定一个元素的宽高。 我们来看下面的图： content-box 情况： border-box 情况： 浏览器兼容性如下： 参考文档MDN box-sizing\n",
+  "wordCount" : "58",
+  "inLanguage": "en",
+  "datePublished": "2024-05-24T02:53:44Z",
+  "dateModified": "2024-05-24T02:53:44Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/box-sizing/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Box Sizing
+    </h1>
+    <div class="post-meta"><span title='2024-05-24 02:53:44 +0000 UTC'>May 24, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>CSS 中的 box-sizing 属性定义了 user agent 应该如何计算一个元素的总宽度和总高度。</p>
+<p>怎么理解呢？</p>
+<p>首先先明确一点，默认情况下，元素的宽度(width) 和高度(height)计算方式为：</p>
+<blockquote>
+<p>width(宽度) + padding(内边距) + border(边框) = 元素实际宽度
+height(高度) + padding(内边距) + border(边框) = 元素实际高度</p>
+</blockquote>
+<p>而 box-sizing 属性可以被用来调整这些表现</p>
+<ul>
+<li>content-box 是默认值。如果你设置一个元素的宽为 100px，那么这个元素的内容区会有 100px 宽，并且任何边框和内边距的宽度都会被增加到最后绘制出来的元素宽度中。</li>
+<li>border-box ：设置的边框和内边距的值是包含在 width 内的。也就是说，如果你将一个元素的 width 设为 100px，那么这 100px 会包含它的 border 和 padding，内容区的实际宽度是 width 减去 (border + padding) 的值。大多数情况下，这使得我们更容易地设定一个元素的宽高。</li>
+</ul>
+<p>我们来看下面的图：
+content-box 情况：
+<img loading="lazy" src="image.png" alt="alt text"  />
+
+<img loading="lazy" src="image-1.png" alt="alt text"  />
+
+<img loading="lazy" src="image-2.png" alt="alt text"  />
+</p>
+<p>border-box 情况：
+<img loading="lazy" src="image-3.png" alt="alt text"  />
+
+<img loading="lazy" src="image-4.png" alt="alt text"  />
+
+<img loading="lazy" src="image-5.png" alt="alt text"  />
+</p>
+<p><strong>浏览器兼容性如下：</strong>
+<img loading="lazy" src="image-6.png" alt="alt text"  />
+</p>
+<p>参考文档<a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/box-sizing">MDN box-sizing</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
