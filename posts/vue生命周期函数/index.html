@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>VUE生命周期函数 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="学习 VUE, 就不得不了解 VUE 的生命周期函数。 下面这张图来自 VUE 官网
+其中 setup 函数是 VUE3 新加入的特性， 通过组合式 API 可以让我们的代码更具有可读性和可维护性。
+我们随便写点代码来验证一下
+&lt;!DOCTYPE html&gt; &lt;html lang=&#34;zh&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;VUE3 生命周期学习&lt;/title&gt; &lt;script src=&#34;https://unpkg.com/vue@3/dist/vue.global.js&#34;&gt;&lt;/script&gt; &lt;/head&gt; &lt;body&gt; &lt;div id=&#34;app&#34;&gt; &lt;button @click=&#34;changeMessage&#34;&gt;改变信息&lt;/button&gt; &lt;button @click=&#34;unmountComponent&#34;&gt;卸载组件&lt;/button&gt; &lt;p&gt;{{ message }}&lt;/p&gt; &lt;child-component v-if=&#34;!componentUnmounted&#34; :message=&#34;message&#34; &gt;&lt;/child-component&gt; &lt;/div&gt; &lt;script&gt; const ChildComponent = { props: [&#34;message&#34;], beforeUnmount() { console.log(&#34;beforeUnmount&#34;); }, unmounted() { console.log(&#34;unmounted&#34;); }, template: `&lt;p&gt;{{ message }}&lt;/p&gt;`, }; const App = { data() { return { message: &#34;Hello Vue3&#34;, componentUnmounted: false, }; }, components: { &#34;child-component&#34;: ChildComponent, }, beforeCreate() { console.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="VUE生命周期函数" />
+<meta property="og:description" content="学习 VUE, 就不得不了解 VUE 的生命周期函数。 下面这张图来自 VUE 官网
+其中 setup 函数是 VUE3 新加入的特性， 通过组合式 API 可以让我们的代码更具有可读性和可维护性。
+我们随便写点代码来验证一下
+&lt;!DOCTYPE html&gt; &lt;html lang=&#34;zh&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;VUE3 生命周期学习&lt;/title&gt; &lt;script src=&#34;https://unpkg.com/vue@3/dist/vue.global.js&#34;&gt;&lt;/script&gt; &lt;/head&gt; &lt;body&gt; &lt;div id=&#34;app&#34;&gt; &lt;button @click=&#34;changeMessage&#34;&gt;改变信息&lt;/button&gt; &lt;button @click=&#34;unmountComponent&#34;&gt;卸载组件&lt;/button&gt; &lt;p&gt;{{ message }}&lt;/p&gt; &lt;child-component v-if=&#34;!componentUnmounted&#34; :message=&#34;message&#34; &gt;&lt;/child-component&gt; &lt;/div&gt; &lt;script&gt; const ChildComponent = { props: [&#34;message&#34;], beforeUnmount() { console.log(&#34;beforeUnmount&#34;); }, unmounted() { console.log(&#34;unmounted&#34;); }, template: `&lt;p&gt;{{ message }}&lt;/p&gt;`, }; const App = { data() { return { message: &#34;Hello Vue3&#34;, componentUnmounted: false, }; }, components: { &#34;child-component&#34;: ChildComponent, }, beforeCreate() { console." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-24T11:39:34+00:00" />
+<meta property="article:modified_time" content="2024-05-24T11:39:34+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="VUE生命周期函数"/>
+<meta name="twitter:description" content="学习 VUE, 就不得不了解 VUE 的生命周期函数。 下面这张图来自 VUE 官网
+其中 setup 函数是 VUE3 新加入的特性， 通过组合式 API 可以让我们的代码更具有可读性和可维护性。
+我们随便写点代码来验证一下
+&lt;!DOCTYPE html&gt; &lt;html lang=&#34;zh&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;VUE3 生命周期学习&lt;/title&gt; &lt;script src=&#34;https://unpkg.com/vue@3/dist/vue.global.js&#34;&gt;&lt;/script&gt; &lt;/head&gt; &lt;body&gt; &lt;div id=&#34;app&#34;&gt; &lt;button @click=&#34;changeMessage&#34;&gt;改变信息&lt;/button&gt; &lt;button @click=&#34;unmountComponent&#34;&gt;卸载组件&lt;/button&gt; &lt;p&gt;{{ message }}&lt;/p&gt; &lt;child-component v-if=&#34;!componentUnmounted&#34; :message=&#34;message&#34; &gt;&lt;/child-component&gt; &lt;/div&gt; &lt;script&gt; const ChildComponent = { props: [&#34;message&#34;], beforeUnmount() { console.log(&#34;beforeUnmount&#34;); }, unmounted() { console.log(&#34;unmounted&#34;); }, template: `&lt;p&gt;{{ message }}&lt;/p&gt;`, }; const App = { data() { return { message: &#34;Hello Vue3&#34;, componentUnmounted: false, }; }, components: { &#34;child-component&#34;: ChildComponent, }, beforeCreate() { console."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "VUE生命周期函数",
+      "item": "https://ycchi0.github.io/posts/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "VUE生命周期函数",
+  "name": "VUE生命周期函数",
+  "description": "学习 VUE, 就不得不了解 VUE 的生命周期函数。 下面这张图来自 VUE 官网\n其中 setup 函数是 VUE3 新加入的特性， 通过组合式 API 可以让我们的代码更具有可读性和可维护性。\n我们随便写点代码来验证一下\n\u0026lt;!DOCTYPE html\u0026gt; \u0026lt;html lang=\u0026#34;zh\u0026#34;\u0026gt; \u0026lt;head\u0026gt; \u0026lt;meta charset=\u0026#34;UTF-8\u0026#34; /\u0026gt; \u0026lt;meta name=\u0026#34;viewport\u0026#34; content=\u0026#34;width=device-width, initial-scale=1.0\u0026#34; /\u0026gt; \u0026lt;title\u0026gt;VUE3 生命周期学习\u0026lt;/title\u0026gt; \u0026lt;script src=\u0026#34;https://unpkg.com/vue@3/dist/vue.global.js\u0026#34;\u0026gt;\u0026lt;/script\u0026gt; \u0026lt;/head\u0026gt; \u0026lt;body\u0026gt; \u0026lt;div id=\u0026#34;app\u0026#34;\u0026gt; \u0026lt;button @click=\u0026#34;changeMessage\u0026#34;\u0026gt;改变信息\u0026lt;/button\u0026gt; \u0026lt;button @click=\u0026#34;unmountComponent\u0026#34;\u0026gt;卸载组件\u0026lt;/button\u0026gt; \u0026lt;p\u0026gt;{{ message }}\u0026lt;/p\u0026gt; \u0026lt;child-component v-if=\u0026#34;!componentUnmounted\u0026#34; :message=\u0026#34;message\u0026#34; \u0026gt;\u0026lt;/child-component\u0026gt; \u0026lt;/div\u0026gt; \u0026lt;script\u0026gt; const ChildComponent = { props: [\u0026#34;message\u0026#34;], beforeUnmount() { console.log(\u0026#34;beforeUnmount\u0026#34;); }, unmounted() { console.log(\u0026#34;unmounted\u0026#34;); }, template: `\u0026lt;p\u0026gt;{{ message }}\u0026lt;/p\u0026gt;`, }; const App = { data() { return { message: \u0026#34;Hello Vue3\u0026#34;, componentUnmounted: false, }; }, components: { \u0026#34;child-component\u0026#34;: ChildComponent, }, beforeCreate() { console.",
+  "keywords": [
+    
+  ],
+  "articleBody": "学习 VUE, 就不得不了解 VUE 的生命周期函数。 下面这张图来自 VUE 官网\n其中 setup 函数是 VUE3 新加入的特性， 通过组合式 API 可以让我们的代码更具有可读性和可维护性。\n我们随便写点代码来验证一下\n\u003c!DOCTYPE html\u003e \u003chtml lang=\"zh\"\u003e \u003chead\u003e \u003cmeta charset=\"UTF-8\" /\u003e \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /\u003e \u003ctitle\u003eVUE3 生命周期学习\u003c/title\u003e \u003cscript src=\"https://unpkg.com/vue@3/dist/vue.global.js\"\u003e\u003c/script\u003e \u003c/head\u003e \u003cbody\u003e \u003cdiv id=\"app\"\u003e \u003cbutton @click=\"changeMessage\"\u003e改变信息\u003c/button\u003e \u003cbutton @click=\"unmountComponent\"\u003e卸载组件\u003c/button\u003e \u003cp\u003e{{ message }}\u003c/p\u003e \u003cchild-component v-if=\"!componentUnmounted\" :message=\"message\" \u003e\u003c/child-component\u003e \u003c/div\u003e \u003cscript\u003e const ChildComponent = { props: [\"message\"], beforeUnmount() { console.log(\"beforeUnmount\"); }, unmounted() { console.log(\"unmounted\"); }, template: `{{ message }}\n`, }; const App = { data() { return { message: \"Hello Vue3\", componentUnmounted: false, }; }, components: { \"child-component\": ChildComponent, }, beforeCreate() { console.log(\"beforeCreate\"); }, created() { console.log(\"created\"); }, beforeMount() { console.log(\"beforeMount\"); }, mounted() { console.log(\"mounted\"); }, beforeUpdate() { console.log(\"beforeUpdate\"); }, updated() { console.log(\"updated\"); }, beforeUnmount() { console.log(\"beforeUnmount\"); }, unmounted() { console.log(\"unmounted\"); }, setup() { console.log(\"setup\"); }, methods: { changeMessage() { this.message = \"数据已改变\"; }, unmountComponent() { this.componentUnmounted = true; // trigger component unmount }, }, }; const app = Vue.createApp(App).mount(\"#app\"); \u003c/script\u003e \u003c/body\u003e \u003c/html\u003e 初始化打开浏览器： 点击改变信息按钮： 点击卸载组件按钮： 可以看到，卸载了子组件后，又重新渲染的界面。 至此，我们就对 VUE3 的生命周期有了一个直观的认识。\n在编写 VUE 代码时也可以做到心中有数。\n",
+  "wordCount" : "163",
+  "inLanguage": "en",
+  "datePublished": "2024-05-24T11:39:34Z",
+  "dateModified": "2024-05-24T11:39:34Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      VUE生命周期函数
+    </h1>
+    <div class="post-meta"><span title='2024-05-24 11:39:34 +0000 UTC'>May 24, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>学习 VUE, 就不得不了解 VUE 的生命周期函数。
+下面这张图来自 VUE <a href="https://cn.vuejs.org/guide/essentials/lifecycle.html">官网</a></p>
+<p><img loading="lazy" src="lifecycle_zh-CN.W0MNXI0C.png" alt="alt text"  />
+</p>
+<p>其中 setup 函数是 VUE3 新加入的特性， 通过组合式 API 可以让我们的代码更具有可读性和可维护性。</p>
+<p>我们随便写点代码来验证一下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;zh&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;UTF-8&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;viewport&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width=device-width, initial-scale=1.0&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">title</span>&gt;VUE3 生命周期学习&lt;/<span style="color:#f92672">title</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://unpkg.com/vue@3/dist/vue.global.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;app&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;changeMessage&#34;</span>&gt;改变信息&lt;/<span style="color:#f92672">button</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;unmountComponent&#34;</span>&gt;卸载组件&lt;/<span style="color:#f92672">button</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">p</span>&gt;{{ message }}&lt;/<span style="color:#f92672">p</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">child-component</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">v-if</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;!componentUnmounted&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">:message</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;message&#34;</span>
+</span></span><span style="display:flex;"><span>      &gt;&lt;/<span style="color:#f92672">child-component</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ChildComponent</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">props</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;message&#34;</span>],
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">beforeUnmount</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;beforeUnmount&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">unmounted</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;unmounted&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">template</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`&lt;p&gt;{{ message }}&lt;/p&gt;`</span>,
+</span></span><span style="display:flex;"><span>      };
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">App</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">data</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Hello Vue3&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">componentUnmounted</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>          };
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">components</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;child-component&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">ChildComponent</span>,
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">beforeCreate</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;beforeCreate&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">created</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;created&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">beforeMount</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;beforeMount&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">mounted</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;mounted&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">beforeUpdate</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;beforeUpdate&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">updated</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;updated&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">beforeUnmount</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;beforeUnmount&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">unmounted</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;unmounted&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;setup&#34;</span>);
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">methods</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">changeMessage</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">message</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;数据已改变&#34;</span>;
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">unmountComponent</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">componentUnmounted</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>; <span style="color:#75715e">// trigger component unmount
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>          },
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>      };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">app</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">createApp</span>(<span style="color:#a6e22e">App</span>).<span style="color:#a6e22e">mount</span>(<span style="color:#e6db74">&#34;#app&#34;</span>);
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">html</span>&gt;
+</span></span></code></pre></div><p><strong>初始化打开浏览器：</strong>
+<img loading="lazy" src="image.png" alt="alt text"  />
+</p>
+<p><strong>点击改变信息按钮：</strong>
+<img loading="lazy" src="image-1.png" alt="alt text"  />
+</p>
+<p><strong>点击卸载组件按钮：</strong>
+可以看到，卸载了子组件后，又重新渲染的界面。
+<img loading="lazy" src="image-2.png" alt="alt text"  />
+</p>
+<p>至此，我们就对 VUE3 的生命周期有了一个直观的认识。</p>
+<p>在编写 VUE 代码时也可以做到心中有数。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

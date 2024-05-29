@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods  | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Vue 中 computed, watch 和 methods 区别 在Vue 中，我们有几种处理数据和逻辑的方式。
+本文将重点探讨computed, watch 和 methods 的区别和使用场景。
+computed 在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。
+setup() { const count = ref(0); const doubled = computed(() =&gt; count.value * 2); return { count, doubled } } 我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。
+watch watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。
+在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：
+computed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。
+watch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。
+另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询VUE 文档
+下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。
+setup() { const count = ref(0); watch(count, (newValue, oldValue) =&gt; { console.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/vue_compute_watch_function/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/vue_compute_watch_function/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods " />
+<meta property="og:description" content="Vue 中 computed, watch 和 methods 区别 在Vue 中，我们有几种处理数据和逻辑的方式。
+本文将重点探讨computed, watch 和 methods 的区别和使用场景。
+computed 在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。
+setup() { const count = ref(0); const doubled = computed(() =&gt; count.value * 2); return { count, doubled } } 我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。
+watch watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。
+在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：
+computed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。
+watch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。
+另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询VUE 文档
+下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。
+setup() { const count = ref(0); watch(count, (newValue, oldValue) =&gt; { console." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/vue_compute_watch_function/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-24T12:49:58+00:00" />
+<meta property="article:modified_time" content="2024-05-24T12:49:58+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods "/>
+<meta name="twitter:description" content="Vue 中 computed, watch 和 methods 区别 在Vue 中，我们有几种处理数据和逻辑的方式。
+本文将重点探讨computed, watch 和 methods 的区别和使用场景。
+computed 在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。
+setup() { const count = ref(0); const doubled = computed(() =&gt; count.value * 2); return { count, doubled } } 我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。
+watch watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。
+在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：
+computed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。
+watch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。
+另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询VUE 文档
+下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。
+setup() { const count = ref(0); watch(count, (newValue, oldValue) =&gt; { console."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods ",
+      "item": "https://ycchi0.github.io/posts/vue_compute_watch_function/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods ",
+  "name": "在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods ",
+  "description": "Vue 中 computed, watch 和 methods 区别 在Vue 中，我们有几种处理数据和逻辑的方式。\n本文将重点探讨computed, watch 和 methods 的区别和使用场景。\ncomputed 在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。\nsetup() { const count = ref(0); const doubled = computed(() =\u0026gt; count.value * 2); return { count, doubled } } 我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。\nwatch watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。\n在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：\ncomputed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。\nwatch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。\n另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询VUE 文档\n下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。\nsetup() { const count = ref(0); watch(count, (newValue, oldValue) =\u0026gt; { console.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Vue 中 computed, watch 和 methods 区别 在Vue 中，我们有几种处理数据和逻辑的方式。\n本文将重点探讨computed, watch 和 methods 的区别和使用场景。\ncomputed 在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。\nsetup() { const count = ref(0); const doubled = computed(() =\u003e count.value * 2); return { count, doubled } } 我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。\nwatch watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。\n在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：\ncomputed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。\nwatch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。\n另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询VUE 文档\n下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。\nsetup() { const count = ref(0); watch(count, (newValue, oldValue) =\u003e { console.log(`Count changed from ${oldValue} to ${newValue}`); }); return { count, increment: () =\u003e count.value++ } } 在这个例子中，当increment函数被调用，count的值会增加，然后watch回调函数将在控制台中打印出count的新旧值。\nmethods methods 是我们在Vue组件中定义的函数。它们不依赖于任何数据属性，并且不会在数据发生变化时自动触发。\n下面的例子中，我们定义了一个increment的方法，将count增加1。\nsetup() { const count = ref(0); const increment = () =\u003e { count.value++; }; return { count, increment } } 以下是一个可运行的示例代码：\n\u003c!DOCTYPE html\u003e \u003chtml\u003e \u003chead\u003e \u003cscript src=\"https://unpkg.com/vue@3/dist/vue.global.js\"\u003e\u003c/script\u003e \u003ctitle\u003eVue 3\u003c/title\u003e \u003c/head\u003e \u003cbody\u003e \u003cdiv id=\"app\"\u003e \u003cp\u003e当前值是：{{ count }}\u003c/p\u003e \u003cp\u003e两倍的值是：{{ doubleCount }}\u003c/p\u003e \u003cbutton @click=\"increment\"\u003e增加值\u003c/button\u003e \u003c/div\u003e \u003cscript\u003e const { ref, computed, watch } = Vue; const app = Vue.createApp({ setup() { const count = ref(0); const doubleCount = computed(() =\u003e count.value * 2); const increment = () =\u003e { count.value++; }; watch(count, (newValue, oldValue) =\u003e { console.log(`Count changed from ${oldValue} to ${newValue}`); }); return { count, doubleCount, increment, }; }, }); app.mount(\"#app\"); \u003c/script\u003e \u003c/body\u003e \u003c/html\u003e 总结 computed, watch 和 methods 在Vue中有它们各自的适用场景。\ncomputed是计算属性，适用于需要根据其他数据变化计算得到新数据的场景。\nwatch是观察者，适用于关注某个值的变化，并执行一些逻辑操作。\n而methods则适用于处理更加复杂的逻辑操作，如用户交互等。你应当根据自己的实际需求选择最适合的处理方式。\n",
+  "wordCount" : "208",
+  "inLanguage": "en",
+  "datePublished": "2024-05-24T12:49:58Z",
+  "dateModified": "2024-05-24T12:49:58Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/vue_compute_watch_function/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods 
+    </h1>
+    <div class="post-meta"><span title='2024-05-24 12:49:58 +0000 UTC'>May 24, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="vue-中-computed-watch-和-methods-区别">Vue 中 computed, watch 和 methods 区别<a hidden class="anchor" aria-hidden="true" href="#vue-中-computed-watch-和-methods-区别">#</a></h2>
+<p>在Vue 中，我们有几种处理数据和逻辑的方式。</p>
+<p>本文将重点探讨computed, watch 和 methods 的区别和使用场景。</p>
+<h3 id="computed">computed<a hidden class="anchor" aria-hidden="true" href="#computed">#</a></h3>
+<p>在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">doubled</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">computed</span>(() =&gt; <span style="color:#a6e22e">count</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">count</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">doubled</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。</p>
+<h3 id="watch">watch<a hidden class="anchor" aria-hidden="true" href="#watch">#</a></h3>
+<p>watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。</p>
+<p>在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：</p>
+<ul>
+<li>
+<p>computed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。</p>
+</li>
+<li>
+<p>watch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。</p>
+</li>
+</ul>
+<p>另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询<a href="https://cn.vuejs.org/guide/introduction.html">VUE 文档</a></p>
+<p>下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">watch</span>(<span style="color:#a6e22e">count</span>, (<span style="color:#a6e22e">newValue</span>, <span style="color:#a6e22e">oldValue</span>) =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Count changed from </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">oldValue</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> to </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">newValue</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">count</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">increment</span><span style="color:#f92672">:</span> () =&gt; <span style="color:#a6e22e">count</span>.<span style="color:#a6e22e">value</span><span style="color:#f92672">++</span> 
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在这个例子中，当increment函数被调用，count的值会增加，然后watch回调函数将在控制台中打印出count的新旧值。</p>
+<h3 id="methods">methods<a hidden class="anchor" aria-hidden="true" href="#methods">#</a></h3>
+<p>methods 是我们在Vue组件中定义的函数。它们不依赖于任何数据属性，并且不会在数据发生变化时自动触发。</p>
+<p>下面的例子中，我们定义了一个increment的方法，将count增加1。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">increment</span> <span style="color:#f92672">=</span> () =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">count</span>.<span style="color:#a6e22e">value</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">count</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">increment</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>以下是一个可运行的示例代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#f92672">&lt;!</span><span style="color:#a6e22e">DOCTYPE</span> <span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">head</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://unpkg.com/vue@3/dist/vue.global.js&#34;</span><span style="color:#f92672">&gt;&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">title</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">Vue</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/title&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/head&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">body</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;app&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">p</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">当前值是</span><span style="color:#960050;background-color:#1e0010">：</span>{{ <span style="color:#a6e22e">count</span> }}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/p&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">p</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">两倍的值是</span><span style="color:#960050;background-color:#1e0010">：</span>{{ <span style="color:#a6e22e">doubleCount</span> }}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/p&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;increment&#34;</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">增加值</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">ref</span>, <span style="color:#a6e22e">computed</span>, <span style="color:#a6e22e">watch</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vue</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">app</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">createApp</span>({
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">doubleCount</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">computed</span>(() =&gt; <span style="color:#a6e22e">count</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">increment</span> <span style="color:#f92672">=</span> () =&gt; {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">count</span>.<span style="color:#a6e22e">value</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>          };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">watch</span>(<span style="color:#a6e22e">count</span>, (<span style="color:#a6e22e">newValue</span>, <span style="color:#a6e22e">oldValue</span>) =&gt; {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Count changed from </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">oldValue</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> to </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">newValue</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>          });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">count</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">doubleCount</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">increment</span>,
+</span></span><span style="display:flex;"><span>          };
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>      });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">mount</span>(<span style="color:#e6db74">&#34;#app&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/body&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/html&gt;</span>
+</span></span></code></pre></div><h2 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h2>
+<p>computed, watch 和 methods 在Vue中有它们各自的适用场景。</p>
+<p>computed是计算属性，适用于需要根据其他数据变化计算得到新数据的场景。</p>
+<p>watch是观察者，适用于关注某个值的变化，并执行一些逻辑操作。</p>
+<p>而methods则适用于处理更加复杂的逻辑操作，如用户交互等。你应当根据自己的实际需求选择最适合的处理方式。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

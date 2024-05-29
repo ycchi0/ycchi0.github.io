@@ -80,6 +80,45 @@ SQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多
 那么什么是 BFC 呢 ？ 根据 MDN 的定义，BFC(区块格式化上下文)是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。 下列方式会创建块格式化上下文： 本质上来说，只要创建了 BFC,浮动的问题就解决了。</description>
     </item>
     <item>
+      <title>Vif和vshow</title>
+      <link>https://ycchi0.github.io/posts/vif%E5%92%8Cvshow/</link>
+      <pubDate>Fri, 24 May 2024 13:13:11 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/vif%E5%92%8Cvshow/</guid>
+      <description>v-if 与 v-show 的共同点 v-if v-show 都是 Vue 中用来控制元素显示与否的。
+v-if 与 v-show 的区别 v-show隐藏则是为该元素添加css&amp;ndash;display:none，dom元素依旧还在。v-if显示隐藏是将dom元素整个添加或删除
+v-show 由false变为true的时候不会触发组件的生命周期
+v-if由false变为true的时候，触发组件的beforeCreate、create、beforeMount、mounted钩子，由true变为false的时候触发组件的beforeDestory、destoryed方法
+v-if 与 v-show 的使用场景 需要非常频繁地切换，则使用 v-show 较好
+运行时条件很少改变时，则使用 v-if 较好</description>
+    </item>
+    <item>
+      <title>在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods </title>
+      <link>https://ycchi0.github.io/posts/vue_compute_watch_function/</link>
+      <pubDate>Fri, 24 May 2024 12:49:58 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/vue_compute_watch_function/</guid>
+      <description>Vue 中 computed, watch 和 methods 区别 在Vue 中，我们有几种处理数据和逻辑的方式。
+本文将重点探讨computed, watch 和 methods 的区别和使用场景。
+computed 在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。
+setup() { const count = ref(0); const doubled = computed(() =&amp;gt; count.value * 2); return { count, doubled } } 我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。
+watch watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。
+在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：
+computed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。
+watch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。
+另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询VUE 文档
+下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。
+setup() { const count = ref(0); watch(count, (newValue, oldValue) =&amp;gt; { console.</description>
+    </item>
+    <item>
+      <title>VUE生命周期函数</title>
+      <link>https://ycchi0.github.io/posts/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0/</link>
+      <pubDate>Fri, 24 May 2024 11:39:34 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0/</guid>
+      <description>学习 VUE, 就不得不了解 VUE 的生命周期函数。 下面这张图来自 VUE 官网
+其中 setup 函数是 VUE3 新加入的特性， 通过组合式 API 可以让我们的代码更具有可读性和可维护性。
+我们随便写点代码来验证一下
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;zh&amp;#34;&amp;gt; &amp;lt;head&amp;gt; &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34; /&amp;gt; &amp;lt;meta name=&amp;#34;viewport&amp;#34; content=&amp;#34;width=device-width, initial-scale=1.0&amp;#34; /&amp;gt; &amp;lt;title&amp;gt;VUE3 生命周期学习&amp;lt;/title&amp;gt; &amp;lt;script src=&amp;#34;https://unpkg.com/vue@3/dist/vue.global.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt; &amp;lt;div id=&amp;#34;app&amp;#34;&amp;gt; &amp;lt;button @click=&amp;#34;changeMessage&amp;#34;&amp;gt;改变信息&amp;lt;/button&amp;gt; &amp;lt;button @click=&amp;#34;unmountComponent&amp;#34;&amp;gt;卸载组件&amp;lt;/button&amp;gt; &amp;lt;p&amp;gt;{{ message }}&amp;lt;/p&amp;gt; &amp;lt;child-component v-if=&amp;#34;!componentUnmounted&amp;#34; :message=&amp;#34;message&amp;#34; &amp;gt;&amp;lt;/child-component&amp;gt; &amp;lt;/div&amp;gt; &amp;lt;script&amp;gt; const ChildComponent = { props: [&amp;#34;message&amp;#34;], beforeUnmount() { console.log(&amp;#34;beforeUnmount&amp;#34;); }, unmounted() { console.log(&amp;#34;unmounted&amp;#34;); }, template: `&amp;lt;p&amp;gt;{{ message }}&amp;lt;/p&amp;gt;`, }; const App = { data() { return { message: &amp;#34;Hello Vue3&amp;#34;, componentUnmounted: false, }; }, components: { &amp;#34;child-component&amp;#34;: ChildComponent, }, beforeCreate() { console.</description>
+    </item>
+    <item>
       <title>Box Sizing</title>
       <link>https://ycchi0.github.io/posts/box-sizing/</link>
       <pubDate>Fri, 24 May 2024 02:53:44 +0000</pubDate>

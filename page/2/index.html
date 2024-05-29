@@ -128,6 +128,53 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">CSS 浮动
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>先谈谈浮动 float 很多网站的布局都是通过 float 实现的，浮动最本质的功能就是用来实现并排。
+一个例子 先来看一个例子，有三个未设置浮动的盒子，代码如下：
+&lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;style&gt; .box { width: 600px; height: 200px; border: 1px solid #000; } .box .c1 { width: 200px; height: 200px; background-color: orange; /* float: left; */ } .box .c2 { width: 200px; height: 200px; background-color: green; /* float: left; */ } .box .c3 { width: 200px; height: 200px; background-color: blue; /* float: left; */ } &lt;/style&gt; &lt;/head&gt; &lt;body&gt; &lt;div class=&#34;box&#34;&gt; &lt;div class=&#34;c1&#34;&gt;&lt;/div&gt; &lt;div class=&#34;c2&#34;&gt;&lt;/div&gt; &lt;div class=&#34;c3&#34;&gt;&lt;/div&gt; &lt;/div&gt; &lt;/body&gt; &lt;/html&gt; 当我们给三个盒子都设置浮动，即取消上面代码注释部分，盒子便可以横向编排。 浮动使用要点 浮动在使用时，有两个要点...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-23 18:22:30 +0000 UTC'>May 23, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to CSS 浮动" href="https://ycchi0.github.io/posts/css%E6%B5%AE%E5%8A%A8/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Art Template
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>art-template art-template 是一个简约、超快的模板引擎。采用作用域预声明的技术来优化模板渲染速度，从而获得接近 JavaScript 极限的运行性能，并且同时支持 NodeJS 和浏览器。
+在一些动态渲染场景，使用 art-template 可以将 JS 代码与 Html 代码分开管理，便于项目维护。
+比如说后端获取到一个 students 对象数组，现在要在界面上以列表的形式展示，我们可能会这样编写代码
+student 对象数组为：
+const students = [ { name: &#34;xxx&#34;, age: 18, }, { name: &#34;yyy&#34;, age: 28, }, { name: &#34;zzz&#34;, age: 20, }, ]; 使用模板字符串
+const list = document.getElementById(&#39;list&#39;); let html = &#39;&#39;; for (const student of students) { html &#43;= `&lt;li&gt;${student.name} ${student.age}&lt;/li&gt;`; } list.innerHTML = html; 使用 art-template：
+&lt;script id=&#34;tpl-students&#34; type=&#34;text/html&#34;&gt; {{each students}} &lt;li&gt;{{$value....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-23 16:59:54 +0000 UTC'>May 23, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to Art Template" href="https://ycchi0.github.io/posts/art-template/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">谈谈Cookie
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Cookie 是什么 Cookie 全称 HTTP Cookie，简称 Cookie,是浏览器存储数据的一种方式。Cookie 存储在用户本地，一般会自动随着浏览器每次请求发送到服务器端。
+打开浏览器开发者工具，如下： Cookie 有什么用 可以利用 Cookie 跟踪统计用户访问该网站的习惯，比如什么时间访问，访问了哪些页面，在每个网页的停留时间等
+注意：不要在 Cookie 中保存密码等敏感信息
+Cookie 的基本用法 写入 Cookie &lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;script&gt; document.cookie = &#34;username=zs&#34;; document.cookie = &#34;age=18&#34;; &lt;/script&gt; &lt;/body&gt; &lt;/html&gt; 读取 Cookie &lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;script&gt; console.log(document.cookie); &lt;/script&gt; &lt;/body&gt; &lt;/html&gt; Cookie 属性 最重要的两个属性 Cookie 的名称（Name）和值（Value） 是最重要的两个属性，创建 时必须填写，其它属性可以使用默认值。...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-23 15:30:15 +0000 UTC'>May 23, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 谈谈Cookie" href="https://ycchi0.github.io/posts/%E8%B0%88%E8%B0%88cookie/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Webpack 从入门到放弃
     </h2>
   </header>

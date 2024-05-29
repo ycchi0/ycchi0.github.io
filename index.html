@@ -229,6 +229,60 @@ SQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Vif和vshow
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>v-if 与 v-show 的共同点 v-if v-show 都是 Vue 中用来控制元素显示与否的。
+v-if 与 v-show 的区别 v-show隐藏则是为该元素添加css–display:none，dom元素依旧还在。v-if显示隐藏是将dom元素整个添加或删除
+v-show 由false变为true的时候不会触发组件的生命周期
+v-if由false变为true的时候，触发组件的beforeCreate、create、beforeMount、mounted钩子，由true变为false的时候触发组件的beforeDestory、destoryed方法
+v-if 与 v-show 的使用场景 需要非常频繁地切换，则使用 v-show 较好
+运行时条件很少改变时，则使用 v-if 较好</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-24 13:13:11 +0000 UTC'>May 24, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to Vif和vshow" href="https://ycchi0.github.io/posts/vif%E5%92%8Cvshow/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods 
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Vue 中 computed, watch 和 methods 区别 在Vue 中，我们有几种处理数据和逻辑的方式。
+本文将重点探讨computed, watch 和 methods 的区别和使用场景。
+computed 在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。
+setup() { const count = ref(0); const doubled = computed(() =&gt; count.value * 2); return { count, doubled } } 我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。
+watch watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。
+在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：
+computed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。
+watch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。
+另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询VUE 文档
+下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。
+setup() { const count = ref(0); watch(count, (newValue, oldValue) =&gt; { console....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-24 12:49:58 +0000 UTC'>May 24, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods " href="https://ycchi0.github.io/posts/vue_compute_watch_function/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">VUE生命周期函数
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>学习 VUE, 就不得不了解 VUE 的生命周期函数。 下面这张图来自 VUE 官网
+其中 setup 函数是 VUE3 新加入的特性， 通过组合式 API 可以让我们的代码更具有可读性和可维护性。
+我们随便写点代码来验证一下
+&lt;!DOCTYPE html&gt; &lt;html lang=&#34;zh&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;VUE3 生命周期学习&lt;/title&gt; &lt;script src=&#34;https://unpkg.com/vue@3/dist/vue.global.js&#34;&gt;&lt;/script&gt; &lt;/head&gt; &lt;body&gt; &lt;div id=&#34;app&#34;&gt; &lt;button @click=&#34;changeMessage&#34;&gt;改变信息&lt;/button&gt; &lt;button @click=&#34;unmountComponent&#34;&gt;卸载组件&lt;/button&gt; &lt;p&gt;{{ message }}&lt;/p&gt; &lt;child-component v-if=&#34;!componentUnmounted&#34; :message=&#34;message&#34; &gt;&lt;/child-component&gt; &lt;/div&gt; &lt;script&gt; const ChildComponent = { props: [&#34;message&#34;], beforeUnmount() { console.log(&#34;beforeUnmount&#34;); }, unmounted() { console.log(&#34;unmounted&#34;); }, template: `&lt;p&gt;{{ message }}&lt;/p&gt;`, }; const App = { data() { return { message: &#34;Hello Vue3&#34;, componentUnmounted: false, }; }, components: { &#34;child-component&#34;: ChildComponent, }, beforeCreate() { console....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-24 11:39:34 +0000 UTC'>May 24, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to VUE生命周期函数" href="https://ycchi0.github.io/posts/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Box Sizing
     </h2>
   </header>
@@ -242,53 +296,6 @@ content-box 是默认值。如果你设置一个元素的宽为 100px，那么�
   </div>
   <footer class="entry-footer"><span title='2024-05-24 02:53:44 +0000 UTC'>May 24, 2024</span></footer>
   <a class="entry-link" aria-label="post link to Box Sizing" href="https://ycchi0.github.io/posts/box-sizing/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">CSS 浮动
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>先谈谈浮动 float 很多网站的布局都是通过 float 实现的，浮动最本质的功能就是用来实现并排。
-一个例子 先来看一个例子，有三个未设置浮动的盒子，代码如下：
-&lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;style&gt; .box { width: 600px; height: 200px; border: 1px solid #000; } .box .c1 { width: 200px; height: 200px; background-color: orange; /* float: left; */ } .box .c2 { width: 200px; height: 200px; background-color: green; /* float: left; */ } .box .c3 { width: 200px; height: 200px; background-color: blue; /* float: left; */ } &lt;/style&gt; &lt;/head&gt; &lt;body&gt; &lt;div class=&#34;box&#34;&gt; &lt;div class=&#34;c1&#34;&gt;&lt;/div&gt; &lt;div class=&#34;c2&#34;&gt;&lt;/div&gt; &lt;div class=&#34;c3&#34;&gt;&lt;/div&gt; &lt;/div&gt; &lt;/body&gt; &lt;/html&gt; 当我们给三个盒子都设置浮动，即取消上面代码注释部分，盒子便可以横向编排。 浮动使用要点 浮动在使用时，有两个要点...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-23 18:22:30 +0000 UTC'>May 23, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to CSS 浮动" href="https://ycchi0.github.io/posts/css%E6%B5%AE%E5%8A%A8/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Art Template
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>art-template art-template 是一个简约、超快的模板引擎。采用作用域预声明的技术来优化模板渲染速度，从而获得接近 JavaScript 极限的运行性能，并且同时支持 NodeJS 和浏览器。
-在一些动态渲染场景，使用 art-template 可以将 JS 代码与 Html 代码分开管理，便于项目维护。
-比如说后端获取到一个 students 对象数组，现在要在界面上以列表的形式展示，我们可能会这样编写代码
-student 对象数组为：
-const students = [ { name: &#34;xxx&#34;, age: 18, }, { name: &#34;yyy&#34;, age: 28, }, { name: &#34;zzz&#34;, age: 20, }, ]; 使用模板字符串
-const list = document.getElementById(&#39;list&#39;); let html = &#39;&#39;; for (const student of students) { html &#43;= `&lt;li&gt;${student.name} ${student.age}&lt;/li&gt;`; } list.innerHTML = html; 使用 art-template：
-&lt;script id=&#34;tpl-students&#34; type=&#34;text/html&#34;&gt; {{each students}} &lt;li&gt;{{$value....</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-23 16:59:54 +0000 UTC'>May 23, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to Art Template" href="https://ycchi0.github.io/posts/art-template/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">谈谈Cookie
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Cookie 是什么 Cookie 全称 HTTP Cookie，简称 Cookie,是浏览器存储数据的一种方式。Cookie 存储在用户本地，一般会自动随着浏览器每次请求发送到服务器端。
-打开浏览器开发者工具，如下： Cookie 有什么用 可以利用 Cookie 跟踪统计用户访问该网站的习惯，比如什么时间访问，访问了哪些页面，在每个网页的停留时间等
-注意：不要在 Cookie 中保存密码等敏感信息
-Cookie 的基本用法 写入 Cookie &lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;script&gt; document.cookie = &#34;username=zs&#34;; document.cookie = &#34;age=18&#34;; &lt;/script&gt; &lt;/body&gt; &lt;/html&gt; 读取 Cookie &lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;script&gt; console.log(document.cookie); &lt;/script&gt; &lt;/body&gt; &lt;/html&gt; Cookie 属性 最重要的两个属性 Cookie 的名称（Name）和值（Value） 是最重要的两个属性，创建 时必须填写，其它属性可以使用默认值。...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-23 15:30:15 +0000 UTC'>May 23, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 谈谈Cookie" href="https://ycchi0.github.io/posts/%E8%B0%88%E8%B0%88cookie/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
