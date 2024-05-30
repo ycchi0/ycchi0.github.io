@@ -6,8 +6,52 @@
     <description>Recent content on Ycchi0 Blog</description>
     <generator>Hugo -- 0.123.7</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 28 May 2024 11:11:22 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 30 May 2024 06:44:34 +0000</lastBuildDate>
     <atom:link href="https://ycchi0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Explain详解与索引最佳实践</title>
+      <link>https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Thu, 30 May 2024 06:44:34 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</guid>
+      <description>Explain Explain是MySQL中的一个非常有用的工具，它可以帮助我们理解MySQL是如何执行SQL查询的。
+通过使用Explain，我们可以看到查询的执行计划，包括使用了哪些索引，表的连接顺序，预计要扫描的行数等信息。
+这些信息可以帮助我们优化查询，提高查询效率。
+EXPLAIN SELECT * FROM users WHERE id = 1; Explain的结果包含以下几个重要的列：
+id 查询的标识符，如果一个查询包含多个子查询，那么每个子查询都会有一个不同的id。
+select_type 表示对应行是简单还是复杂的查询。
+simple：简单查询。查询不包含子查询和union primary：复杂查询中最外层的 select subquery：包含在 select 中的子查询（不在 from 子句中） derived：包含在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表（derived的英文含义） CREATE TABLE customers ( id INT PRIMARY KEY, name VARCHAR(50) ); CREATE TABLE orders ( id INT PRIMARY KEY, customer_id INT, amount DECIMAL(10, 2) ); INSERT INTO customers (id, name) VALUES (1, &amp;#39;John&amp;#39;), (2, &amp;#39;Jane&amp;#39;), (3, &amp;#39;Bob&amp;#39;); INSERT INTO orders (id, customer_id, amount) VALUES (1, 1, 100.</description>
+    </item>
+    <item>
+      <title>深入理解MySQL索引底层数据结构</title>
+      <link>https://ycchi0.github.io/posts/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3mysql%E7%B4%A2%E5%BC%95%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Thu, 30 May 2024 05:27:40 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3mysql%E7%B4%A2%E5%BC%95%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
+      <description>索引是什么 索引是帮助MySQL高效获取数据的排好序的数据结构。
+InnoDB 索引实现 InnoDB 存储引擎使用一种称为 B+Tree 的数据结构来实现其索引。B+Tree 是 B-Tree 的一种变体，它在数据库索引中的应用非常广泛。
+B+树是一种自平衡的树，可以保持数据有序。这种数据结构可以大大加快数据的检索速度，尤其是在处理大量数据时。
+在B+树中，所有的数据都存储在叶子节点，而非叶子节点只存储关键字和子节点的指针。
+同时，叶子节点之间通过指针相连，这样可以提高范围查询的效率。MySQL 对b+ 树做了优化,叶子节点之间是双向连接，标准的 b+ 树是从左指向右,单向连接
+此外，MySQL还支持哈希索引，但是哈希索引只能满足&amp;quot;=&amp;quot;,&amp;ldquo;IN&amp;rdquo; 和&amp;quot;&amp;lt;=&amp;gt;&amp;ldquo;查询，不能使用范围查询和排序，所以B+树是MySQL的主要索引结构。
+InnoDB 存储引擎有两种类型的索引：主键索引（聚簇索引）和二级索引（非聚簇索引）。
+主键索引 InnoDB 的数据是按照主键顺序存放的，也就是说主键索引的叶子节点就是数据节点。因此，按照主键查询可以直接通过索引找到数据，效率非常高。
+二级索引 二级索引的叶子节点并不包含行记录的全部数据。相反，它的叶子节点包含的是对应行数据的主键值。当通过二级索引查找时，InnoDB 会先找到二级索引指向的主键，然后再通过主键索引找到完整的行数据。这就是所谓的“回表”。
+MyISAM 的索引 MyISAM索引文件和数据文件是分离的。在MyISAM存储引擎中，每个表被存储为三个文件。一个是表定义文件（.frm），一个是数据文件（.MYD），还有一个是索引文件（.MYI）。
+数据文件和索引文件是分离的，这也是MyISAM的一个特点。 数据文件存储了表的数据，而索引文件则存储了表的索引信息。这种分离的设计使得MyISAM在处理大量数据时具有一定的优势，因为索引和数据可以分别进行IO操作，提高了数据处理的效率。
+但是，这种设计也有一些缺点。例如，如果在操作过程中发生故障，可能会导致数据文件和索引文件之间的不一致，从而影响数据的完整性。此外，MyISAM不支持事务，这也是其在某些场景下被InnoDB等其他存储引擎所取代的原因。
+为什么建议InnoDB表必须建主键，并且推荐使用整型的自增主键？ InnoDB 存储引擎在存储数据时，会按照主键的顺序进行存储。
+如果没有主键，InnoDB 会选择一个唯一非空索引代替，如果这样的索引也没有，InnoDB 会生成一个隐藏的聚簇索引。
+这个隐藏的聚簇索引会占用额外的存储空间，而且由于它不是由用户定义的，所以在执行查询时可能会导致性能下降。
+使用整型的自增主键有以下几个优点：
+整型的自增主键可以保证数据的插入顺序，这样可以避免页面分裂，提高插入效率 整型的自增主键占用的空间小，可以减少索引的存储空间，提高查询效率。 自增主键可以避免主键的重复，保证数据的唯一性。 使用自增主键，可以避免在插入数据时需要手动指定主键值，简化了插入操作 为什么非主键索引结构叶子节点存储的是主键值？ 简单来说就是为了一致性和节省存储空间。
+在InnoDB存储引擎中，非主键索引（也称为二级索引）的叶子节点存储的是主键值，这是由InnoDB的存储结构决定的。
+InnoDB使用聚簇索引（也就是主键索引）来存储数据，这意味着表中的数据实际上是按照主键的顺序存储的。因此，主键值实际上就是数据行在物理存储上的地址。
+当我们通过非主键索引进行查询时，InnoDB首先会在非主键索引中查找到主键值，然后再通过主键值在聚簇索引中查找到实际的数据行。这个过程通常被称为“回表”。
+这样设计的好处是，非主键索引可以更小，因为它只需要存储主键值，而不需要存储整行数据。这可以节省存储空间，提高IO效率。同时，由于所有的非主键索引都引用了主键，所以在更新数据时，只需要更新聚簇索引，而不需要更新每一个非主键索引，这也可以提高更新操作的效率。
+但是，这也意味着如果频繁地进行非主键索引查询，可能会导致大量的“回表”操作，从而影响查询性能。因此，在设计数据库时，需要根据实际的查询需求来合理选择使用主键索引还是非主键索引。
+索引最左前缀原理 最左前缀原理，也被称为最左前缀匹配原则，是指在多列索引中，查询可以只使用索引的最左边的一部分，但必须是连续的部分。这是因为多列索引是按照列的顺序，从左到右进行排序的。
+例如，如果我们有一个包含三列（A，B，C）的索引，那么以下查询可以使用索引： 查询只涉及到 A 列。 查询涉及到 A 和 B 列。 查询涉及到 A，B 和 C 列。
+但是，如果查询只涉及到 B 列或者 C 列，或者涉及到 A 和 C 列（跳过了 B 列），那么索引将不会被使用。这就是最左前缀原理。</description>
+    </item>
     <item>
       <title>常见的限流算法</title>
       <link>https://ycchi0.github.io/posts/%E5%B8%B8%E8%A7%81%E7%9A%84%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/</link>

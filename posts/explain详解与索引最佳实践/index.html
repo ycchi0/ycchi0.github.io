@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Explain详解与索引最佳实践 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Explain Explain是MySQL中的一个非常有用的工具，它可以帮助我们理解MySQL是如何执行SQL查询的。
+通过使用Explain，我们可以看到查询的执行计划，包括使用了哪些索引，表的连接顺序，预计要扫描的行数等信息。
+这些信息可以帮助我们优化查询，提高查询效率。
+EXPLAIN SELECT * FROM users WHERE id = 1; Explain的结果包含以下几个重要的列：
+id 查询的标识符，如果一个查询包含多个子查询，那么每个子查询都会有一个不同的id。
+select_type 表示对应行是简单还是复杂的查询。
+simple：简单查询。查询不包含子查询和union primary：复杂查询中最外层的 select subquery：包含在 select 中的子查询（不在 from 子句中） derived：包含在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表（derived的英文含义） CREATE TABLE customers ( id INT PRIMARY KEY, name VARCHAR(50) ); CREATE TABLE orders ( id INT PRIMARY KEY, customer_id INT, amount DECIMAL(10, 2) ); INSERT INTO customers (id, name) VALUES (1, &#39;John&#39;), (2, &#39;Jane&#39;), (3, &#39;Bob&#39;); INSERT INTO orders (id, customer_id, amount) VALUES (1, 1, 100.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Explain详解与索引最佳实践" />
+<meta property="og:description" content="Explain Explain是MySQL中的一个非常有用的工具，它可以帮助我们理解MySQL是如何执行SQL查询的。
+通过使用Explain，我们可以看到查询的执行计划，包括使用了哪些索引，表的连接顺序，预计要扫描的行数等信息。
+这些信息可以帮助我们优化查询，提高查询效率。
+EXPLAIN SELECT * FROM users WHERE id = 1; Explain的结果包含以下几个重要的列：
+id 查询的标识符，如果一个查询包含多个子查询，那么每个子查询都会有一个不同的id。
+select_type 表示对应行是简单还是复杂的查询。
+simple：简单查询。查询不包含子查询和union primary：复杂查询中最外层的 select subquery：包含在 select 中的子查询（不在 from 子句中） derived：包含在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表（derived的英文含义） CREATE TABLE customers ( id INT PRIMARY KEY, name VARCHAR(50) ); CREATE TABLE orders ( id INT PRIMARY KEY, customer_id INT, amount DECIMAL(10, 2) ); INSERT INTO customers (id, name) VALUES (1, &#39;John&#39;), (2, &#39;Jane&#39;), (3, &#39;Bob&#39;); INSERT INTO orders (id, customer_id, amount) VALUES (1, 1, 100." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-30T06:44:34+00:00" />
+<meta property="article:modified_time" content="2024-05-30T06:44:34+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Explain详解与索引最佳实践"/>
+<meta name="twitter:description" content="Explain Explain是MySQL中的一个非常有用的工具，它可以帮助我们理解MySQL是如何执行SQL查询的。
+通过使用Explain，我们可以看到查询的执行计划，包括使用了哪些索引，表的连接顺序，预计要扫描的行数等信息。
+这些信息可以帮助我们优化查询，提高查询效率。
+EXPLAIN SELECT * FROM users WHERE id = 1; Explain的结果包含以下几个重要的列：
+id 查询的标识符，如果一个查询包含多个子查询，那么每个子查询都会有一个不同的id。
+select_type 表示对应行是简单还是复杂的查询。
+simple：简单查询。查询不包含子查询和union primary：复杂查询中最外层的 select subquery：包含在 select 中的子查询（不在 from 子句中） derived：包含在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表（derived的英文含义） CREATE TABLE customers ( id INT PRIMARY KEY, name VARCHAR(50) ); CREATE TABLE orders ( id INT PRIMARY KEY, customer_id INT, amount DECIMAL(10, 2) ); INSERT INTO customers (id, name) VALUES (1, &#39;John&#39;), (2, &#39;Jane&#39;), (3, &#39;Bob&#39;); INSERT INTO orders (id, customer_id, amount) VALUES (1, 1, 100."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Explain详解与索引最佳实践",
+      "item": "https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Explain详解与索引最佳实践",
+  "name": "Explain详解与索引最佳实践",
+  "description": "Explain Explain是MySQL中的一个非常有用的工具，它可以帮助我们理解MySQL是如何执行SQL查询的。\n通过使用Explain，我们可以看到查询的执行计划，包括使用了哪些索引，表的连接顺序，预计要扫描的行数等信息。\n这些信息可以帮助我们优化查询，提高查询效率。\nEXPLAIN SELECT * FROM users WHERE id = 1; Explain的结果包含以下几个重要的列：\nid 查询的标识符，如果一个查询包含多个子查询，那么每个子查询都会有一个不同的id。\nselect_type 表示对应行是简单还是复杂的查询。\nsimple：简单查询。查询不包含子查询和union primary：复杂查询中最外层的 select subquery：包含在 select 中的子查询（不在 from 子句中） derived：包含在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表（derived的英文含义） CREATE TABLE customers ( id INT PRIMARY KEY, name VARCHAR(50) ); CREATE TABLE orders ( id INT PRIMARY KEY, customer_id INT, amount DECIMAL(10, 2) ); INSERT INTO customers (id, name) VALUES (1, \u0026#39;John\u0026#39;), (2, \u0026#39;Jane\u0026#39;), (3, \u0026#39;Bob\u0026#39;); INSERT INTO orders (id, customer_id, amount) VALUES (1, 1, 100.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Explain Explain是MySQL中的一个非常有用的工具，它可以帮助我们理解MySQL是如何执行SQL查询的。\n通过使用Explain，我们可以看到查询的执行计划，包括使用了哪些索引，表的连接顺序，预计要扫描的行数等信息。\n这些信息可以帮助我们优化查询，提高查询效率。\nEXPLAIN SELECT * FROM users WHERE id = 1; Explain的结果包含以下几个重要的列：\nid 查询的标识符，如果一个查询包含多个子查询，那么每个子查询都会有一个不同的id。\nselect_type 表示对应行是简单还是复杂的查询。\nsimple：简单查询。查询不包含子查询和union primary：复杂查询中最外层的 select subquery：包含在 select 中的子查询（不在 from 子句中） derived：包含在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表（derived的英文含义） CREATE TABLE customers ( id INT PRIMARY KEY, name VARCHAR(50) ); CREATE TABLE orders ( id INT PRIMARY KEY, customer_id INT, amount DECIMAL(10, 2) ); INSERT INTO customers (id, name) VALUES (1, 'John'), (2, 'Jane'), (3, 'Bob'); INSERT INTO orders (id, customer_id, amount) VALUES (1, 1, 100.00), (2, 1, 200.00), (3, 2, 300.00), (4, 3, 400.00), (5, 3, 500.00); table 查询涉及到的表。\ntype 访问类型，表示MySQL如何访问表\n依次从最优到最差分别为：system \u003e const \u003e eq_ref \u003e ref \u003e range \u003e index \u003e ALL\n一般来说，得保证查询达到range级别，最好达到ref\nconst, system：MySQL能对查询的某部分进行优化并将其转化成一个常量（可以看show warnings 的结果）。用于 primary key 或 unique key 的所有列与常数比较时，所以表最多有一个匹配行，读取1次，速度比较快。system是const的特例，表里只有一条元组匹配时为system\neq_ref\nprimary key 或 unique key 索引的所有部分被连接使用 ，最多只会返回一条符合条件的记录。这可能是在 const 之外最好的联接类型了，简单的 select 查询不会出现这种 type。\nref\n相比 eq_ref，不使用唯一索引，而是使用普通索引或者唯一性索引的部分前缀，索引要和某个值相比较，可能会找到多个符合条件的行。\nrange 范围扫描通常出现在 in(), between ,\u003e ,\u003c, \u003e= 等操作中。使用一个索引来检索给定范围的行。\nindex 表示进行了全索引扫描，也就是说，MySQL扫描了整个索引来查找匹配的行。这通常比全表扫描要好，因为索引通常比整个表要小，所以扫描起来更快。然而，如果索引很大，或者匹配的行很多，那么这种类型可能并不比其他类型要好。\nALL 即全表扫描，扫描你的聚簇索引的所有叶子节点。通常情况下这需要增加索引来进行优化了。\npossible_keys 可能使用的索引。\nkey 实际使用的索引。\nkey_len 使用的索引的长度。\nref 索引的参考列，表示通过哪些列或常量来查找索引。\nrows 预计要扫描的行数。\npartition 这个字段显示了查询涉及的分区信息。如果你的表没有使用分区，那么这个字段的值就会是NULL。如果你的查询只涉及到表的某个分区，那么这个字段就会显示那个分区的名字。如果你的查询涉及到表的多个分区，那么这个字段就会显示为多个分区的名字，用逗号分隔。\nfiltered 是一个半分比的值，rows * filtered/100 可以估算出将要和 explain 中前一个表进行连接的行数\nExtra 额外的信息，例如是否使用了文件排序，是否使用了临时表等。\nUsing where\n这表示MySQL服务器将在存储引擎检索行后再进行过滤。这意味着存储引擎返回的行并不都符合WHERE子句的条件。\nUsing temporary\n这表示MySQL需要使用一个临时表来存储结果，这通常发生在对不同的列进行ORDER BY和GROUP BY的时候。\nUsing filesort\n这表示MySQL会对结果使用一个外部索引排序，而不是按照表内的索引顺序进行读取。需要注意的是，尽管名称是filesort，但并不一定会进行磁盘操作，数据可能会被放在内存中排序，只有在数据量大于内存时，才会使用磁盘。\nUsing index\n这表示MySQL使用覆盖索引\n覆盖索引定义：MySQL执行计划explain结果里的key有使用索引，如果select后面查询的字段都可以从这个索引的树中获取，这种情况一般可以说是用到了覆盖索引，extra里一般都有using index；覆盖索引一般针对的是辅助索引，整个查询结果只通过辅助索引就能拿到结果，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其它字段值\nUsing index condition\n查询的列不完全被索引覆盖，where条件中是一个前导列的范围；\nUsing join buffer\n这表示MySQL在进行表连接时使用了连接缓冲区。\n索引最佳实践 示例表：\nCREATE TABLE `employees` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(24) NOT NULL DEFAULT '' COMMENT '姓名', `age` int(11) NOT NULL DEFAULT '0' COMMENT '年龄', `position` varchar(20) NOT NULL DEFAULT '' COMMENT '职位', `hire_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入职时间', PRIMARY KEY (`id`), KEY `idx_name_age_position` (`name`,`age`,`position`) USING BTREE ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='员工记录表'; INSERT INTO employees(name,age,position,hire_time) VALUES('LiLei',22,'manager',NOW()); INSERT INTO employees(name,age,position,hire_time) VALUES('HanMeimei', 23,'dev',NOW()); INSERT INTO employees(name,age,position,hire_time) VALUES('Lucy',23,'dev',NOW()); 1.全值匹配 2.最左前缀法则 如果索引了多列，要遵守最左前缀法则。指的是查询从索引的最左前列开始并且不跳过索引中的列。\n下面这个查询就不符合最左前缀法则： 注意看下面这个写法 这是因为MySQL进行了优化，所以也走了索引，日常开发中要注意SQL语句的规范。\n3.不在索引列上做任何操作（计算、函数、（自动or手动）类型转换），会导致索引失效而转向全表扫描 4.日期类字段如果有索引，使用范围查询有可能会走索引 ALTER TABLE `employees` ADD INDEX `idx_hire_time` (`hire_time`) USING BTREE ; 使用范围查询： 5.存储引擎不能使用索引中范围条件右边的列 在MySQL中，当你在多个列上创建一个联合索引时，索引的顺序是非常重要的。索引中的列顺序决定了哪些查询可以有效地使用索引。\n当你在查询中使用范围条件时（比如使用BETWEEN、\u003c、\u003e等操作符），索引只能在范围条件的列上起作用，而不能在其右边的列上起作用。这是因为一旦MySQL在索引中找到了满足范围条件的第一个值，它就必须扫描索引中的所有后续值，直到找到不满足范围条件的值。\n例如，假设你有一个在列a和b上的联合索引，你的查询是WHERE a = 1 AND b \u003e 2。在这种情况下，索引可以在列a和b上起作用，因为a是一个常数条件，b是一个范围条件。但是，如果你的查询是WHERE a \u003e 1 AND b = 2，那么索引只能在列a上起作用，因为a是一个范围条件，而b在其右边。\n所以，当你在设计索引和查询时，你需要考虑你的查询中的条件。如果可能，你应该尽量将范围条件放在联合索引的最右边，这样可以使索引在更多的列上起作用。 6.尽量使用覆盖索引 即只使用索引的查询（索引列包含查询的列），禁止或减少 select * 语句。\n7.尽量避免使用那些无法有效利用索引的操作符 MySQL的索引是基于B-Tree（平衡多路查找树）或者Hash（哈希）等数据结构实现的。这些数据结构在处理等值查询（=）和范围查询（\u003c、\u003e、\u003c=、\u003e=）时非常高效，因为它们可以快速定位到满足条件的数据。然而，对于不等于（!=或\u003c\u003e）、NOT IN和NOT EXISTS等查询，索引就无法高效地工作了。\n不等于（!=或\u003c\u003e）：当你使用不等于操作符时，满足条件的数据可能分布在整个表中，MySQL无法通过索引快速定位到这些数据，因此它需要扫描整个表。 NOT IN和NOT EXISTS：这两种操作符的情况与不等于操作符类似。它们都是在查找不满足某个条件的数据，这些数据可能分布在整个表中，因此MySQL需要扫描整个表。\n对于\u003c、\u003e、\u003c=、\u003e=这些操作符，MySQL的查询优化器会根据表的大小、数据的分布、查询的选择性等因素来决定是否使用索引。如果使用索引能够显著减少需要访问的数据量，那么MySQL就会选择使用索引；否则，它可能会选择全表扫描。\n总的来说，当你在设计数据库和查询时，你需要考虑这些因素，尽量避免使用那些无法有效利用索引的操作符。如果必须使用这些操作符，你可能需要考虑其他的优化策略，比如改变表的结构，或者使用其他的查询方法。\n8.尽量不使用 is null,is not null is null,is not null 一般情况下也无法使用索引\n9.避免 like以通配符开头（’$abc…’） like以通配符开头（’$abc…’） MySQL索引失效会变成全表扫描操作\n如果要使用 like ‘%abc%’ 可以考虑全文索引（FULLTEXT），或者其他搜索引擎如Elasticsearch。\n10.字符串不加单引号索引失效 因为发生了转换 11.少用or或in 用它查询时，MySQL不一定使用索引，MySQL内部优化器会根据检索比例、表大小等多个因素整体评估是否使用索引，详见范围查询优化\n12.范围查询优化 考虑增加索引 查询时可以将大的范围拆分成多个小范围 ",
+  "wordCount" : "337",
+  "inLanguage": "en",
+  "datePublished": "2024-05-30T06:44:34Z",
+  "dateModified": "2024-05-30T06:44:34Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Explain详解与索引最佳实践
+    </h1>
+    <div class="post-meta"><span title='2024-05-30 06:44:34 +0000 UTC'>May 30, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="explain">Explain<a hidden class="anchor" aria-hidden="true" href="#explain">#</a></h2>
+<p>Explain是MySQL中的一个非常有用的工具，它可以帮助我们理解MySQL是如何执行SQL查询的。</p>
+<p>通过使用Explain，我们可以看到查询的执行计划，包括使用了哪些索引，表的连接顺序，预计要扫描的行数等信息。</p>
+<p>这些信息可以帮助我们优化查询，提高查询效率。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">EXPLAIN</span> <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> users <span style="color:#66d9ef">WHERE</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span></code></pre></div><p><img loading="lazy" src="image.png" alt="alt text"  />
+
+Explain的结果包含以下几个重要的列：</p>
+<h3 id="id">id<a hidden class="anchor" aria-hidden="true" href="#id">#</a></h3>
+<p>查询的标识符，如果一个查询包含多个子查询，那么每个子查询都会有一个不同的id。</p>
+<h3 id="select_type">select_type<a hidden class="anchor" aria-hidden="true" href="#select_type">#</a></h3>
+<p>表示对应行是简单还是复杂的查询。</p>
+<ul>
+<li>simple：简单查询。查询不包含子查询和union</li>
+<li>primary：复杂查询中最外层的 select</li>
+<li>subquery：包含在 select 中的子查询（不在 from 子句中）</li>
+<li>derived：包含在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表（derived的英文含义）</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> customers (
+</span></span><span style="display:flex;"><span>    id INT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>,
+</span></span><span style="display:flex;"><span>    name VARCHAR(<span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> orders (
+</span></span><span style="display:flex;"><span>    id INT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>,
+</span></span><span style="display:flex;"><span>    customer_id INT,
+</span></span><span style="display:flex;"><span>    amount DECIMAL(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> customers (id, name) <span style="color:#66d9ef">VALUES</span> 
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;John&#39;</span>),
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#39;Jane&#39;</span>),
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">3</span>, <span style="color:#e6db74">&#39;Bob&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> orders (id, customer_id, amount) <span style="color:#66d9ef">VALUES</span> 
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">100</span>.<span style="color:#ae81ff">00</span>),
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">200</span>.<span style="color:#ae81ff">00</span>),
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">300</span>.<span style="color:#ae81ff">00</span>),
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">400</span>.<span style="color:#ae81ff">00</span>),
+</span></span><span style="display:flex;"><span>(<span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">500</span>.<span style="color:#ae81ff">00</span>);
+</span></span></code></pre></div><p><img loading="lazy" src="image-1.png" alt="alt text"  />
+</p>
+<h3 id="table">table<a hidden class="anchor" aria-hidden="true" href="#table">#</a></h3>
+<p>查询涉及到的表。</p>
+<h3 id="type">type<a hidden class="anchor" aria-hidden="true" href="#type">#</a></h3>
+<p>访问类型，表示MySQL如何访问表</p>
+<p>依次从最优到最差分别为：system &gt; const &gt; eq_ref &gt; ref &gt; range &gt; index &gt; ALL</p>
+<p>一般来说，得保证查询达到range级别，最好达到ref</p>
+<p><strong>const, system</strong>：MySQL能对查询的某部分进行优化并将其转化成一个常量（可以看show warnings 的结果）。用于 primary key 或 unique key 的所有列与常数比较时，所以表最多有一个匹配行，读取1次，速度比较快。system是const的特例，表里只有一条元组匹配时为system</p>
+<p><strong>eq_ref</strong></p>
+<p>primary key 或 unique key 索引的所有部分被连接使用 ，最多只会返回一条符合条件的记录。这可能是在 const 之外最好的联接类型了，简单的 select 查询不会出现这种 type。</p>
+<p><strong>ref</strong></p>
+<p>相比 eq_ref，不使用唯一索引，而是使用普通索引或者唯一性索引的部分前缀，索引要和某个值相比较，可能会找到多个符合条件的行。</p>
+<p><strong>range</strong>
+范围扫描通常出现在 in(), between ,&gt; ,&lt;, &gt;= 等操作中。使用一个索引来检索给定范围的行。</p>
+<p><strong>index</strong>
+表示进行了全索引扫描，也就是说，MySQL扫描了整个索引来查找匹配的行。这通常比全表扫描要好，因为索引通常比整个表要小，所以扫描起来更快。然而，如果索引很大，或者匹配的行很多，那么这种类型可能并不比其他类型要好。</p>
+<p><strong>ALL</strong>
+即全表扫描，扫描你的聚簇索引的所有叶子节点。通常情况下这需要增加索引来进行优化了。</p>
+<h3 id="possible_keys">possible_keys<a hidden class="anchor" aria-hidden="true" href="#possible_keys">#</a></h3>
+<p>可能使用的索引。</p>
+<h3 id="key">key<a hidden class="anchor" aria-hidden="true" href="#key">#</a></h3>
+<p>实际使用的索引。</p>
+<h3 id="key_len">key_len<a hidden class="anchor" aria-hidden="true" href="#key_len">#</a></h3>
+<p>使用的索引的长度。</p>
+<h3 id="ref">ref<a hidden class="anchor" aria-hidden="true" href="#ref">#</a></h3>
+<p>索引的参考列，表示通过哪些列或常量来查找索引。</p>
+<h3 id="rows">rows<a hidden class="anchor" aria-hidden="true" href="#rows">#</a></h3>
+<p>预计要扫描的行数。</p>
+<h3 id="partition">partition<a hidden class="anchor" aria-hidden="true" href="#partition">#</a></h3>
+<p>这个字段显示了查询涉及的分区信息。如果你的表没有使用分区，那么这个字段的值就会是NULL。如果你的查询只涉及到表的某个分区，那么这个字段就会显示那个分区的名字。如果你的查询涉及到表的多个分区，那么这个字段就会显示为多个分区的名字，用逗号分隔。</p>
+<h3 id="filtered">filtered<a hidden class="anchor" aria-hidden="true" href="#filtered">#</a></h3>
+<p>是一个半分比的值，rows * filtered/100 可以估算出将要和 explain 中前一个表进行连接的行数</p>
+<h3 id="extra">Extra<a hidden class="anchor" aria-hidden="true" href="#extra">#</a></h3>
+<p>额外的信息，例如是否使用了文件排序，是否使用了临时表等。</p>
+<p><strong>Using where</strong></p>
+<p>这表示MySQL服务器将在存储引擎检索行后再进行过滤。这意味着存储引擎返回的行并不都符合WHERE子句的条件。</p>
+<p><strong>Using temporary</strong></p>
+<p>这表示MySQL需要使用一个临时表来存储结果，这通常发生在对不同的列进行ORDER BY和GROUP BY的时候。</p>
+<p><strong>Using filesort</strong></p>
+<p>这表示MySQL会对结果使用一个外部索引排序，而不是按照表内的索引顺序进行读取。需要注意的是，尽管名称是filesort，但并不一定会进行磁盘操作，数据可能会被放在内存中排序，只有在数据量大于内存时，才会使用磁盘。</p>
+<p><strong>Using index</strong></p>
+<p>这表示MySQL使用覆盖索引</p>
+<p>覆盖索引定义：MySQL执行计划explain结果里的key有使用索引，如果select后面查询的字段都可以从这个索引的树中获取，这种情况一般可以说是用到了覆盖索引，extra里一般都有using index；覆盖索引一般针对的是辅助索引，整个查询结果只通过辅助索引就能拿到结果，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其它字段值</p>
+<p><strong>Using index condition</strong></p>
+<p>查询的列不完全被索引覆盖，where条件中是一个前导列的范围；</p>
+<p><strong>Using join buffer</strong></p>
+<p>这表示MySQL在进行表连接时使用了连接缓冲区。</p>
+<h2 id="索引最佳实践">索引最佳实践<a hidden class="anchor" aria-hidden="true" href="#索引最佳实践">#</a></h2>
+<p>示例表：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#f92672">`</span>employees<span style="color:#f92672">`</span> (
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>id<span style="color:#f92672">`</span> int(<span style="color:#ae81ff">11</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> AUTO_INCREMENT,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>name<span style="color:#f92672">`</span> varchar(<span style="color:#ae81ff">24</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#e6db74">&#39;&#39;</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;姓名&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>age<span style="color:#f92672">`</span> int(<span style="color:#ae81ff">11</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#e6db74">&#39;0&#39;</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;年龄&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span><span style="color:#66d9ef">position</span><span style="color:#f92672">`</span> varchar(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#e6db74">&#39;&#39;</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;职位&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>hire_time<span style="color:#f92672">`</span> <span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;入职时间&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> (<span style="color:#f92672">`</span>id<span style="color:#f92672">`</span>),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">KEY</span> <span style="color:#f92672">`</span>idx_name_age_position<span style="color:#f92672">`</span> (<span style="color:#f92672">`</span>name<span style="color:#f92672">`</span>,<span style="color:#f92672">`</span>age<span style="color:#f92672">`</span>,<span style="color:#f92672">`</span><span style="color:#66d9ef">position</span><span style="color:#f92672">`</span>) <span style="color:#66d9ef">USING</span> BTREE
+</span></span><span style="display:flex;"><span>) ENGINE<span style="color:#f92672">=</span>InnoDB AUTO_INCREMENT<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span> <span style="color:#66d9ef">DEFAULT</span> CHARSET<span style="color:#f92672">=</span>utf8 <span style="color:#66d9ef">COMMENT</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;员工记录表&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> employees(name,age,<span style="color:#66d9ef">position</span>,hire_time) <span style="color:#66d9ef">VALUES</span>(<span style="color:#e6db74">&#39;LiLei&#39;</span>,<span style="color:#ae81ff">22</span>,<span style="color:#e6db74">&#39;manager&#39;</span>,NOW());
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> employees(name,age,<span style="color:#66d9ef">position</span>,hire_time) <span style="color:#66d9ef">VALUES</span>(<span style="color:#e6db74">&#39;HanMeimei&#39;</span>, <span style="color:#ae81ff">23</span>,<span style="color:#e6db74">&#39;dev&#39;</span>,NOW());
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> employees(name,age,<span style="color:#66d9ef">position</span>,hire_time) <span style="color:#66d9ef">VALUES</span>(<span style="color:#e6db74">&#39;Lucy&#39;</span>,<span style="color:#ae81ff">23</span>,<span style="color:#e6db74">&#39;dev&#39;</span>,NOW());
+</span></span></code></pre></div><h3 id="1全值匹配">1.全值匹配<a hidden class="anchor" aria-hidden="true" href="#1全值匹配">#</a></h3>
+<p><img loading="lazy" src="image-2.png" alt="alt text"  />
+</p>
+<p><img loading="lazy" src="image-3.png" alt="alt text"  />
+</p>
+<h3 id="2最左前缀法则">2.最左前缀法则<a hidden class="anchor" aria-hidden="true" href="#2最左前缀法则">#</a></h3>
+<p>如果索引了多列，要遵守最左前缀法则。指的是查询从索引的最左前列开始并且不跳过索引中的列。</p>
+<p><img loading="lazy" src="image-4.png" alt="alt text"  />
+</p>
+<p>下面这个查询就不符合最左前缀法则：
+<img loading="lazy" src="image-5.png" alt="alt text"  />
+</p>
+<p>注意看下面这个写法
+<img loading="lazy" src="image-6.png" alt="alt text"  />
+</p>
+<p>这是因为MySQL进行了优化，所以也走了索引，日常开发中要注意SQL语句的规范。</p>
+<h3 id="3不在索引列上做任何操作计算函数自动or手动类型转换会导致索引失效而转向全表扫描">3.不在索引列上做任何操作（计算、函数、（自动or手动）类型转换），会导致索引失效而转向全表扫描<a hidden class="anchor" aria-hidden="true" href="#3不在索引列上做任何操作计算函数自动or手动类型转换会导致索引失效而转向全表扫描">#</a></h3>
+<p><img loading="lazy" src="image-7.png" alt="alt text"  />
+</p>
+<h3 id="4日期类字段如果有索引使用范围查询有可能会走索引">4.日期类字段如果有索引，使用范围查询有可能会走索引<a hidden class="anchor" aria-hidden="true" href="#4日期类字段如果有索引使用范围查询有可能会走索引">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#f92672">`</span>employees<span style="color:#f92672">`</span> <span style="color:#66d9ef">ADD</span> <span style="color:#66d9ef">INDEX</span> <span style="color:#f92672">`</span>idx_hire_time<span style="color:#f92672">`</span> (<span style="color:#f92672">`</span>hire_time<span style="color:#f92672">`</span>) <span style="color:#66d9ef">USING</span> BTREE ;
+</span></span></code></pre></div><p><img loading="lazy" src="image-8.png" alt="alt text"  />
+</p>
+<p>使用范围查询：
+<img loading="lazy" src="image-9.png" alt="alt text"  />
+</p>
+<h3 id="5存储引擎不能使用索引中范围条件右边的列">5.存储引擎不能使用索引中范围条件右边的列<a hidden class="anchor" aria-hidden="true" href="#5存储引擎不能使用索引中范围条件右边的列">#</a></h3>
+<p>在MySQL中，当你在多个列上创建一个联合索引时，索引的顺序是非常重要的。索引中的列顺序决定了哪些查询可以有效地使用索引。</p>
+<p>当你在查询中使用范围条件时（比如使用BETWEEN、&lt;、&gt;等操作符），索引只能在范围条件的列上起作用，而不能在其右边的列上起作用。这是因为一旦MySQL在索引中找到了满足范围条件的第一个值，它就必须扫描索引中的所有后续值，直到找到不满足范围条件的值。</p>
+<p>例如，假设你有一个在列a和b上的联合索引，你的查询是WHERE a = 1 AND b &gt; 2。在这种情况下，索引可以在列a和b上起作用，因为a是一个常数条件，b是一个范围条件。但是，如果你的查询是WHERE a &gt; 1 AND b = 2，那么索引只能在列a上起作用，因为a是一个范围条件，而b在其右边。</p>
+<p>所以，当你在设计索引和查询时，你需要考虑你的查询中的条件。如果可能，你应该尽量将范围条件放在联合索引的最右边，这样可以使索引在更多的列上起作用。
+<img loading="lazy" src="image-10.png" alt="alt text"  />
+</p>
+<p><img loading="lazy" src="image-11.png" alt="alt text"  />
+</p>
+<h3 id="6尽量使用覆盖索引">6.尽量使用覆盖索引<a hidden class="anchor" aria-hidden="true" href="#6尽量使用覆盖索引">#</a></h3>
+<p>即只使用索引的查询（索引列包含查询的列），禁止或减少 select * 语句。</p>
+<h3 id="7尽量避免使用那些无法有效利用索引的操作符">7.尽量避免使用那些无法有效利用索引的操作符<a hidden class="anchor" aria-hidden="true" href="#7尽量避免使用那些无法有效利用索引的操作符">#</a></h3>
+<p>MySQL的索引是基于B-Tree（平衡多路查找树）或者Hash（哈希）等数据结构实现的。这些数据结构在处理等值查询（=）和范围查询（&lt;、&gt;、&lt;=、&gt;=）时非常高效，因为它们可以快速定位到满足条件的数据。然而，对于不等于（!=或&lt;&gt;）、NOT IN和NOT EXISTS等查询，索引就无法高效地工作了。</p>
+<p>不等于（!=或&lt;&gt;）：当你使用不等于操作符时，满足条件的数据可能分布在整个表中，MySQL无法通过索引快速定位到这些数据，因此它需要扫描整个表。
+NOT IN和NOT EXISTS：这两种操作符的情况与不等于操作符类似。它们都是在查找不满足某个条件的数据，这些数据可能分布在整个表中，因此MySQL需要扫描整个表。</p>
+<p>对于&lt;、&gt;、&lt;=、&gt;=这些操作符，MySQL的查询优化器会根据表的大小、数据的分布、查询的选择性等因素来决定是否使用索引。如果使用索引能够显著减少需要访问的数据量，那么MySQL就会选择使用索引；否则，它可能会选择全表扫描。</p>
+<p>总的来说，当你在设计数据库和查询时，你需要考虑这些因素，尽量避免使用那些无法有效利用索引的操作符。如果必须使用这些操作符，你可能需要考虑其他的优化策略，比如改变表的结构，或者使用其他的查询方法。</p>
+<h3 id="8尽量不使用-is-nullis-not-null">8.尽量不使用 is null,is not null<a hidden class="anchor" aria-hidden="true" href="#8尽量不使用-is-nullis-not-null">#</a></h3>
+<p>is null,is not null  一般情况下也无法使用索引</p>
+<h3 id="9避免-like以通配符开头abc">9.避免 like以通配符开头（&rsquo;$abc&hellip;&rsquo;）<a hidden class="anchor" aria-hidden="true" href="#9避免-like以通配符开头abc">#</a></h3>
+<p>like以通配符开头（&rsquo;$abc&hellip;&rsquo;） MySQL索引失效会变成全表扫描操作</p>
+<p>如果要使用 like &lsquo;%abc%&rsquo; 可以考虑全文索引（FULLTEXT），或者其他搜索引擎如Elasticsearch。</p>
+<h3 id="10字符串不加单引号索引失效">10.字符串不加单引号索引失效<a hidden class="anchor" aria-hidden="true" href="#10字符串不加单引号索引失效">#</a></h3>
+<p>因为发生了转换
+<img loading="lazy" src="image-12.png" alt="alt text"  />
+
+<img loading="lazy" src="image-13.png" alt="alt text"  />
+</p>
+<h3 id="11少用or或in">11.少用or或in<a hidden class="anchor" aria-hidden="true" href="#11少用or或in">#</a></h3>
+<p>用它查询时，MySQL不一定使用索引，MySQL内部优化器会根据检索比例、表大小等多个因素整体评估是否使用索引，详见范围查询优化</p>
+<h3 id="12范围查询优化">12.范围查询优化<a hidden class="anchor" aria-hidden="true" href="#12范围查询优化">#</a></h3>
+<ol>
+<li>考虑增加索引</li>
+<li>查询时可以将大的范围拆分成多个小范围</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
