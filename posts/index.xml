@@ -6,8 +6,66 @@
     <description>Recent content in Posts on Ycchi0 Blog</description>
     <generator>Hugo -- 0.123.7</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 30 May 2024 08:00:45 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 30 May 2024 16:27:47 +0000</lastBuildDate>
     <atom:link href="https://ycchi0.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>跨域问题处理方案</title>
+      <link>https://ycchi0.github.io/posts/%E5%A4%84%E7%90%86%E8%B7%A8%E5%9F%9F/</link>
+      <pubDate>Thu, 30 May 2024 16:27:47 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/%E5%A4%84%E7%90%86%E8%B7%A8%E5%9F%9F/</guid>
+      <description>使用 Nginx 反向代理处理跨域问题 在 Nginx 配置文件中设置一个代理服务器，并添加一些额外的头信息。
+location /api/ { add_header &amp;#39;Access-Control-Allow-Origin&amp;#39; &amp;#39;*&amp;#39;; add_header &amp;#39;Access-Control-Allow-Methods&amp;#39; &amp;#39;GET, POST, OPTIONS&amp;#39;; add_header &amp;#39;Access-Control-Allow-Headers&amp;#39; &amp;#39;DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range&amp;#39;; add_header &amp;#39;Access-Control-Expose-Headers&amp;#39; &amp;#39;Content-Length,Content-Range&amp;#39;; proxy_pass http://target.com; } 然后重启 Nginx 以应用这些更改：
+在 Vue.js 项目中处理跨域问题 在vue.config.js文件中，配置 devServer.proxy 选项来设置代理规则。例如：
+module.exports = { devServer: { host: &amp;#34;127.0.0.1&amp;#34;, port: 8084, open: true, proxy: { &amp;#34;/api&amp;#34;: { // &amp;#39;/api&amp;#39;是代理标识，用于告诉node，url前面是/api的就是使用代理的 target: &amp;#34;http://xxx.xxx.xx.xx:8080&amp;#34;, //目标地址，一般是指后台服务器地址 changeOrigin: true, //是否跨域 pathRewrite: { // pathRewrite 的作用是把实际Request Url中的&amp;#39;/api&amp;#39;用&amp;#34;&amp;#34;代替 &amp;#34;^/api&amp;#34;: &amp;#34;&amp;#34;, }, }, }, }, }; 保存并重启 Vue 开发服务器，新的代理设置应该就生效了。 注意：这种方法只在开发环境中有效，因为它依赖于 Vue CLI 的开发服务器。在生产环境中，你可能需要在你的后端服务器上设置 CORS 或使用其他方法来处理跨域问题。</description>
+    </item>
+    <item>
+      <title>Redis 缓存设计</title>
+      <link>https://ycchi0.github.io/posts/redis%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/</link>
+      <pubDate>Thu, 30 May 2024 09:55:49 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/redis%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/</guid>
+      <description>典型 Web 应用缓存设计架构 在一个典型的 Web 应用中，从前端请求到 Nginx 再到后端服务的多级缓存设计可以如下：
+浏览器缓存：这是最接近用户的一级缓存。浏览器会根据 HTTP 的缓存控制头字段（如 Expires、Cache-Control、Last-Modified、ETag 等）来决定是否需要向服务器发送请求，还是直接从本地缓存中获取资源。
+CDN 缓存：内容分发网络（CDN）是一种常见的缓存策略，它可以将内容缓存到离用户最近的节点，从而减少网络延迟。当用户的请求到达 CDN 节点时，如果节点中有缓存的内容，就直接返回给用户；如果没有，就向源服务器请求内容，并将内容缓存到节点中。
+Nginx 缓存：Nginx 是一种常见的反向代理服务器，它可以将后端服务器的响应缓存起来，从而减少对后端服务器的请求。当用户的请求到达 Nginx 时，如果 Nginx 中有缓存的响应，就直接返回给用户；如果没有，就向后端服务器请求内容，并将响应缓存起来。
+应用服务器本地缓存：应用服务器可以使用本地内存作为缓存，存储经常访问的数据。这样，对于相同的请求，应用服务器可以直接从本地缓存中获取数据，而不需要访问数据库或者分布式缓存。这种缓存的优点是访问速度快，但是缺点是无法在多个应用服务器之间共享数据。
+分布式缓存：当数据不在应用服务器的本地缓存中时，应用服务器可以从分布式缓存（如 Redis 或 Memcached）中获取数据。分布式缓存可以在多个应用服务器之间共享数据，但是访问速度相对于本地缓存会慢一些。
+数据库缓存：数据库也有自己的缓存机制，例如 MySQL 的查询缓存。当收到相同的查询请求时，数据库可以直接从缓存中返回结果，而不需要再次执行查询。
+在这个过程中，每一级缓存都可以减少对下一级的访问，从而提高系统的性能。
+但是，也需要注意缓存的更新和失效问题，以保证数据的一致性。
+缓存设计 在设计缓存系统时，我们需要考虑以下几个问题：
+缓存穿透 缓存穿透是指用户查询的数据既不在缓存中，也不在数据库中，这样的查询请求就会“穿透”缓存层，直接请求数据库。这种情况通常发生在用户查询一些不存在的数据时。
+例如，假设我们有一个商品信息的系统，用户可以通过商品 ID 查询商品信息。
+当用户查询一个不存在的商品 ID 时，系统首先会在缓存中查找，如果没有找到，就会去数据库中查找。但是因为这个商品 ID 不存在，所以数据库中也找不到。这样，每次查询这个商品 ID，都会直接访问数据库，而不会利用到缓存。
+如果有大量这样的查询请求，就会给数据库带来很大的压力，可能导致数据库崩溃。这就是缓存穿透。
+为了防止缓存穿透，常见的解决方案有：
+过滤非法请求：在应用层增加校验，对于用户的输入进行校验，过滤掉不存在的查询。
+使用布隆过滤器：布隆过滤器是一种数据结构，它可以用来判断一个元素是否在一个集合中。我们可以将所有可能存在的数据哈希到布隆过滤器中，当用户查询数据时，先在布隆过滤器中查找，如果布隆过滤器判断数据不存在，就直接返回，不再查询缓存和数据库。
+缓存空对象：即使数据库中没有数据，也将“空”结果进行缓存，但是这种缓存的有效期通常设置得比较短。
+缓存击穿 缓存击穿是指当某个热点数据的缓存过期失效的瞬间，大量的请求同时涌入，这些请求都会穿透缓存直接请求数据库，可能会导致数据库瞬间压力过大。
+举个例子，假设一个电商网站的某个热销商品信息被大量用户频繁查询，这个商品信息在缓存中有对应的缓存项。
+然而，当这个缓存项到达过期时间，还没有来得及被更新，此时又有大量的请求涌入查询这个商品信息，这些请求会直接打到数据库上，可能会导致数据库压力过大，甚至崩溃，这就是缓存击穿。
+为了防止缓存击穿，常见的解决方案有：
+设置热点数据永不过期：对于一些访问非常频繁的热点数据，可以设置其在缓存中永不过期，或者在程序中控制在缓存失效后立即重新加载。
+使用互斥锁：当缓存失效的时候，不是立即去加载数据库，而是先使用缓存工具的某些带成功操作返回值的操作（比如 Redis 的 SETNX 或者 Memcached 的 ADD），当操作返回成功时，再去加载数据库，否则，就重试获取缓存。这样可以保证对于一个 key，数据库只会被加载一次。
+使用缓存预热策略：缓存预热就是系统上线后，将可能被用户访问的数据主动加载到缓存中，这样用户在访问数据时，就已经在缓存中了。可以通过定时任务，在非高峰时间对可能的热点数据进行预热，加载到缓存中。
+设置不同的过期时间：为了避免大量的缓存同时过期，可以为每个缓存设置不同的过期时间，比如在一个基础过期时间上加上一个随机值。
+缓存雪崩 缓存雪崩指的是缓存层支撑不住或宕掉后， 流量会像奔逃的野牛一样， 打向后端存储层。</description>
+    </item>
+    <item>
+      <title>Redis的单线程和高性能</title>
+      <link>https://ycchi0.github.io/posts/redis%E7%9A%84%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%92%8C%E9%AB%98%E6%80%A7%E8%83%BD/</link>
+      <pubDate>Thu, 30 May 2024 09:12:51 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/redis%E7%9A%84%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%92%8C%E9%AB%98%E6%80%A7%E8%83%BD/</guid>
+      <description>Redis是单线程吗？ Redis 的单线程主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外提供键值存储服务的主要流程。
+但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其 实是由额外的线程执行的。
+Redis 单线程如何处理那么多的并发客户端连接？ Redis的IO多路复用：redis利用epoll来实现IO多路复用，将连接信息和事件放到队列中，依次放到文件事件分派器，事件分派器将事件分发给事件处理器。
+Redis 单线程为什么还能这么快？ 因为它所有的数据都在内存中，所有的运算都是内存级别的运算，而且单线程避免了多线程的切换性能损耗问题。
+正因为 Redis 是单线程，所以要小心使用 Redis 指令，对于那些耗时的指令(比如keys)，一定要谨慎使用，一不小心就可能会导致 Redis 卡顿。
+Redis 遍历 keys 用来列出所有满足特定正则字符串规则的key，当redis数据量比较大时，性能比较差，要避免使用。
+在需要遍历的场景下，需要使用 scan 命令进行渐进式遍历
+SCAN cursor [MATCH pattern] [COUNT count] scan 参数提供了三个参数，第一个是 cursor 整数值(hash桶的索引值)，第二个是 key 的正则模式，第三个是一次遍历的key的数量(参考值，底层遍历的数量不一定)，并不是符合条件的结果数量。第一次遍历时，cursor 值为 0，然后将返回结果中第一个整数值作为下一次遍历的 cursor。一直遍历 到返回的 cursor 值为 0 时结束。
+注意：但是scan并非完美无瑕， 如果在scan的过程中如果有键的变化（增加、 删除、 修改） ，那么遍历效果可能会碰到如下问题： 新增的键可能没有遍历到， 遍历出了重复的键等情况， 也就是说scan并不能保证完整的遍历出来所有的键， 这些是我们在开发时需要考虑的。</description>
+    </item>
     <item>
       <title>Redis核心数据结构及应用场景</title>
       <link>https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>

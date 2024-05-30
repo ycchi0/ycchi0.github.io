@@ -128,6 +128,79 @@
 
 <article class="first-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">跨域问题处理方案
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>使用 Nginx 反向代理处理跨域问题 在 Nginx 配置文件中设置一个代理服务器，并添加一些额外的头信息。
+location /api/ { add_header &#39;Access-Control-Allow-Origin&#39; &#39;*&#39;; add_header &#39;Access-Control-Allow-Methods&#39; &#39;GET, POST, OPTIONS&#39;; add_header &#39;Access-Control-Allow-Headers&#39; &#39;DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range&#39;; add_header &#39;Access-Control-Expose-Headers&#39; &#39;Content-Length,Content-Range&#39;; proxy_pass http://target.com; } 然后重启 Nginx 以应用这些更改：
+在 Vue.js 项目中处理跨域问题 在vue.config.js文件中，配置 devServer.proxy 选项来设置代理规则。例如：
+module.exports = { devServer: { host: &#34;127.0.0.1&#34;, port: 8084, open: true, proxy: { &#34;/api&#34;: { // &#39;/api&#39;是代理标识，用于告诉node，url前面是/api的就是使用代理的 target: &#34;http://xxx.xxx.xx.xx:8080&#34;, //目标地址，一般是指后台服务器地址 changeOrigin: true, //是否跨域 pathRewrite: { // pathRewrite 的作用是把实际Request Url中的&#39;/api&#39;用&#34;&#34;代替 &#34;^/api&#34;: &#34;&#34;, }, }, }, }, }; 保存并重启 Vue 开发服务器，新的代理设置应该就生效了。 注意：这种方法只在开发环境中有效，因为它依赖于 Vue CLI 的开发服务器。在生产环境中，你可能需要在你的后端服务器上设置 CORS 或使用其他方法来处理跨域问题。</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-30 16:27:47 +0000 UTC'>May 30, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 跨域问题处理方案" href="https://ycchi0.github.io/posts/%E5%A4%84%E7%90%86%E8%B7%A8%E5%9F%9F/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Redis 缓存设计
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>典型 Web 应用缓存设计架构 在一个典型的 Web 应用中，从前端请求到 Nginx 再到后端服务的多级缓存设计可以如下：
+浏览器缓存：这是最接近用户的一级缓存。浏览器会根据 HTTP 的缓存控制头字段（如 Expires、Cache-Control、Last-Modified、ETag 等）来决定是否需要向服务器发送请求，还是直接从本地缓存中获取资源。
+CDN 缓存：内容分发网络（CDN）是一种常见的缓存策略，它可以将内容缓存到离用户最近的节点，从而减少网络延迟。当用户的请求到达 CDN 节点时，如果节点中有缓存的内容，就直接返回给用户；如果没有，就向源服务器请求内容，并将内容缓存到节点中。
+Nginx 缓存：Nginx 是一种常见的反向代理服务器，它可以将后端服务器的响应缓存起来，从而减少对后端服务器的请求。当用户的请求到达 Nginx 时，如果 Nginx 中有缓存的响应，就直接返回给用户；如果没有，就向后端服务器请求内容，并将响应缓存起来。
+应用服务器本地缓存：应用服务器可以使用本地内存作为缓存，存储经常访问的数据。这样，对于相同的请求，应用服务器可以直接从本地缓存中获取数据，而不需要访问数据库或者分布式缓存。这种缓存的优点是访问速度快，但是缺点是无法在多个应用服务器之间共享数据。
+分布式缓存：当数据不在应用服务器的本地缓存中时，应用服务器可以从分布式缓存（如 Redis 或 Memcached）中获取数据。分布式缓存可以在多个应用服务器之间共享数据，但是访问速度相对于本地缓存会慢一些。
+数据库缓存：数据库也有自己的缓存机制，例如 MySQL 的查询缓存。当收到相同的查询请求时，数据库可以直接从缓存中返回结果，而不需要再次执行查询。
+在这个过程中，每一级缓存都可以减少对下一级的访问，从而提高系统的性能。
+但是，也需要注意缓存的更新和失效问题，以保证数据的一致性。
+缓存设计 在设计缓存系统时，我们需要考虑以下几个问题：
+缓存穿透 缓存穿透是指用户查询的数据既不在缓存中，也不在数据库中，这样的查询请求就会“穿透”缓存层，直接请求数据库。这种情况通常发生在用户查询一些不存在的数据时。
+例如，假设我们有一个商品信息的系统，用户可以通过商品 ID 查询商品信息。
+当用户查询一个不存在的商品 ID 时，系统首先会在缓存中查找，如果没有找到，就会去数据库中查找。但是因为这个商品 ID 不存在，所以数据库中也找不到。这样，每次查询这个商品 ID，都会直接访问数据库，而不会利用到缓存。
+如果有大量这样的查询请求，就会给数据库带来很大的压力，可能导致数据库崩溃。这就是缓存穿透。
+为了防止缓存穿透，常见的解决方案有：
+过滤非法请求：在应用层增加校验，对于用户的输入进行校验，过滤掉不存在的查询。
+使用布隆过滤器：布隆过滤器是一种数据结构，它可以用来判断一个元素是否在一个集合中。我们可以将所有可能存在的数据哈希到布隆过滤器中，当用户查询数据时，先在布隆过滤器中查找，如果布隆过滤器判断数据不存在，就直接返回，不再查询缓存和数据库。
+缓存空对象：即使数据库中没有数据，也将“空”结果进行缓存，但是这种缓存的有效期通常设置得比较短。
+缓存击穿 缓存击穿是指当某个热点数据的缓存过期失效的瞬间，大量的请求同时涌入，这些请求都会穿透缓存直接请求数据库，可能会导致数据库瞬间压力过大。
+举个例子，假设一个电商网站的某个热销商品信息被大量用户频繁查询，这个商品信息在缓存中有对应的缓存项。
+然而，当这个缓存项到达过期时间，还没有来得及被更新，此时又有大量的请求涌入查询这个商品信息，这些请求会直接打到数据库上，可能会导致数据库压力过大，甚至崩溃，这就是缓存击穿。
+为了防止缓存击穿，常见的解决方案有：
+设置热点数据永不过期：对于一些访问非常频繁的热点数据，可以设置其在缓存中永不过期，或者在程序中控制在缓存失效后立即重新加载。
+使用互斥锁：当缓存失效的时候，不是立即去加载数据库，而是先使用缓存工具的某些带成功操作返回值的操作（比如 Redis 的 SETNX 或者 Memcached 的 ADD），当操作返回成功时，再去加载数据库，否则，就重试获取缓存。这样可以保证对于一个 key，数据库只会被加载一次。
+使用缓存预热策略：缓存预热就是系统上线后，将可能被用户访问的数据主动加载到缓存中，这样用户在访问数据时，就已经在缓存中了。可以通过定时任务，在非高峰时间对可能的热点数据进行预热，加载到缓存中。
+设置不同的过期时间：为了避免大量的缓存同时过期，可以为每个缓存设置不同的过期时间，比如在一个基础过期时间上加上一个随机值。
+缓存雪崩 缓存雪崩指的是缓存层支撑不住或宕掉后， 流量会像奔逃的野牛一样， 打向后端存储层。...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-30 09:55:49 +0000 UTC'>May 30, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to Redis 缓存设计" href="https://ycchi0.github.io/posts/redis%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Redis的单线程和高性能
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Redis是单线程吗？ Redis 的单线程主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外提供键值存储服务的主要流程。
+但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其 实是由额外的线程执行的。
+Redis 单线程如何处理那么多的并发客户端连接？ Redis的IO多路复用：redis利用epoll来实现IO多路复用，将连接信息和事件放到队列中，依次放到文件事件分派器，事件分派器将事件分发给事件处理器。
+Redis 单线程为什么还能这么快？ 因为它所有的数据都在内存中，所有的运算都是内存级别的运算，而且单线程避免了多线程的切换性能损耗问题。
+正因为 Redis 是单线程，所以要小心使用 Redis 指令，对于那些耗时的指令(比如keys)，一定要谨慎使用，一不小心就可能会导致 Redis 卡顿。
+Redis 遍历 keys 用来列出所有满足特定正则字符串规则的key，当redis数据量比较大时，性能比较差，要避免使用。
+在需要遍历的场景下，需要使用 scan 命令进行渐进式遍历
+SCAN cursor [MATCH pattern] [COUNT count] scan 参数提供了三个参数，第一个是 cursor 整数值(hash桶的索引值)，第二个是 key 的正则模式，第三个是一次遍历的key的数量(参考值，底层遍历的数量不一定)，并不是符合条件的结果数量。第一次遍历时，cursor 值为 0，然后将返回结果中第一个整数值作为下一次遍历的 cursor。一直遍历 到返回的 cursor 值为 0 时结束。
+注意：但是scan并非完美无瑕， 如果在scan的过程中如果有键的变化（增加、 删除、 修改） ，那么遍历效果可能会碰到如下问题： 新增的键可能没有遍历到， 遍历出了重复的键等情况， 也就是说scan并不能保证完整的遍历出来所有的键， 这些是我们在开发时需要考虑的。</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-30 09:12:51 +0000 UTC'>May 30, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to Redis的单线程和高性能" href="https://ycchi0.github.io/posts/redis%E7%9A%84%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%92%8C%E9%AB%98%E6%80%A7%E8%83%BD/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Redis核心数据结构及应用场景
     </h2>
   </header>
@@ -278,58 +351,6 @@ CREATE TABLE `mytable` ( `id` int unsigned NOT NULL, `a` varchar(10) COLLATE utf
   </div>
   <footer class="entry-footer"><span title='2024-05-28 10:56:23 +0000 UTC'>May 28, 2024</span></footer>
   <a class="entry-link" aria-label="post link to MySQL关于only_full_group_by限制" href="https://ycchi0.github.io/posts/mysql%E5%85%B3%E4%BA%8Eonly_full_group_by%E9%99%90%E5%88%B6/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">SQL基础
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>前言 在平时的工作中，大家可能是 ORM 战士。但是 ORM 之下，还是原生的 SQL。这是整理 SQL 基础时的一些记录。
-DDL 数据定义语言,用来定义数据库对象，包括数据库、数据表和列。
-DML 数据操作语言，用来操作和数据库相关的记录，比如增加、删除、修改数据表中的记录。
-DCL 数据控制语言，用来定义访问权限和安全级别。
-DQL 数据查询语言，用来查询想要的记录。
-SQL语句书写规范 参考：
-表名、表别名、字段名、字段别名等都小写
-SQL 保留字、函数名、绑定变量等都大写
-SQL 排序 ORDER BY ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推。 ORDER BY 后面可以注明排序规则，ASC 代表递增排序，DESC 代表递减排序。默认情况下是按照 ASC 递增排序。 ORDER BY 可以使用非选择列进行排序，即使在 SELECT 后面没有这个列名，同样可以放到 ORDER BY 后面进行排序。 SELECT 的执行顺序 1.关键字语法顺序 SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... 其中 WHERE 和 HAVING 的区别在于，WHERE 是对数据行进行过滤，而 HAVING 是对分组数据进行过滤。
-2.语句的执行顺序(以MySQL为例) FROM &gt; WHERE &gt; GROUP BY &gt; HAVING &gt; SELECT 的字段 &gt; DISTINCT &gt; ORDER BY &gt; LIMIT (5)SELECT DISTINCT &lt;select_list&gt; (1)FROM &lt;left_table&gt; &lt;join_type&gt; JOIN &lt;right_table&gt; ON &lt;on_predicate&gt; (2)WHERE &lt;where_predicate&gt; (3)GROUP BY &lt;group_by_specification&gt; (4)HAVING &lt;having_predicate&gt; (6)ORDER BY &lt;order_by_list&gt; (7)LIMIT n, m 这些步骤执行时，每个步骤都会产生一个虚拟表，该虚拟表被用作下一个步骤的输入。这些虚拟表对调用者（客户端应用程序或者外部查询）无感知的。只有最后一步生成的表才会返回给调用者。如果没有在查询中指定某一子句，将跳过相应的步骤。...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-28 10:51:29 +0000 UTC'>May 28, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to SQL基础" href="https://ycchi0.github.io/posts/sql%E5%9F%BA%E7%A1%80/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">CSS清除浮动
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>谈谈 BFC 当一个盒子没有设置 height, 而子盒子又都设置浮动时，此时这个盒子会塌陷。 如下：
-&lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;style&gt; .box { width: 600px; border: 10px solid #a89393; } .box .c1 { width: 300px; height: 200px; background-color: orange; float: left; } .box .c2 { width: 300px; height: 200px; background-color: blue; float: left; } &lt;/style&gt; &lt;/head&gt; &lt;body&gt; &lt;div class=&#34;box&#34;&gt; &lt;div class=&#34;c1&#34;&gt;&lt;/div&gt; &lt;div class=&#34;c2&#34;&gt;&lt;/div&gt; &lt;/div&gt; &lt;/body&gt; &lt;/html&gt; 造成这个现象的原因，就是这个父盒子没有产生 BFC。
-那么什么是 BFC 呢 ？ 根据 MDN 的定义，BFC(区块格式化上下文)是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。 下列方式会创建块格式化上下文： 本质上来说，只要创建了 BFC,浮动的问题就解决了。...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-28 08:50:13 +0000 UTC'>May 28, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to CSS清除浮动" href="https://ycchi0.github.io/posts/css%E6%B8%85%E9%99%A4%E6%B5%AE%E5%8A%A8/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Vif和vshow
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>v-if 与 v-show 的共同点 v-if v-show 都是 Vue 中用来控制元素显示与否的。
-v-if 与 v-show 的区别 v-show隐藏则是为该元素添加css–display:none，dom元素依旧还在。v-if显示隐藏是将dom元素整个添加或删除
-v-show 由false变为true的时候不会触发组件的生命周期
-v-if由false变为true的时候，触发组件的beforeCreate、create、beforeMount、mounted钩子，由true变为false的时候触发组件的beforeDestory、destoryed方法
-v-if 与 v-show 的使用场景 需要非常频繁地切换，则使用 v-show 较好
-运行时条件很少改变时，则使用 v-if 较好</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-24 13:13:11 +0000 UTC'>May 24, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to Vif和vshow" href="https://ycchi0.github.io/posts/vif%E5%92%8Cvshow/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
