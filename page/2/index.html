@@ -128,6 +128,28 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods 
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Vue 中 computed, watch 和 methods 区别 在Vue 中，我们有几种处理数据和逻辑的方式。
+本文将重点探讨computed, watch 和 methods 的区别和使用场景。
+computed 在Vue中，computed用于处理依赖其他属性的计算结果。它是由缓存的，只有当依赖项发生更改时，才会重新计算其结果。
+setup() { const count = ref(0); const doubled = computed(() =&gt; count.value * 2); return { count, doubled } } 我们创建了一个计算属性doubled，将count进行了两倍的计算。每当 count 更新时，doubled 也会自动更新。
+watch watch用于观察和响应Vue组件中的数据更改。当被观察的数据源发生改变时，会触发一个回调函数。
+在Vue中，computed和watch是两种常见的监听数据变化和执行逻辑的手段。它们在用法和应用场景上存在一些区别：
+computed: 它用于处理依赖其他变量的计算结果。比如，你有两个变量 a 和 b，你想创建第三个变量 c，它是 a 和 b 的和。在这种情况下，你应该使用 computed。computed 属性有一个缓存机制，当依赖项没有发生改变时，它会直接返回上一次的计算结果，而不会再次执行函数。
+watch: 它用来观察vue实例上的数据变动。需要注意的是，watch 是非缓存的，即只要观察的目标发生变化 watch 就会执行，无论是否真的需要（依赖的数据是否真正发生了改变）。watch 更适合于例如：当数据变化时需要执行异步或者较长时间的操作的场景。
+另外 watch 还有跟多高阶用法和特性，本文不做讨论，具体可查询VUE 文档
+下面的例子中，我们观察count的变化，并在每次count变化时打印出变化后和变化前的值。
+setup() { const count = ref(0); watch(count, (newValue, oldValue) =&gt; { console....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-24 12:49:58 +0000 UTC'>May 24, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 在 VUE 中 ，如何正确使用 Compute、Watch 和 Methods " href="https://ycchi0.github.io/posts/vue_compute_watch_function/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">VUE生命周期函数
     </h2>
   </header>

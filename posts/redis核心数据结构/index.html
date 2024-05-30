@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Redis核心数据结构及应用场景 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="五种核心数据结构及其应用场景 String 最基本的类型，一个 key 对应一个 value，value 其实不仅可以是 String，也可以是数字。常规 key-value 缓存应用。
+应用场景
+缓存： 如果我们有一个用户信息，用户 ID 为 123，用户信息为&quot;John&quot;，我们可以这样存储：
+SET user:123 &#34;John&#34; 当我们需要获取这个用户的信息时，我们可以这样获取：
+GET user:123 计数器：
+如果我们需要对一个网页的访问次数进行计数，我们可以这样操作：
+INCR page_view:1 每当有新的访问时，我们就执行上面的命令，这样就可以实时统计网页的访问次数。
+分布式锁：
+如果我们需要对一个资源进行加锁，我们可以这样操作：
+SET lock:resource_name &#34;lock_value&#34; NX EX 30 这个命令会尝试设置一个键，如果这个键不存在，那么设置成功，我们就获取到了锁，如果这个键已经存在，那么设置失败，我们就没有获取到锁。EX 参数表示这个键的过期时间，这样可以防止死锁。
+会话缓存：
+如果我们需要存储一个用户的会话信息，我们可以这样操作：
+SET session:123 &#34;session_info&#34; 当我们需要获取这个用户的会话信息时，我们可以这样获取：
+GET session:123 页面缓存：
+如果我们需要缓存一个网页的内容，我们可以这样操作：
+SET page:1 &#34;page_content&#34; 当我们需要获取这个网页的内容时，我们可以这样获取：
+GET page:1 分布式系统全局序列号
+redis 批量生成序列号提升性能
+INCRBY orderId 1000 Hash 用于存储对象，即多个字段及字段值，通过 key 和字段名（field）来唯一确定一个值。适合用于存储对象。
+应用场景
+存储对象：哈希表是存储对象的理想选择。例如，如果你有一个用户对象，你可以使用用户的 ID 作为键，用户的其他信息（如姓名、电子邮件等）作为值。
+示例：
+HSET user:1000 name &#34;John Doe&#34; HSET user:1000 email &#34;john.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Redis核心数据结构及应用场景" />
+<meta property="og:description" content="五种核心数据结构及其应用场景 String 最基本的类型，一个 key 对应一个 value，value 其实不仅可以是 String，也可以是数字。常规 key-value 缓存应用。
+应用场景
+缓存： 如果我们有一个用户信息，用户 ID 为 123，用户信息为&quot;John&quot;，我们可以这样存储：
+SET user:123 &#34;John&#34; 当我们需要获取这个用户的信息时，我们可以这样获取：
+GET user:123 计数器：
+如果我们需要对一个网页的访问次数进行计数，我们可以这样操作：
+INCR page_view:1 每当有新的访问时，我们就执行上面的命令，这样就可以实时统计网页的访问次数。
+分布式锁：
+如果我们需要对一个资源进行加锁，我们可以这样操作：
+SET lock:resource_name &#34;lock_value&#34; NX EX 30 这个命令会尝试设置一个键，如果这个键不存在，那么设置成功，我们就获取到了锁，如果这个键已经存在，那么设置失败，我们就没有获取到锁。EX 参数表示这个键的过期时间，这样可以防止死锁。
+会话缓存：
+如果我们需要存储一个用户的会话信息，我们可以这样操作：
+SET session:123 &#34;session_info&#34; 当我们需要获取这个用户的会话信息时，我们可以这样获取：
+GET session:123 页面缓存：
+如果我们需要缓存一个网页的内容，我们可以这样操作：
+SET page:1 &#34;page_content&#34; 当我们需要获取这个网页的内容时，我们可以这样获取：
+GET page:1 分布式系统全局序列号
+redis 批量生成序列号提升性能
+INCRBY orderId 1000 Hash 用于存储对象，即多个字段及字段值，通过 key 和字段名（field）来唯一确定一个值。适合用于存储对象。
+应用场景
+存储对象：哈希表是存储对象的理想选择。例如，如果你有一个用户对象，你可以使用用户的 ID 作为键，用户的其他信息（如姓名、电子邮件等）作为值。
+示例：
+HSET user:1000 name &#34;John Doe&#34; HSET user:1000 email &#34;john." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-30T08:00:45+00:00" />
+<meta property="article:modified_time" content="2024-05-30T08:00:45+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis核心数据结构及应用场景"/>
+<meta name="twitter:description" content="五种核心数据结构及其应用场景 String 最基本的类型，一个 key 对应一个 value，value 其实不仅可以是 String，也可以是数字。常规 key-value 缓存应用。
+应用场景
+缓存： 如果我们有一个用户信息，用户 ID 为 123，用户信息为&quot;John&quot;，我们可以这样存储：
+SET user:123 &#34;John&#34; 当我们需要获取这个用户的信息时，我们可以这样获取：
+GET user:123 计数器：
+如果我们需要对一个网页的访问次数进行计数，我们可以这样操作：
+INCR page_view:1 每当有新的访问时，我们就执行上面的命令，这样就可以实时统计网页的访问次数。
+分布式锁：
+如果我们需要对一个资源进行加锁，我们可以这样操作：
+SET lock:resource_name &#34;lock_value&#34; NX EX 30 这个命令会尝试设置一个键，如果这个键不存在，那么设置成功，我们就获取到了锁，如果这个键已经存在，那么设置失败，我们就没有获取到锁。EX 参数表示这个键的过期时间，这样可以防止死锁。
+会话缓存：
+如果我们需要存储一个用户的会话信息，我们可以这样操作：
+SET session:123 &#34;session_info&#34; 当我们需要获取这个用户的会话信息时，我们可以这样获取：
+GET session:123 页面缓存：
+如果我们需要缓存一个网页的内容，我们可以这样操作：
+SET page:1 &#34;page_content&#34; 当我们需要获取这个网页的内容时，我们可以这样获取：
+GET page:1 分布式系统全局序列号
+redis 批量生成序列号提升性能
+INCRBY orderId 1000 Hash 用于存储对象，即多个字段及字段值，通过 key 和字段名（field）来唯一确定一个值。适合用于存储对象。
+应用场景
+存储对象：哈希表是存储对象的理想选择。例如，如果你有一个用户对象，你可以使用用户的 ID 作为键，用户的其他信息（如姓名、电子邮件等）作为值。
+示例：
+HSET user:1000 name &#34;John Doe&#34; HSET user:1000 email &#34;john."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Redis核心数据结构及应用场景",
+      "item": "https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Redis核心数据结构及应用场景",
+  "name": "Redis核心数据结构及应用场景",
+  "description": "五种核心数据结构及其应用场景 String 最基本的类型，一个 key 对应一个 value，value 其实不仅可以是 String，也可以是数字。常规 key-value 缓存应用。\n应用场景\n缓存： 如果我们有一个用户信息，用户 ID 为 123，用户信息为\u0026quot;John\u0026quot;，我们可以这样存储：\nSET user:123 \u0026#34;John\u0026#34; 当我们需要获取这个用户的信息时，我们可以这样获取：\nGET user:123 计数器：\n如果我们需要对一个网页的访问次数进行计数，我们可以这样操作：\nINCR page_view:1 每当有新的访问时，我们就执行上面的命令，这样就可以实时统计网页的访问次数。\n分布式锁：\n如果我们需要对一个资源进行加锁，我们可以这样操作：\nSET lock:resource_name \u0026#34;lock_value\u0026#34; NX EX 30 这个命令会尝试设置一个键，如果这个键不存在，那么设置成功，我们就获取到了锁，如果这个键已经存在，那么设置失败，我们就没有获取到锁。EX 参数表示这个键的过期时间，这样可以防止死锁。\n会话缓存：\n如果我们需要存储一个用户的会话信息，我们可以这样操作：\nSET session:123 \u0026#34;session_info\u0026#34; 当我们需要获取这个用户的会话信息时，我们可以这样获取：\nGET session:123 页面缓存：\n如果我们需要缓存一个网页的内容，我们可以这样操作：\nSET page:1 \u0026#34;page_content\u0026#34; 当我们需要获取这个网页的内容时，我们可以这样获取：\nGET page:1 分布式系统全局序列号\nredis 批量生成序列号提升性能\nINCRBY orderId 1000 Hash 用于存储对象，即多个字段及字段值，通过 key 和字段名（field）来唯一确定一个值。适合用于存储对象。\n应用场景\n存储对象：哈希表是存储对象的理想选择。例如，如果你有一个用户对象，你可以使用用户的 ID 作为键，用户的其他信息（如姓名、电子邮件等）作为值。\n示例：\nHSET user:1000 name \u0026#34;John Doe\u0026#34; HSET user:1000 email \u0026#34;john.",
+  "keywords": [
+    
+  ],
+  "articleBody": "五种核心数据结构及其应用场景 String 最基本的类型，一个 key 对应一个 value，value 其实不仅可以是 String，也可以是数字。常规 key-value 缓存应用。\n应用场景\n缓存： 如果我们有一个用户信息，用户 ID 为 123，用户信息为\"John\"，我们可以这样存储：\nSET user:123 \"John\" 当我们需要获取这个用户的信息时，我们可以这样获取：\nGET user:123 计数器：\n如果我们需要对一个网页的访问次数进行计数，我们可以这样操作：\nINCR page_view:1 每当有新的访问时，我们就执行上面的命令，这样就可以实时统计网页的访问次数。\n分布式锁：\n如果我们需要对一个资源进行加锁，我们可以这样操作：\nSET lock:resource_name \"lock_value\" NX EX 30 这个命令会尝试设置一个键，如果这个键不存在，那么设置成功，我们就获取到了锁，如果这个键已经存在，那么设置失败，我们就没有获取到锁。EX 参数表示这个键的过期时间，这样可以防止死锁。\n会话缓存：\n如果我们需要存储一个用户的会话信息，我们可以这样操作：\nSET session:123 \"session_info\" 当我们需要获取这个用户的会话信息时，我们可以这样获取：\nGET session:123 页面缓存：\n如果我们需要缓存一个网页的内容，我们可以这样操作：\nSET page:1 \"page_content\" 当我们需要获取这个网页的内容时，我们可以这样获取：\nGET page:1 分布式系统全局序列号\nredis 批量生成序列号提升性能\nINCRBY orderId 1000 Hash 用于存储对象，即多个字段及字段值，通过 key 和字段名（field）来唯一确定一个值。适合用于存储对象。\n应用场景\n存储对象：哈希表是存储对象的理想选择。例如，如果你有一个用户对象，你可以使用用户的 ID 作为键，用户的其他信息（如姓名、电子邮件等）作为值。\n示例：\nHSET user:1000 name \"John Doe\" HSET user:1000 email \"john.doe@example.com\" 缓存：哈希表可以用作缓存，以加快数据检索速度。例如，你可以将数据库查询的结果存储在哈希表中，当再次需要这些数据时，可以直接从哈希表中获取，而不需要再次查询数据库。\n示例：\nHSET cache:products product:1000 \"{...product data...}\" 计数器：哈希表也可以用作计数器。例如，你可以使用哈希表来跟踪网站的页面访问次数。\n示例：\nHINCRBY pageviews /index.html 1 数据去重：哈希表可以用来检查数据是否已经存在，从而避免数据的重复。例如，你可以使用哈希表来检查一个电子邮件地址是否已经被注册。\n示例：\nHSETNX emails john.doe@example.com 1 哈希表在电商购物车的应用中非常常见，它可以用来存储用户的购物车信息。\n存储购物车信息：哈希表可以用来存储用户的购物车信息。例如，你可以使用用户的 ID 作为键，购物车中的商品 ID 和数量作为值。\n示例：\nHSET cart:1000 product:2001 3 HSET cart:1000 product:2002 2 这表示用户 ID 为 1000 的购物车中，商品 ID 为 2001 的商品数量为 3，商品 ID 为 2002 的商品数量为 2。\n更新购物车信息：当用户在购物车中增加或减少商品数量时，可以使用哈希表的 HINCRBY 命令来更新购物车信息。\n示例：\nHINCRBY cart:1000 product:2001 1 这表示将用户 ID 为 1000 的购物车中，商品 ID 为 2001 的商品数量增加 1。\n获取购物车信息：当用户查看购物车时，可以使用 HGETALL 命令来获取购物车中的所有商品信息。\n示例：\nHGETALL cart:1000 这将返回用户 ID 为 1000 的购物车中的所有商品信息。\n删除购物车信息：当用户从购物车中删除商品时，可以使用 HDEL 命令来删除购物车中的商品信息。\n示例：\nHDEL cart:1000 product:2001 这将删除用户 ID 为 1000 的购物车中，商品 ID 为 2001 的商品信息。\n优缺点 优点：\n同类数据归类整合储存：哈希表可以将同类数据整合在一起存储，这使得数据管理更加方便。\n较小的内存和 CPU 消耗：相比于字符串操作，哈希表的操作对内存和 CPU 的消耗更小，这使得哈希表在处理大量数据时更加高效。\n更节省空间：相比于字符串存储，哈希表的存储更加节省空间。这是因为哈希表可以将数据压缩存储，而不需要为每个数据都分配一个独立的内存空间。\n缺点：\n过期功能的限制：在哈希表中，过期功能只能应用在键上，不能应用在字段上。这意味着你不能单独设置一个字段的过期时间，只能设置整个哈希表的过期时间。\n在 Redis 集群架构下的限制：在 Redis 集群架构下，哈希表不适合大规模使用。这是因为在集群架构下，哈希表的数据分布可能会导致数据不均衡，从而影响集群的性能。\nList Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。\n应用场景\n时间线或新闻 feed：你可以使用LPUSH命令将新的动态添加到时间线 List 的头部。\n示例：LPUSH user:1:timeline \"User 1's new status\"\n最近使用的内容：你可以使用LPUSH命令将用户最近查看的商品添加到 List 的头部，然后使用LTRIM命令保持 List 的长度，只保留最近查看的一定数量的商品。\n示例： LPUSH user:1:recently_viewed \"Product 1\" LTRIM user:1:recently_viewed 0 9\n实现栈或队列：你可以使用LPUSH命令将新的任务添加到待处理任务 List 的头部，然后使用RPOP命令从 List 的尾部取出一个任务进行处理。\nStack(栈) = LPUSH + LPOP Queue(队列）= LPUSH + RPOP Blocking MQ(阻塞队列）= LPUSH + BRPOP 浏览器历史：你可以使用LPUSH命令将新访问的网页添加到浏览历史 List 的头部。\n示例：LPUSH user:1:history \"www.example.com\"\n以上就是一些具体的 Redis 命令示例，希望对你有所帮助。\nSet 集合是字符串的无序集合。和列表一样，你可以添加、删除、查看集合中的元素。\n社交网络应用：\n关注的人：可以使用 Set 来存储用户关注的人。例如，当用户 A 关注了用户 B 和用户 C 时，你可以使用SADD命令将用户 B 和用户 C 添加到用户 A 的关注 Set 中。\n示例：SADD userA:following \"userB\" \"userC\"\n共同关注：如果你想要找出两个用户共同关注的人，你可以使用SINTER命令来获取两个用户的关注 Set 的交集。\n示例：SINTER userA:following userB:following\n检查是否关注：如果你想要检查用户 A 是否关注了用户 B，你可以使用SISMEMBER命令来检查用户 B 是否在用户 A 的关注 Set 中。\n示例：SISMEMBER userA:following \"userB\"\n可能认识的人：如果你想要推荐用户 A 可能认识的人，你可以使用SDIFF命令来获取用户 B 的关注 Set 和用户 A 的关注 Set 的差集，也就是用户 B 关注的人中用户 A 没有关注的人。\n示例：SDIFF userB:following userA:following\nSorted Set 和集合一样也是字符串的集合,且不允许重复的成员。所有成员都会被分配一个浮点数作为分数。根据分数对集合进行从小到大的排序。集合中的成员是唯一的,但分数(score)却可以重复。\n排行榜：在游戏或者社交网络应用中，你可以使用 Sorted Set 来存储用户的分数或者排名。例如，当用户获取了新的分数时，你可以使用ZADD命令将用户的分数添加到 Sorted Set 中。\n示例：ZADD game:1:scores 100 \"user1\"\n然后，你可以使用ZRANK命令来获取用户在排行榜中的排名，或者使用ZREVRANK命令来获取用户在排行榜中的倒序排名。\n示例：ZRANK game:1:scores \"user1\" 或者 ZREVRANK game:1:scores \"user1\"\n时间线或者日程表：如果你的应用有时间线或者日程表的功能，你可以使用 Sorted Set 来存储事件。你可以使用事件的时间戳作为分数，然后使用ZADD命令将事件添加到 Sorted Set 中。\n示例：ZADD timeline 1622275200 \"event1\"\n然后，你可以使用ZRANGE命令来获取一段时间内的事件。\n示例：ZRANGE timeline 1622275200 1622361600\n以上就是一些 Sorted Set 数据类型在 Redis 中的应用场景和具体命令示例，希望对你有所帮助。\n如果你有两个游戏，每个游戏都有一个分数排行榜，你可以使用ZUNIONSTORE命令来计算两个游戏的总分数排行榜。\n示例：ZUNIONSTORE total_scores 2 game1:scores game2:scores 这个命令将计算game1:scores和game2:scores的并集，并将结果存储在total_scores中。\n如果你有两个社交网络群组，每个群组都有一个活跃用户排行榜，你可以使用ZINTERSTORE命令来计算两个群组的活跃用户交集。 示例：ZINTERSTORE active_users 2 group1:active_users group2:active_users 这个命令将计算group1:active_users和group2:active_users的交集，并将结果存储在active_users中。\n",
+  "wordCount" : "362",
+  "inLanguage": "en",
+  "datePublished": "2024-05-30T08:00:45Z",
+  "dateModified": "2024-05-30T08:00:45Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Redis核心数据结构及应用场景
+    </h1>
+    <div class="post-meta"><span title='2024-05-30 08:00:45 +0000 UTC'>May 30, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="五种核心数据结构及其应用场景">五种核心数据结构及其应用场景<a hidden class="anchor" aria-hidden="true" href="#五种核心数据结构及其应用场景">#</a></h2>
+<h3 id="string">String<a hidden class="anchor" aria-hidden="true" href="#string">#</a></h3>
+<p>最基本的类型，一个 key 对应一个 value，value 其实不仅可以是 String，也可以是数字。常规 key-value 缓存应用。</p>
+<p><strong>应用场景</strong></p>
+<ol>
+<li>
+<p>缓存：
+如果我们有一个用户信息，用户 ID 为 123，用户信息为&quot;John&quot;，我们可以这样存储：</p>
+<pre tabindex="0"><code>SET user:123 &#34;John&#34;
+</code></pre><p>当我们需要获取这个用户的信息时，我们可以这样获取：</p>
+<pre tabindex="0"><code>GET user:123
+</code></pre></li>
+<li>
+<p>计数器：</p>
+<p>如果我们需要对一个网页的访问次数进行计数，我们可以这样操作：</p>
+<pre tabindex="0"><code>INCR page_view:1
+</code></pre><p>每当有新的访问时，我们就执行上面的命令，这样就可以实时统计网页的访问次数。</p>
+</li>
+<li>
+<p>分布式锁：</p>
+<p>如果我们需要对一个资源进行加锁，我们可以这样操作：</p>
+<pre tabindex="0"><code>SET lock:resource_name &#34;lock_value&#34; NX EX 30
+</code></pre><p>这个命令会尝试设置一个键，如果这个键不存在，那么设置成功，我们就获取到了锁，如果这个键已经存在，那么设置失败，我们就没有获取到锁。EX 参数表示这个键的过期时间，这样可以防止死锁。</p>
+</li>
+<li>
+<p>会话缓存：</p>
+<p>如果我们需要存储一个用户的会话信息，我们可以这样操作：</p>
+<pre tabindex="0"><code>SET session:123 &#34;session_info&#34;
+</code></pre><p>当我们需要获取这个用户的会话信息时，我们可以这样获取：</p>
+<pre tabindex="0"><code>GET session:123
+</code></pre></li>
+<li>
+<p>页面缓存：</p>
+<p>如果我们需要缓存一个网页的内容，我们可以这样操作：</p>
+<pre tabindex="0"><code>SET page:1 &#34;page_content&#34;
+</code></pre><p>当我们需要获取这个网页的内容时，我们可以这样获取：</p>
+<pre tabindex="0"><code>GET page:1
+</code></pre></li>
+<li>
+<p>分布式系统全局序列号</p>
+<p>redis 批量生成序列号提升性能</p>
+<pre tabindex="0"><code>INCRBY  orderId  1000
+</code></pre></li>
+</ol>
+<h3 id="hash">Hash<a hidden class="anchor" aria-hidden="true" href="#hash">#</a></h3>
+<p>用于存储对象，即多个字段及字段值，通过 key 和字段名（field）来唯一确定一个值。适合用于存储对象。</p>
+<p><strong>应用场景</strong></p>
+<ol>
+<li>
+<p>存储对象：哈希表是存储对象的理想选择。例如，如果你有一个用户对象，你可以使用用户的 ID 作为键，用户的其他信息（如姓名、电子邮件等）作为值。</p>
+<p>示例：</p>
+<pre tabindex="0"><code>HSET user:1000 name &#34;John Doe&#34;
+HSET user:1000 email &#34;john.doe@example.com&#34;
+</code></pre></li>
+<li>
+<p>缓存：哈希表可以用作缓存，以加快数据检索速度。例如，你可以将数据库查询的结果存储在哈希表中，当再次需要这些数据时，可以直接从哈希表中获取，而不需要再次查询数据库。</p>
+<p>示例：</p>
+<pre tabindex="0"><code>HSET cache:products product:1000 &#34;{...product data...}&#34;
+</code></pre></li>
+<li>
+<p>计数器：哈希表也可以用作计数器。例如，你可以使用哈希表来跟踪网站的页面访问次数。</p>
+<p>示例：</p>
+<pre tabindex="0"><code>HINCRBY pageviews /index.html 1
+</code></pre></li>
+<li>
+<p>数据去重：哈希表可以用来检查数据是否已经存在，从而避免数据的重复。例如，你可以使用哈希表来检查一个电子邮件地址是否已经被注册。</p>
+<p>示例：</p>
+<pre tabindex="0"><code>HSETNX emails john.doe@example.com 1
+</code></pre></li>
+<li>
+<p>哈希表在电商购物车的应用中非常常见，它可以用来存储用户的购物车信息。</p>
+<ol>
+<li>
+<p>存储购物车信息：哈希表可以用来存储用户的购物车信息。例如，你可以使用用户的 ID 作为键，购物车中的商品 ID 和数量作为值。</p>
+<p>示例：</p>
+<pre tabindex="0"><code>HSET cart:1000 product:2001 3
+HSET cart:1000 product:2002 2
+</code></pre><p>这表示用户 ID 为 1000 的购物车中，商品 ID 为 2001 的商品数量为 3，商品 ID 为 2002 的商品数量为 2。</p>
+</li>
+<li>
+<p>更新购物车信息：当用户在购物车中增加或减少商品数量时，可以使用哈希表的 HINCRBY 命令来更新购物车信息。</p>
+<p>示例：</p>
+<pre tabindex="0"><code>HINCRBY cart:1000 product:2001 1
+</code></pre><p>这表示将用户 ID 为 1000 的购物车中，商品 ID 为 2001 的商品数量增加 1。</p>
+</li>
+<li>
+<p>获取购物车信息：当用户查看购物车时，可以使用 HGETALL 命令来获取购物车中的所有商品信息。</p>
+<p>示例：</p>
+<pre tabindex="0"><code>HGETALL cart:1000
+</code></pre><p>这将返回用户 ID 为 1000 的购物车中的所有商品信息。</p>
+</li>
+<li>
+<p>删除购物车信息：当用户从购物车中删除商品时，可以使用 HDEL 命令来删除购物车中的商品信息。</p>
+<p>示例：</p>
+<pre tabindex="0"><code>HDEL cart:1000 product:2001
+</code></pre><p>这将删除用户 ID 为 1000 的购物车中，商品 ID 为 2001 的商品信息。</p>
+</li>
+</ol>
+</li>
+</ol>
+<h4 id="优缺点">优缺点<a hidden class="anchor" aria-hidden="true" href="#优缺点">#</a></h4>
+<p><strong>优点：</strong></p>
+<ol>
+<li>
+<p>同类数据归类整合储存：哈希表可以将同类数据整合在一起存储，这使得数据管理更加方便。</p>
+</li>
+<li>
+<p>较小的内存和 CPU 消耗：相比于字符串操作，哈希表的操作对内存和 CPU 的消耗更小，这使得哈希表在处理大量数据时更加高效。</p>
+</li>
+<li>
+<p>更节省空间：相比于字符串存储，哈希表的存储更加节省空间。这是因为哈希表可以将数据压缩存储，而不需要为每个数据都分配一个独立的内存空间。</p>
+</li>
+</ol>
+<p><strong>缺点：</strong></p>
+<ol>
+<li>
+<p>过期功能的限制：在哈希表中，过期功能只能应用在键上，不能应用在字段上。这意味着你不能单独设置一个字段的过期时间，只能设置整个哈希表的过期时间。</p>
+</li>
+<li>
+<p>在 Redis 集群架构下的限制：在 Redis 集群架构下，哈希表不适合大规模使用。这是因为在集群架构下，哈希表的数据分布可能会导致数据不均衡，从而影响集群的性能。</p>
+</li>
+</ol>
+<h3 id="list">List<a hidden class="anchor" aria-hidden="true" href="#list">#</a></h3>
+<p>Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。</p>
+<p><strong>应用场景</strong></p>
+<ol>
+<li>
+<p>时间线或新闻 feed：你可以使用<code>LPUSH</code>命令将新的动态添加到时间线 List 的头部。</p>
+<p>示例：<code>LPUSH user:1:timeline &quot;User 1's new status&quot;</code></p>
+</li>
+<li>
+<p>最近使用的内容：你可以使用<code>LPUSH</code>命令将用户最近查看的商品添加到 List 的头部，然后使用<code>LTRIM</code>命令保持 List 的长度，只保留最近查看的一定数量的商品。</p>
+<p>示例：
+<code>LPUSH user:1:recently_viewed &quot;Product 1&quot;</code>
+<code>LTRIM user:1:recently_viewed 0 9</code></p>
+</li>
+<li>
+<p>实现栈或队列：你可以使用<code>LPUSH</code>命令将新的任务添加到待处理任务 List 的头部，然后使用<code>RPOP</code>命令从 List 的尾部取出一个任务进行处理。</p>
+</li>
+</ol>
+<pre tabindex="0"><code>Stack(栈) = LPUSH + LPOP
+Queue(队列）= LPUSH + RPOP
+Blocking MQ(阻塞队列）= LPUSH + BRPOP
+</code></pre><ol start="4">
+<li>
+<p>浏览器历史：你可以使用<code>LPUSH</code>命令将新访问的网页添加到浏览历史 List 的头部。</p>
+<p>示例：<code>LPUSH user:1:history &quot;www.example.com&quot;</code></p>
+</li>
+</ol>
+<p>以上就是一些具体的 Redis 命令示例，希望对你有所帮助。</p>
+<h3 id="set">Set<a hidden class="anchor" aria-hidden="true" href="#set">#</a></h3>
+<p>集合是字符串的无序集合。和列表一样，你可以添加、删除、查看集合中的元素。</p>
+<p>社交网络应用：</p>
+<ol>
+<li>
+<p>关注的人：可以使用 Set 来存储用户关注的人。例如，当用户 A 关注了用户 B 和用户 C 时，你可以使用<code>SADD</code>命令将用户 B 和用户 C 添加到用户 A 的关注 Set 中。</p>
+<p>示例：<code>SADD userA:following &quot;userB&quot; &quot;userC&quot;</code></p>
+</li>
+<li>
+<p>共同关注：如果你想要找出两个用户共同关注的人，你可以使用<code>SINTER</code>命令来获取两个用户的关注 Set 的交集。</p>
+<p>示例：<code>SINTER userA:following userB:following</code></p>
+</li>
+<li>
+<p>检查是否关注：如果你想要检查用户 A 是否关注了用户 B，你可以使用<code>SISMEMBER</code>命令来检查用户 B 是否在用户 A 的关注 Set 中。</p>
+<p>示例：<code>SISMEMBER userA:following &quot;userB&quot;</code></p>
+</li>
+<li>
+<p>可能认识的人：如果你想要推荐用户 A 可能认识的人，你可以使用<code>SDIFF</code>命令来获取用户 B 的关注 Set 和用户 A 的关注 Set 的差集，也就是用户 B 关注的人中用户 A 没有关注的人。</p>
+<p>示例：<code>SDIFF userB:following userA:following</code></p>
+</li>
+</ol>
+<h3 id="sorted-set">Sorted Set<a hidden class="anchor" aria-hidden="true" href="#sorted-set">#</a></h3>
+<p>和集合一样也是字符串的集合,且不允许重复的成员。所有成员都会被分配一个浮点数作为分数。根据分数对集合进行从小到大的排序。集合中的成员是唯一的,但分数(score)却可以重复。</p>
+<ol>
+<li>
+<p>排行榜：在游戏或者社交网络应用中，你可以使用 Sorted Set 来存储用户的分数或者排名。例如，当用户获取了新的分数时，你可以使用<code>ZADD</code>命令将用户的分数添加到 Sorted Set 中。</p>
+<p>示例：<code>ZADD game:1:scores 100 &quot;user1&quot;</code></p>
+<p>然后，你可以使用<code>ZRANK</code>命令来获取用户在排行榜中的排名，或者使用<code>ZREVRANK</code>命令来获取用户在排行榜中的倒序排名。</p>
+<p>示例：<code>ZRANK game:1:scores &quot;user1&quot;</code> 或者 <code>ZREVRANK game:1:scores &quot;user1&quot;</code></p>
+</li>
+<li>
+<p>时间线或者日程表：如果你的应用有时间线或者日程表的功能，你可以使用 Sorted Set 来存储事件。你可以使用事件的时间戳作为分数，然后使用<code>ZADD</code>命令将事件添加到 Sorted Set 中。</p>
+<p>示例：<code>ZADD timeline 1622275200 &quot;event1&quot;</code></p>
+<p>然后，你可以使用<code>ZRANGE</code>命令来获取一段时间内的事件。</p>
+<p>示例：<code>ZRANGE timeline 1622275200 1622361600</code></p>
+</li>
+</ol>
+<p>以上就是一些 Sorted Set 数据类型在 Redis 中的应用场景和具体命令示例，希望对你有所帮助。</p>
+<ol start="3">
+<li>
+<p>如果你有两个游戏，每个游戏都有一个分数排行榜，你可以使用ZUNIONSTORE命令来计算两个游戏的总分数排行榜。</p>
+<p>示例：<code>ZUNIONSTORE total_scores 2 game1:scores game2:scores</code>
+这个命令将计算game1:scores和game2:scores的并集，并将结果存储在total_scores中。</p>
+</li>
+<li>
+<p>如果你有两个社交网络群组，每个群组都有一个活跃用户排行榜，你可以使用ZINTERSTORE命令来计算两个群组的活跃用户交集。
+示例：<code>ZINTERSTORE active_users 2 group1:active_users group2:active_users</code>
+这个命令将计算group1:active_users和group2:active_users的交集，并将结果存储在active_users中。</p>
+</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

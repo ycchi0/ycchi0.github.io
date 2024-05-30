@@ -6,8 +6,37 @@
     <description>Recent content on Ycchi0 Blog</description>
     <generator>Hugo -- 0.123.7</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 30 May 2024 06:44:34 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 30 May 2024 08:00:45 +0000</lastBuildDate>
     <atom:link href="https://ycchi0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis核心数据结构及应用场景</title>
+      <link>https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Thu, 30 May 2024 08:00:45 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
+      <description>五种核心数据结构及其应用场景 String 最基本的类型，一个 key 对应一个 value，value 其实不仅可以是 String，也可以是数字。常规 key-value 缓存应用。
+应用场景
+缓存： 如果我们有一个用户信息，用户 ID 为 123，用户信息为&amp;quot;John&amp;quot;，我们可以这样存储：
+SET user:123 &amp;#34;John&amp;#34; 当我们需要获取这个用户的信息时，我们可以这样获取：
+GET user:123 计数器：
+如果我们需要对一个网页的访问次数进行计数，我们可以这样操作：
+INCR page_view:1 每当有新的访问时，我们就执行上面的命令，这样就可以实时统计网页的访问次数。
+分布式锁：
+如果我们需要对一个资源进行加锁，我们可以这样操作：
+SET lock:resource_name &amp;#34;lock_value&amp;#34; NX EX 30 这个命令会尝试设置一个键，如果这个键不存在，那么设置成功，我们就获取到了锁，如果这个键已经存在，那么设置失败，我们就没有获取到锁。EX 参数表示这个键的过期时间，这样可以防止死锁。
+会话缓存：
+如果我们需要存储一个用户的会话信息，我们可以这样操作：
+SET session:123 &amp;#34;session_info&amp;#34; 当我们需要获取这个用户的会话信息时，我们可以这样获取：
+GET session:123 页面缓存：
+如果我们需要缓存一个网页的内容，我们可以这样操作：
+SET page:1 &amp;#34;page_content&amp;#34; 当我们需要获取这个网页的内容时，我们可以这样获取：
+GET page:1 分布式系统全局序列号
+redis 批量生成序列号提升性能
+INCRBY orderId 1000 Hash 用于存储对象，即多个字段及字段值，通过 key 和字段名（field）来唯一确定一个值。适合用于存储对象。
+应用场景
+存储对象：哈希表是存储对象的理想选择。例如，如果你有一个用户对象，你可以使用用户的 ID 作为键，用户的其他信息（如姓名、电子邮件等）作为值。
+示例：
+HSET user:1000 name &amp;#34;John Doe&amp;#34; HSET user:1000 email &amp;#34;john.</description>
+    </item>
     <item>
       <title>Explain详解与索引最佳实践</title>
       <link>https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</link>
