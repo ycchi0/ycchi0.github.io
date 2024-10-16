@@ -81,7 +81,10 @@ Nginx 缓存：Nginx 是一种常见的反向代理服务器，它可以将后�
         }
 
     </style>
-</noscript><meta property="og:title" content="Redis 缓存设计" />
+</noscript>
+  
+
+<meta property="og:title" content="Redis 缓存设计" />
 <meta property="og:description" content="典型 Web 应用缓存设计架构 在一个典型的 Web 应用中，从前端请求到 Nginx 再到后端服务的多级缓存设计可以如下：
 浏览器缓存：这是最接近用户的一级缓存。浏览器会根据 HTTP 的缓存控制头字段（如 Expires、Cache-Control、Last-Modified、ETag 等）来决定是否需要向服务器发送请求，还是直接从本地缓存中获取资源。
 CDN 缓存：内容分发网络（CDN）是一种常见的缓存策略，它可以将内容缓存到离用户最近的节点，从而减少网络延迟。当用户的请求到达 CDN 节点时，如果节点中有缓存的内容，就直接返回给用户；如果没有，就向源服务器请求内容，并将内容缓存到节点中。

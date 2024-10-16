@@ -58,7 +58,10 @@ setScript = ` for _, offset in ipairs(ARGV) do redis.call(&#34;setbit&#34;, KEYS
         }
 
     </style>
-</noscript><meta property="og:title" content="服务治理之布隆过滤器" />
+</noscript>
+  
+
+<meta property="og:title" content="服务治理之布隆过滤器" />
 <meta property="og:description" content="布隆过滤器 布隆过滤器（英语：Bloom Filter）是1970年由布隆提出的。它实际上是一个很长的二进制向量和一系列随机映射函数。元素可以添加到集合中，但不能删除(计数布鲁姆过滤器变体支持删除);
 作用 布隆过滤器可以用于判断一个元素可能存在或者一定不存在。
 参考文章 Bloom filter https://segmentfault.com/a/1190000021136424 go-zero 中的实现 go-zero 中基于 redis 实现了布隆过滤器 通过 lua 脚本 setbit 和 getbit

@@ -58,7 +58,10 @@ module.exports = { devServer: { host: &#34;127.0.0.1&#34;, port: 8084, open: tru
         }
 
     </style>
-</noscript><meta property="og:title" content="跨域问题处理方案" />
+</noscript>
+  
+
+<meta property="og:title" content="跨域问题处理方案" />
 <meta property="og:description" content="使用 Nginx 反向代理处理跨域问题 在 Nginx 配置文件中设置一个代理服务器，并添加一些额外的头信息。
 location /api/ { add_header &#39;Access-Control-Allow-Origin&#39; &#39;*&#39;; add_header &#39;Access-Control-Allow-Methods&#39; &#39;GET, POST, OPTIONS&#39;; add_header &#39;Access-Control-Allow-Headers&#39; &#39;DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range&#39;; add_header &#39;Access-Control-Expose-Headers&#39; &#39;Content-Length,Content-Range&#39;; proxy_pass http://target.com; } 然后重启 Nginx 以应用这些更改：
 在 Vue.js 项目中处理跨域问题 在vue.config.js文件中，配置 devServer.proxy 选项来设置代理规则。例如：

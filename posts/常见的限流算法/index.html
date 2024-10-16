@@ -62,7 +62,10 @@ func main() { rl := ratelimit.New(1) // per second for i := 0; i &lt; 10; i&#43;
         }
 
     </style>
-</noscript><meta property="og:title" content="常见的限流算法" />
+</noscript>
+  
+
+<meta property="og:title" content="常见的限流算法" />
 <meta property="og:description" content="限流 通过限制并发访问数或者限制一个时间窗口内允许处理的请求数量来保护系统，例如，通过限流，你可以过滤掉产生流量峰值的客户和服务。
 令牌桶算法 令牌桶算法是常见的一种限流算法。假设有一个桶，以固定速度（rate）往桶里加入令牌（token）。当桶满了时停止加入。服务收到请求时尝试从桶里取出令牌。如果成功取出，则可以响应本次请求。如果没有取到，可以进行有限时间的等待或者返回超时错误。
 特点 遇到流量洪峰时可以应对部分突发流量，但由于桶有容量上限，当消耗完桶里堆积的令牌之后只能根据令牌的生成速率提供服务，从而起到限流的作用。

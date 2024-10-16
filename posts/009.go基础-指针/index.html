@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>009.Go基础 指针 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="在 Go 语言中，指针是指向变量内存地址的变量。指针可以用来直接操作内存，并且可以通过指针共享数据，避免不必要的拷贝。在 Go 中，虽然没有像 C 语言那样的指针运算，但 Go 提供了简单且安全的指针功能，使开发者可以在安全的环境下进行内存操作。
+1. 指针的基本概念 指针是保存内存地址的变量。通过指针，我们可以间接地访问或修改变量的值。
+示例：指针的基本使用 var x int = 42 var p *int = &amp;x // 获取变量x的地址，并将其赋值给指针p fmt.Println(p) // 输出内存地址，例如：0xc0000140b0 fmt.Println(*p) // 输出指针p指向的值，即42 在这个例子中：
+&amp;x 是取变量x的地址，返回一个指向x的指针。 *p 是解引用操作，通过指针p访问其指向的变量的值。 2. 指针类型 Go 语言中的每种类型都有其对应的指针类型。例如：
+int类型的指针是*int float64类型的指针是*float64 自定义类型的指针也是类似的。 示例：不同类型的指针 var a int = 10 var b float64 = 25.5 var c string = &#34;hello&#34; var pA *int = &amp;a var pB *float64 = &amp;b var pC *string = &amp;c fmt.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/009.go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/009.go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="009.Go基础 指针" />
+<meta property="og:description" content="在 Go 语言中，指针是指向变量内存地址的变量。指针可以用来直接操作内存，并且可以通过指针共享数据，避免不必要的拷贝。在 Go 中，虽然没有像 C 语言那样的指针运算，但 Go 提供了简单且安全的指针功能，使开发者可以在安全的环境下进行内存操作。
+1. 指针的基本概念 指针是保存内存地址的变量。通过指针，我们可以间接地访问或修改变量的值。
+示例：指针的基本使用 var x int = 42 var p *int = &amp;x // 获取变量x的地址，并将其赋值给指针p fmt.Println(p) // 输出内存地址，例如：0xc0000140b0 fmt.Println(*p) // 输出指针p指向的值，即42 在这个例子中：
+&amp;x 是取变量x的地址，返回一个指向x的指针。 *p 是解引用操作，通过指针p访问其指向的变量的值。 2. 指针类型 Go 语言中的每种类型都有其对应的指针类型。例如：
+int类型的指针是*int float64类型的指针是*float64 自定义类型的指针也是类似的。 示例：不同类型的指针 var a int = 10 var b float64 = 25.5 var c string = &#34;hello&#34; var pA *int = &amp;a var pB *float64 = &amp;b var pC *string = &amp;c fmt." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/009.go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-10-16T12:54:55+00:00" />
+<meta property="article:modified_time" content="2024-10-16T12:54:55+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="009.Go基础 指针"/>
+<meta name="twitter:description" content="在 Go 语言中，指针是指向变量内存地址的变量。指针可以用来直接操作内存，并且可以通过指针共享数据，避免不必要的拷贝。在 Go 中，虽然没有像 C 语言那样的指针运算，但 Go 提供了简单且安全的指针功能，使开发者可以在安全的环境下进行内存操作。
+1. 指针的基本概念 指针是保存内存地址的变量。通过指针，我们可以间接地访问或修改变量的值。
+示例：指针的基本使用 var x int = 42 var p *int = &amp;x // 获取变量x的地址，并将其赋值给指针p fmt.Println(p) // 输出内存地址，例如：0xc0000140b0 fmt.Println(*p) // 输出指针p指向的值，即42 在这个例子中：
+&amp;x 是取变量x的地址，返回一个指向x的指针。 *p 是解引用操作，通过指针p访问其指向的变量的值。 2. 指针类型 Go 语言中的每种类型都有其对应的指针类型。例如：
+int类型的指针是*int float64类型的指针是*float64 自定义类型的指针也是类似的。 示例：不同类型的指针 var a int = 10 var b float64 = 25.5 var c string = &#34;hello&#34; var pA *int = &amp;a var pB *float64 = &amp;b var pC *string = &amp;c fmt."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "009.Go基础 指针",
+      "item": "https://ycchi0.github.io/posts/009.go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "009.Go基础 指针",
+  "name": "009.Go基础 指针",
+  "description": "在 Go 语言中，指针是指向变量内存地址的变量。指针可以用来直接操作内存，并且可以通过指针共享数据，避免不必要的拷贝。在 Go 中，虽然没有像 C 语言那样的指针运算，但 Go 提供了简单且安全的指针功能，使开发者可以在安全的环境下进行内存操作。\n1. 指针的基本概念 指针是保存内存地址的变量。通过指针，我们可以间接地访问或修改变量的值。\n示例：指针的基本使用 var x int = 42 var p *int = \u0026amp;x // 获取变量x的地址，并将其赋值给指针p fmt.Println(p) // 输出内存地址，例如：0xc0000140b0 fmt.Println(*p) // 输出指针p指向的值，即42 在这个例子中：\n\u0026amp;x 是取变量x的地址，返回一个指向x的指针。 *p 是解引用操作，通过指针p访问其指向的变量的值。 2. 指针类型 Go 语言中的每种类型都有其对应的指针类型。例如：\nint类型的指针是*int float64类型的指针是*float64 自定义类型的指针也是类似的。 示例：不同类型的指针 var a int = 10 var b float64 = 25.5 var c string = \u0026#34;hello\u0026#34; var pA *int = \u0026amp;a var pB *float64 = \u0026amp;b var pC *string = \u0026amp;c fmt.",
+  "keywords": [
+    
+  ],
+  "articleBody": "在 Go 语言中，指针是指向变量内存地址的变量。指针可以用来直接操作内存，并且可以通过指针共享数据，避免不必要的拷贝。在 Go 中，虽然没有像 C 语言那样的指针运算，但 Go 提供了简单且安全的指针功能，使开发者可以在安全的环境下进行内存操作。\n1. 指针的基本概念 指针是保存内存地址的变量。通过指针，我们可以间接地访问或修改变量的值。\n示例：指针的基本使用 var x int = 42 var p *int = \u0026x // 获取变量x的地址，并将其赋值给指针p fmt.Println(p) // 输出内存地址，例如：0xc0000140b0 fmt.Println(*p) // 输出指针p指向的值，即42 在这个例子中：\n\u0026x 是取变量x的地址，返回一个指向x的指针。 *p 是解引用操作，通过指针p访问其指向的变量的值。 2. 指针类型 Go 语言中的每种类型都有其对应的指针类型。例如：\nint类型的指针是*int float64类型的指针是*float64 自定义类型的指针也是类似的。 示例：不同类型的指针 var a int = 10 var b float64 = 25.5 var c string = \"hello\" var pA *int = \u0026a var pB *float64 = \u0026b var pC *string = \u0026c fmt.Println(*pA) // 输出 10 fmt.Println(*pB) // 输出 25.5 fmt.Println(*pC) // 输出 hello 3. 使用指针修改值 通过指针可以直接修改指向的变量的值。由于指针指向的是变量的地址，通过指针解引用可以改变这个变量的值。\n示例：通过指针修改值 func changeValue(p *int) { *p = 100 // 修改指针指向的变量的值 } func main() { x := 42 fmt.Println(\"Before:\", x) // 输出 42 changeValue(\u0026x) // 传递x的地址 fmt.Println(\"After:\", x) // 输出 100 } 在这个例子中，函数changeValue接受一个指向int类型的指针，通过指针修改了变量的值。\n4. 指针的零值 和 Go 中的其他类型一样，指针也有一个默认的零值，即nil。当指针不指向任何有效的内存地址时，其值为nil。\n示例：指针的零值 var p *int fmt.Println(p) // 输出 在这个例子中，p是一个未初始化的int指针，因此它的值为nil。注意，不能对nil指针进行解引用操作，否则会引发运行时错误。\n5. Go 中的传值与传引用 Go 语言中的函数参数是按值传递的，这意味着函数内部的修改不会影响原始参数的值。但是如果传递的是指针，则可以通过指针修改原始参数的值，这被称为“传引用”。\n示例：传值与传引用 // 传值 func modifyByValue(val int) { val = 100 } // 传引用 func modifyByReference(val *int) { *val = 100 } func main() { x := 42 modifyByValue(x) fmt.Println(\"After modifyByValue:\", x) // 输出 42 modifyByReference(\u0026x) fmt.Println(\"After modifyByReference:\", x) // 输出 100 } 在这个例子中，modifyByValue无法改变x的值，因为传递的是x的副本；而modifyByReference通过指针改变了x的值，因为它修改的是x在内存中的实际数据。\n6. 指针与结构体 指针在处理结构体时非常有用，可以通过指针来修改结构体的字段，而不需要拷贝整个结构体。\n示例：结构体指针 type Person struct { Name string Age int } func changeName(p *Person) { p.Name = \"Alice\" // 通过指针修改结构体字段 } func main() { person := Person{Name: \"Bob\", Age: 30} fmt.Println(\"Before:\", person.Name) // 输出 Bob changeName(\u0026person) // 传递结构体指针 fmt.Println(\"After:\", person.Name) // 输出 Alice } 在这个示例中，函数changeName接受一个Person类型的指针，通过指针修改了结构体的字段。\n7. 指针与数组、切片 在 Go 中，指针可以用于数组和切片，指向数组的第一个元素，或者操作切片的底层数组。\n示例：指针操作数组 func modifyArray(arr *[3]int) { (*arr)[0] = 100 // 修改数组第一个元素的值 } func main() { a := [3]int{1, 2, 3} modifyArray(\u0026a) fmt.Println(a) // 输出 [100 2 3] } 8. 指针的局限性 虽然指针在 Go 语言中很有用，但它也有一些局限性：\n没有指针运算：Go 不支持像 C 语言那样的指针算术操作（例如p++）。 垃圾回收：Go 有自动垃圾回收机制，因此开发者不需要手动管理内存分配和释放。 9. new 和 make Go 语言中的new和make是用于内存分配的两个内置函数，但它们有不同的用途：\nnew(T)：分配内存，并返回指向类型T的零值的指针。返回值是*T类型。 make(T)：只用于分配并初始化引用类型，如切片、映射和通道。make返回的是这些类型本身，而不是指针。 示例：new 的使用 p := new(int) // 分配一个int类型的内存，返回指针 fmt.Println(*p) // 输出 0（默认值） *p = 42 fmt.Println(*p) // 输出 42 总结 指针的作用：指针保存变量的内存地址，可以通过指针修改变量的值，避免数据拷贝。 指针类型：Go 语言中的每种类型都有对应的指针类型，例如*int、*string等。 传值与传引用：Go 语言默认按值传递参数，但通过传递指针可以实现按引用传递。 结构体指针：指针常用于修改结构体的字段而不拷贝整个结构体。 指针的限制：Go 不支持指针运算，但通过自动垃圾回收减少了内存管理的复杂性。 ",
+  "wordCount" : "308",
+  "inLanguage": "en",
+  "datePublished": "2024-10-16T12:54:55Z",
+  "dateModified": "2024-10-16T12:54:55Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/009.go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      009.Go基础 指针
+    </h1>
+    <div class="post-meta"><span title='2024-10-16 12:54:55 +0000 UTC'>October 16, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>在 Go 语言中，指针是指向变量内存地址的变量。指针可以用来直接操作内存，并且可以通过指针共享数据，避免不必要的拷贝。在 Go 中，虽然没有像 C 语言那样的指针运算，但 Go 提供了简单且安全的指针功能，使开发者可以在安全的环境下进行内存操作。</p>
+<h3 id="1-指针的基本概念">1. 指针的基本概念<a hidden class="anchor" aria-hidden="true" href="#1-指针的基本概念">#</a></h3>
+<p>指针是保存内存地址的变量。通过指针，我们可以间接地访问或修改变量的值。</p>
+<h4 id="示例指针的基本使用">示例：指针的基本使用<a hidden class="anchor" aria-hidden="true" href="#示例指针的基本使用">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span> = <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>  <span style="color:#75715e">// 获取变量x的地址，并将其赋值给指针p
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p</span>)  <span style="color:#75715e">// 输出内存地址，例如：0xc0000140b0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">p</span>) <span style="color:#75715e">// 输出指针p指向的值，即42
+</span></span></span></code></pre></div><p>在这个例子中：</p>
+<ul>
+<li><code>&amp;x</code> 是取变量<code>x</code>的地址，返回一个指向<code>x</code>的指针。</li>
+<li><code>*p</code> 是解引用操作，通过指针<code>p</code>访问其指向的变量的值。</li>
+</ul>
+<h3 id="2-指针类型">2. 指针类型<a hidden class="anchor" aria-hidden="true" href="#2-指针类型">#</a></h3>
+<p>Go 语言中的每种类型都有其对应的指针类型。例如：</p>
+<ul>
+<li><code>int</code>类型的指针是<code>*int</code></li>
+<li><code>float64</code>类型的指针是<code>*float64</code></li>
+<li>自定义类型的指针也是类似的。</li>
+</ul>
+<h4 id="示例不同类型的指针">示例：不同类型的指针<a hidden class="anchor" aria-hidden="true" href="#示例不同类型的指针">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">int</span> = <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">float64</span> = <span style="color:#ae81ff">25.5</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">c</span> <span style="color:#66d9ef">string</span> = <span style="color:#e6db74">&#34;hello&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">pA</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">pB</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">float64</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">b</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">pC</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">string</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">c</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">pA</span>) <span style="color:#75715e">// 输出 10
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">pB</span>) <span style="color:#75715e">// 输出 25.5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">pC</span>) <span style="color:#75715e">// 输出 hello
+</span></span></span></code></pre></div><h3 id="3-使用指针修改值">3. 使用指针修改值<a hidden class="anchor" aria-hidden="true" href="#3-使用指针修改值">#</a></h3>
+<p>通过指针可以直接修改指向的变量的值。由于指针指向的是变量的地址，通过指针解引用可以改变这个变量的值。</p>
+<h4 id="示例通过指针修改值">示例：通过指针修改值<a hidden class="anchor" aria-hidden="true" href="#示例通过指针修改值">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">changeValue</span>(<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">p</span> = <span style="color:#ae81ff">100</span> <span style="color:#75715e">// 修改指针指向的变量的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Before:&#34;</span>, <span style="color:#a6e22e">x</span>)  <span style="color:#75715e">// 输出 42
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">changeValue</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>)            <span style="color:#75715e">// 传递x的地址
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;After:&#34;</span>, <span style="color:#a6e22e">x</span>)   <span style="color:#75715e">// 输出 100
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个例子中，函数<code>changeValue</code>接受一个指向<code>int</code>类型的指针，通过指针修改了变量的值。</p>
+<h3 id="4-指针的零值">4. 指针的零值<a hidden class="anchor" aria-hidden="true" href="#4-指针的零值">#</a></h3>
+<p>和 Go 中的其他类型一样，指针也有一个默认的零值，即<code>nil</code>。当指针不指向任何有效的内存地址时，其值为<code>nil</code>。</p>
+<h4 id="示例指针的零值">示例：指针的零值<a hidden class="anchor" aria-hidden="true" href="#示例指针的零值">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p</span>)  <span style="color:#75715e">// 输出 &lt;nil&gt;
+</span></span></span></code></pre></div><p>在这个例子中，<code>p</code>是一个未初始化的<code>int</code>指针，因此它的值为<code>nil</code>。注意，不能对<code>nil</code>指针进行解引用操作，否则会引发运行时错误。</p>
+<h3 id="5-go-中的传值与传引用">5. Go 中的传值与传引用<a hidden class="anchor" aria-hidden="true" href="#5-go-中的传值与传引用">#</a></h3>
+<p>Go 语言中的函数参数是按值传递的，这意味着函数内部的修改不会影响原始参数的值。但是如果传递的是指针，则可以通过指针修改原始参数的值，这被称为“传引用”。</p>
+<h4 id="示例传值与传引用">示例：传值与传引用<a hidden class="anchor" aria-hidden="true" href="#示例传值与传引用">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 传值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">modifyByValue</span>(<span style="color:#a6e22e">val</span> <span style="color:#66d9ef">int</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">val</span> = <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 传引用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">modifyByReference</span>(<span style="color:#a6e22e">val</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">val</span> = <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">modifyByValue</span>(<span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;After modifyByValue:&#34;</span>, <span style="color:#a6e22e">x</span>)  <span style="color:#75715e">// 输出 42
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">modifyByReference</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;After modifyByReference:&#34;</span>, <span style="color:#a6e22e">x</span>)  <span style="color:#75715e">// 输出 100
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个例子中，<code>modifyByValue</code>无法改变<code>x</code>的值，因为传递的是<code>x</code>的副本；而<code>modifyByReference</code>通过指针改变了<code>x</code>的值，因为它修改的是<code>x</code>在内存中的实际数据。</p>
+<h3 id="6-指针与结构体">6. 指针与结构体<a hidden class="anchor" aria-hidden="true" href="#6-指针与结构体">#</a></h3>
+<p>指针在处理结构体时非常有用，可以通过指针来修改结构体的字段，而不需要拷贝整个结构体。</p>
+<h4 id="示例结构体指针">示例：结构体指针<a hidden class="anchor" aria-hidden="true" href="#示例结构体指针">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Person</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Age</span>  <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">changeName</span>(<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Person</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Name</span> = <span style="color:#e6db74">&#34;Alice&#34;</span>  <span style="color:#75715e">// 通过指针修改结构体字段
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">person</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Person</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;Bob&#34;</span>, <span style="color:#a6e22e">Age</span>: <span style="color:#ae81ff">30</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Before:&#34;</span>, <span style="color:#a6e22e">person</span>.<span style="color:#a6e22e">Name</span>)  <span style="color:#75715e">// 输出 Bob
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">changeName</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">person</span>)  <span style="color:#75715e">// 传递结构体指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;After:&#34;</span>, <span style="color:#a6e22e">person</span>.<span style="color:#a6e22e">Name</span>)   <span style="color:#75715e">// 输出 Alice
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个示例中，函数<code>changeName</code>接受一个<code>Person</code>类型的指针，通过指针修改了结构体的字段。</p>
+<h3 id="7-指针与数组切片">7. 指针与数组、切片<a hidden class="anchor" aria-hidden="true" href="#7-指针与数组切片">#</a></h3>
+<p>在 Go 中，指针可以用于数组和切片，指向数组的第一个元素，或者操作切片的底层数组。</p>
+<h4 id="示例指针操作数组">示例：指针操作数组<a hidden class="anchor" aria-hidden="true" href="#示例指针操作数组">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">modifyArray</span>(<span style="color:#a6e22e">arr</span> <span style="color:#f92672">*</span>[<span style="color:#ae81ff">3</span>]<span style="color:#66d9ef">int</span>) {
+</span></span><span style="display:flex;"><span>    (<span style="color:#f92672">*</span><span style="color:#a6e22e">arr</span>)[<span style="color:#ae81ff">0</span>] = <span style="color:#ae81ff">100</span>  <span style="color:#75715e">// 修改数组第一个元素的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">a</span> <span style="color:#f92672">:=</span> [<span style="color:#ae81ff">3</span>]<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">modifyArray</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>)  <span style="color:#75715e">// 输出 [100 2 3]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="8-指针的局限性">8. 指针的局限性<a hidden class="anchor" aria-hidden="true" href="#8-指针的局限性">#</a></h3>
+<p>虽然指针在 Go 语言中很有用，但它也有一些局限性：</p>
+<ol>
+<li><strong>没有指针运算</strong>：Go 不支持像 C 语言那样的指针算术操作（例如<code>p++</code>）。</li>
+<li><strong>垃圾回收</strong>：Go 有自动垃圾回收机制，因此开发者不需要手动管理内存分配和释放。</li>
+</ol>
+<h3 id="9-new-和-make">9. <code>new</code> 和 <code>make</code><a hidden class="anchor" aria-hidden="true" href="#9-new-和-make">#</a></h3>
+<p>Go 语言中的<code>new</code>和<code>make</code>是用于内存分配的两个内置函数，但它们有不同的用途：</p>
+<ul>
+<li><code>new(T)</code>：分配内存，并返回指向类型<code>T</code>的零值的指针。返回值是<code>*T</code>类型。</li>
+<li><code>make(T)</code>：只用于分配并初始化引用类型，如切片、映射和通道。<code>make</code>返回的是这些类型本身，而不是指针。</li>
+</ul>
+<h4 id="示例new-的使用">示例：<code>new</code> 的使用<a hidden class="anchor" aria-hidden="true" href="#示例new-的使用">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> new(<span style="color:#66d9ef">int</span>)  <span style="color:#75715e">// 分配一个int类型的内存，返回指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">p</span>)  <span style="color:#75715e">// 输出 0（默认值）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">*</span><span style="color:#a6e22e">p</span> = <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">p</span>)  <span style="color:#75715e">// 输出 42
+</span></span></span></code></pre></div><h3 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h3>
+<ul>
+<li><strong>指针的作用</strong>：指针保存变量的内存地址，可以通过指针修改变量的值，避免数据拷贝。</li>
+<li><strong>指针类型</strong>：Go 语言中的每种类型都有对应的指针类型，例如<code>*int</code>、<code>*string</code>等。</li>
+<li><strong>传值与传引用</strong>：Go 语言默认按值传递参数，但通过传递指针可以实现按引用传递。</li>
+<li><strong>结构体指针</strong>：指针常用于修改结构体的字段而不拷贝整个结构体。</li>
+<li><strong>指针的限制</strong>：Go 不支持指针运算，但通过自动垃圾回收减少了内存管理的复杂性。</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

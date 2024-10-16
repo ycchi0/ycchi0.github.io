@@ -57,7 +57,10 @@ function Person(name, age) { this.name = name; this.age = age; } Person.prototyp
         }
 
     </style>
-</noscript><meta property="og:title" content="Javascript ES6 Class 深入浅出" />
+</noscript>
+  
+
+<meta property="og:title" content="Javascript ES6 Class 深入浅出" />
 <meta property="og:description" content="初识 Class Javascript 中的类基于 Prototype 创建，一般类需要大写。 下面是一个简单的 Person 类示例，constructor 是构造函数，用来给类的对象进行初始化。
 class Person { constructor(name, age) { //this 代表实例对象，上面定义的是实例属性/方法 this.name = name; this.age = age; } // 各实例共享的方法 sayHi() { console.log(&#34;sayHi&#34;); } } let zs = new Person(&#34;zhangsan&#34;, 18); zs.sayHi(); 上面的 Person 类等同于下面 Prototype-based 写法
 function Person(name, age) { this.name = name; this.age = age; } Person.prototype.sayHi = function () { console.log(&#34;Prototype-based&#34;); }; let zs = new Person(&#34;zhangsan&#34;, 18); zs.sayHi(); 立即执行的匿名类 new (class { constructor() { console." />

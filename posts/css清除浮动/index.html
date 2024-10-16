@@ -57,7 +57,10 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="CSS清除浮动" />
+</noscript>
+  
+
+<meta property="og:title" content="CSS清除浮动" />
 <meta property="og:description" content="谈谈 BFC 当一个盒子没有设置 height, 而子盒子又都设置浮动时，此时这个盒子会塌陷。 如下：
 &lt;!DOCTYPE html&gt; &lt;html lang=&#34;en&#34;&gt; &lt;head&gt; &lt;meta charset=&#34;UTF-8&#34; /&gt; &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;style&gt; .box { width: 600px; border: 10px solid #a89393; } .box .c1 { width: 300px; height: 200px; background-color: orange; float: left; } .box .c2 { width: 300px; height: 200px; background-color: blue; float: left; } &lt;/style&gt; &lt;/head&gt; &lt;body&gt; &lt;div class=&#34;box&#34;&gt; &lt;div class=&#34;c1&#34;&gt;&lt;/div&gt; &lt;div class=&#34;c2&#34;&gt;&lt;/div&gt; &lt;/div&gt; &lt;/body&gt; &lt;/html&gt; 造成这个现象的原因，就是这个父盒子没有产生 BFC。
 那么什么是 BFC 呢 ？ 根据 MDN 的定义，BFC(区块格式化上下文)是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。 下列方式会创建块格式化上下文： 本质上来说，只要创建了 BFC,浮动的问题就解决了。" />

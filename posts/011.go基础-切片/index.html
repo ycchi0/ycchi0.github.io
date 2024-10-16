@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>011.Go基础 切片 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="在 Go 语言中，切片（slice） 是一种非常重要的数据结构，它是对数组的抽象，是一个动态大小的序列。与数组不同，切片的长度是可以变化的，因而更灵活、更常用。切片本质上是对底层数组的引用，允许我们在不复制数据的情况下处理数组的某一部分。
+1. 切片的定义与创建 切片由三部分组成：指针（指向底层数组的某个元素）、长度（当前切片中包含的元素数）和容量（从切片的起始位置到底层数组末尾的元素数）。
+创建切片的方式有几种常见的方式： 1.1 使用现有数组创建切片 通过数组生成切片，可以通过array[start:end]的方式从数组中创建切片，切片不包含end位置的元素。
+arr := [5]int{1, 2, 3, 4, 5} slice := arr[1:4] // 从数组创建切片，包含索引1到索引3的元素 fmt.Println(slice) // 输出 [2 3 4] 1.2 使用make()函数创建切片 make函数是 Go 语言中用于创建切片、映射（map）和通道（channel）的内置函数。通过make函数创建切片时，可以指定切片的长度和容量。
+slice := make([]int, 3, 5) // 创建长度为3，容量为5的切片 fmt.Println(slice) // 输出 [0 0 0] 在这个例子中，切片slice的长度是3，容量是5，所有元素初始化为0。
+1.3 使用切片字面量创建切片 可以像数组一样使用字面量创建切片。不同的是，切片不需要指定长度，长度由初始值的个数决定。
+slice := []int{1, 2, 3, 4} fmt.Println(slice) // 输出 [1 2 3 4] 2. 切片的长度和容量 长度：切片中的元素个数，通过len()函数可以获取切片的长度。 容量：切片从起始位置到底层数组末尾的元素数，通过cap()函数可以获取切片的容量。 示例：查看切片的长度和容量 slice := []int{1, 2, 3, 4, 5} fmt.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/011.go%E5%9F%BA%E7%A1%80-%E5%88%87%E7%89%87/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/011.go%E5%9F%BA%E7%A1%80-%E5%88%87%E7%89%87/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="011.Go基础 切片" />
+<meta property="og:description" content="在 Go 语言中，切片（slice） 是一种非常重要的数据结构，它是对数组的抽象，是一个动态大小的序列。与数组不同，切片的长度是可以变化的，因而更灵活、更常用。切片本质上是对底层数组的引用，允许我们在不复制数据的情况下处理数组的某一部分。
+1. 切片的定义与创建 切片由三部分组成：指针（指向底层数组的某个元素）、长度（当前切片中包含的元素数）和容量（从切片的起始位置到底层数组末尾的元素数）。
+创建切片的方式有几种常见的方式： 1.1 使用现有数组创建切片 通过数组生成切片，可以通过array[start:end]的方式从数组中创建切片，切片不包含end位置的元素。
+arr := [5]int{1, 2, 3, 4, 5} slice := arr[1:4] // 从数组创建切片，包含索引1到索引3的元素 fmt.Println(slice) // 输出 [2 3 4] 1.2 使用make()函数创建切片 make函数是 Go 语言中用于创建切片、映射（map）和通道（channel）的内置函数。通过make函数创建切片时，可以指定切片的长度和容量。
+slice := make([]int, 3, 5) // 创建长度为3，容量为5的切片 fmt.Println(slice) // 输出 [0 0 0] 在这个例子中，切片slice的长度是3，容量是5，所有元素初始化为0。
+1.3 使用切片字面量创建切片 可以像数组一样使用字面量创建切片。不同的是，切片不需要指定长度，长度由初始值的个数决定。
+slice := []int{1, 2, 3, 4} fmt.Println(slice) // 输出 [1 2 3 4] 2. 切片的长度和容量 长度：切片中的元素个数，通过len()函数可以获取切片的长度。 容量：切片从起始位置到底层数组末尾的元素数，通过cap()函数可以获取切片的容量。 示例：查看切片的长度和容量 slice := []int{1, 2, 3, 4, 5} fmt." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/011.go%E5%9F%BA%E7%A1%80-%E5%88%87%E7%89%87/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-10-16T12:55:56+00:00" />
+<meta property="article:modified_time" content="2024-10-16T12:55:56+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="011.Go基础 切片"/>
+<meta name="twitter:description" content="在 Go 语言中，切片（slice） 是一种非常重要的数据结构，它是对数组的抽象，是一个动态大小的序列。与数组不同，切片的长度是可以变化的，因而更灵活、更常用。切片本质上是对底层数组的引用，允许我们在不复制数据的情况下处理数组的某一部分。
+1. 切片的定义与创建 切片由三部分组成：指针（指向底层数组的某个元素）、长度（当前切片中包含的元素数）和容量（从切片的起始位置到底层数组末尾的元素数）。
+创建切片的方式有几种常见的方式： 1.1 使用现有数组创建切片 通过数组生成切片，可以通过array[start:end]的方式从数组中创建切片，切片不包含end位置的元素。
+arr := [5]int{1, 2, 3, 4, 5} slice := arr[1:4] // 从数组创建切片，包含索引1到索引3的元素 fmt.Println(slice) // 输出 [2 3 4] 1.2 使用make()函数创建切片 make函数是 Go 语言中用于创建切片、映射（map）和通道（channel）的内置函数。通过make函数创建切片时，可以指定切片的长度和容量。
+slice := make([]int, 3, 5) // 创建长度为3，容量为5的切片 fmt.Println(slice) // 输出 [0 0 0] 在这个例子中，切片slice的长度是3，容量是5，所有元素初始化为0。
+1.3 使用切片字面量创建切片 可以像数组一样使用字面量创建切片。不同的是，切片不需要指定长度，长度由初始值的个数决定。
+slice := []int{1, 2, 3, 4} fmt.Println(slice) // 输出 [1 2 3 4] 2. 切片的长度和容量 长度：切片中的元素个数，通过len()函数可以获取切片的长度。 容量：切片从起始位置到底层数组末尾的元素数，通过cap()函数可以获取切片的容量。 示例：查看切片的长度和容量 slice := []int{1, 2, 3, 4, 5} fmt."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "011.Go基础 切片",
+      "item": "https://ycchi0.github.io/posts/011.go%E5%9F%BA%E7%A1%80-%E5%88%87%E7%89%87/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "011.Go基础 切片",
+  "name": "011.Go基础 切片",
+  "description": "在 Go 语言中，切片（slice） 是一种非常重要的数据结构，它是对数组的抽象，是一个动态大小的序列。与数组不同，切片的长度是可以变化的，因而更灵活、更常用。切片本质上是对底层数组的引用，允许我们在不复制数据的情况下处理数组的某一部分。\n1. 切片的定义与创建 切片由三部分组成：指针（指向底层数组的某个元素）、长度（当前切片中包含的元素数）和容量（从切片的起始位置到底层数组末尾的元素数）。\n创建切片的方式有几种常见的方式： 1.1 使用现有数组创建切片 通过数组生成切片，可以通过array[start:end]的方式从数组中创建切片，切片不包含end位置的元素。\narr := [5]int{1, 2, 3, 4, 5} slice := arr[1:4] // 从数组创建切片，包含索引1到索引3的元素 fmt.Println(slice) // 输出 [2 3 4] 1.2 使用make()函数创建切片 make函数是 Go 语言中用于创建切片、映射（map）和通道（channel）的内置函数。通过make函数创建切片时，可以指定切片的长度和容量。\nslice := make([]int, 3, 5) // 创建长度为3，容量为5的切片 fmt.Println(slice) // 输出 [0 0 0] 在这个例子中，切片slice的长度是3，容量是5，所有元素初始化为0。\n1.3 使用切片字面量创建切片 可以像数组一样使用字面量创建切片。不同的是，切片不需要指定长度，长度由初始值的个数决定。\nslice := []int{1, 2, 3, 4} fmt.Println(slice) // 输出 [1 2 3 4] 2. 切片的长度和容量 长度：切片中的元素个数，通过len()函数可以获取切片的长度。 容量：切片从起始位置到底层数组末尾的元素数，通过cap()函数可以获取切片的容量。 示例：查看切片的长度和容量 slice := []int{1, 2, 3, 4, 5} fmt.",
+  "keywords": [
+    
+  ],
+  "articleBody": "在 Go 语言中，切片（slice） 是一种非常重要的数据结构，它是对数组的抽象，是一个动态大小的序列。与数组不同，切片的长度是可以变化的，因而更灵活、更常用。切片本质上是对底层数组的引用，允许我们在不复制数据的情况下处理数组的某一部分。\n1. 切片的定义与创建 切片由三部分组成：指针（指向底层数组的某个元素）、长度（当前切片中包含的元素数）和容量（从切片的起始位置到底层数组末尾的元素数）。\n创建切片的方式有几种常见的方式： 1.1 使用现有数组创建切片 通过数组生成切片，可以通过array[start:end]的方式从数组中创建切片，切片不包含end位置的元素。\narr := [5]int{1, 2, 3, 4, 5} slice := arr[1:4] // 从数组创建切片，包含索引1到索引3的元素 fmt.Println(slice) // 输出 [2 3 4] 1.2 使用make()函数创建切片 make函数是 Go 语言中用于创建切片、映射（map）和通道（channel）的内置函数。通过make函数创建切片时，可以指定切片的长度和容量。\nslice := make([]int, 3, 5) // 创建长度为3，容量为5的切片 fmt.Println(slice) // 输出 [0 0 0] 在这个例子中，切片slice的长度是3，容量是5，所有元素初始化为0。\n1.3 使用切片字面量创建切片 可以像数组一样使用字面量创建切片。不同的是，切片不需要指定长度，长度由初始值的个数决定。\nslice := []int{1, 2, 3, 4} fmt.Println(slice) // 输出 [1 2 3 4] 2. 切片的长度和容量 长度：切片中的元素个数，通过len()函数可以获取切片的长度。 容量：切片从起始位置到底层数组末尾的元素数，通过cap()函数可以获取切片的容量。 示例：查看切片的长度和容量 slice := []int{1, 2, 3, 4, 5} fmt.Println(\"长度:\", len(slice)) // 输出 长度: 5 fmt.Println(\"容量:\", cap(slice)) // 输出 容量: 5 newSlice := slice[1:3] fmt.Println(\"newSlice长度:\", len(newSlice)) // 输出 newSlice长度: 2 fmt.Println(\"newSlice容量:\", cap(newSlice)) // 输出 newSlice容量: 4 在这个例子中，newSlice从slice的第 2 个元素开始，到第 3 个元素结束。其长度为 2，但容量为 4，因为newSlice引用的是slice底层数组的部分，包含从slice[1]到slice末尾的所有元素。\n3. 切片的扩容和追加 切片的长度是动态的，可以使用append()函数向切片中添加元素。当向切片中追加元素时，如果切片的容量不足以容纳新元素，Go 会自动为切片分配一个更大的底层数组并复制数据。\n示例：使用append追加元素 slice := []int{1, 2, 3} slice = append(slice, 4, 5) fmt.Println(slice) // 输出 [1 2 3 4 5] 当切片容量不足时，Go 会自动为切片分配一个更大的数组。\n切片的扩容机制 Go 语言切片的扩容机制是指数增长的。当切片的容量不足时，Go 会为切片分配新的底层数组，容量通常是当前容量的两倍。例如，如果容量从 4 增加到 8，那么再一次扩容时，容量可能会增加到 16。\nslice := []int{} fmt.Printf(\"len=%d cap=%d slice=%v\\n\", len(slice), cap(slice), slice) for i := 0; i \u003c 10; i++ { slice = append(slice, i) fmt.Printf(\"len=%d cap=%d slice=%v\\n\", len(slice), cap(slice), slice) } 输出结果展示了切片的容量在不断扩充。\n4. 切片的零值 切片的零值是nil，一个nil切片的长度和容量都是0，但它可以安全地使用append()函数。\nvar s []int fmt.Println(s, len(s), cap(s)) // 输出 [] 0 0 s = append(s, 1, 2, 3) fmt.Println(s) // 输出 [1 2 3] 5. 切片是引用类型 与数组不同，切片是引用类型。将一个切片赋值给另一个切片时，它们指向的是同一个底层数组，因此对一个切片的修改会影响到另一个切片。\n示例：切片是引用类型 slice1 := []int{1, 2, 3} slice2 := slice1 // slice2和slice1共享同一个底层数组 slice2[0] = 100 fmt.Println(slice1) // 输出 [100 2 3] fmt.Println(slice2) // 输出 [100 2 3] 在这个例子中，slice1和slice2指向同一个底层数组，因此修改slice2中的元素也会影响slice1。\n6. 切片的复制 如果想要创建一个切片的副本，而不是引用同一个底层数组，可以使用内置的copy()函数。copy()函数将源切片的元素复制到目标切片中，并返回复制的元素个数。\n示例：复制切片 src := []int{1, 2, 3} dst := make([]int, len(src)) // 创建一个新的切片来存储副本 copy(dst, src) // 复制src到dst dst[0] = 100 fmt.Println(src) // 输出 [1 2 3] fmt.Println(dst) // 输出 [100 2 3] 在这个例子中，src和dst是两个独立的切片，修改dst不会影响src。\n7. 切片与数组的关系 切片是基于数组构建的，它的底层依赖数组。切片通过一个指向数组的指针来操作数组的一部分。切片可以引用整个数组，也可以引用数组的某一部分。\n示例：切片与数组的关系 arr := [5]int{1, 2, 3, 4, 5} slice := arr[1:4] // 创建一个引用数组部分元素的切片 fmt.Println(slice) // 输出 [2 3 4] slice[0] = 100 // 修改切片中的元素 fmt.Println(arr) // 输出 [1 100 3 4 5] 在这个例子中，slice引用了数组arr的一部分，因此修改切片的元素也会影响数组的内容。\n8. 多维切片 切片可以是多维的，即可以创建切片的切片。多维切片的定义和使用与多维数组类似，但更为灵活。\n示例：多维切片 matrix := [][]int{ {1, 2, 3}, {4, 5, 6}, {7, 8, 9}, } fmt.Println(matrix) // 输出 [[1 2 3] [4 5 6] [7 8 9]] fmt.Println(matrix[1][2]) // 输出 6 9. 切片的性能考虑 由于切片是基于底层数组的引用，因此操作切片不会拷贝数据，这使得切片的操作比数组更加高效。然而，由于切片的动态扩容机制，频繁的追加操作可能导致性能开销，特别是在切片频繁扩容时，可能会触发底层数组的重新分配和数据的复制。\n总结 定义和创建：切片是对数组的抽象，长度和容量是动态的，可以通过make或字面量创建。 切片的长度和容量：通过len()获取长度，cap()获取容量，切片的容量是从当前索引位置到底层数组末尾的元素数。 切片的扩容：通过append()可以向切片中追加元素， ",
+  "wordCount" : "340",
+  "inLanguage": "en",
+  "datePublished": "2024-10-16T12:55:56Z",
+  "dateModified": "2024-10-16T12:55:56Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/011.go%E5%9F%BA%E7%A1%80-%E5%88%87%E7%89%87/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      011.Go基础 切片
+    </h1>
+    <div class="post-meta"><span title='2024-10-16 12:55:56 +0000 UTC'>October 16, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>在 Go 语言中，<strong>切片（slice）</strong> 是一种非常重要的数据结构，它是对数组的抽象，是一个<strong>动态大小</strong>的序列。与数组不同，切片的长度是可以变化的，因而更灵活、更常用。切片本质上是对底层数组的引用，允许我们在不复制数据的情况下处理数组的某一部分。</p>
+<h3 id="1-切片的定义与创建">1. 切片的定义与创建<a hidden class="anchor" aria-hidden="true" href="#1-切片的定义与创建">#</a></h3>
+<p>切片由三部分组成：<strong>指针</strong>（指向底层数组的某个元素）、<strong>长度</strong>（当前切片中包含的元素数）和<strong>容量</strong>（从切片的起始位置到底层数组末尾的元素数）。</p>
+<h4 id="创建切片的方式有几种常见的方式">创建切片的方式有几种常见的方式：<a hidden class="anchor" aria-hidden="true" href="#创建切片的方式有几种常见的方式">#</a></h4>
+<h4 id="11-使用现有数组创建切片">1.1 使用现有数组创建切片<a hidden class="anchor" aria-hidden="true" href="#11-使用现有数组创建切片">#</a></h4>
+<p>通过数组生成切片，可以通过<code>array[start:end]</code>的方式从数组中创建切片，切片不包含<code>end</code>位置的元素。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">arr</span> <span style="color:#f92672">:=</span> [<span style="color:#ae81ff">5</span>]<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">arr</span>[<span style="color:#ae81ff">1</span>:<span style="color:#ae81ff">4</span>]  <span style="color:#75715e">// 从数组创建切片，包含索引1到索引3的元素
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">slice</span>) <span style="color:#75715e">// 输出 [2 3 4]
+</span></span></span></code></pre></div><h4 id="12-使用make函数创建切片">1.2 使用<code>make()</code>函数创建切片<a hidden class="anchor" aria-hidden="true" href="#12-使用make函数创建切片">#</a></h4>
+<p><code>make</code>函数是 Go 语言中用于创建切片、映射（map）和通道（channel）的内置函数。通过<code>make</code>函数创建切片时，可以指定切片的长度和容量。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">5</span>)  <span style="color:#75715e">// 创建长度为3，容量为5的切片
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">slice</span>) <span style="color:#75715e">// 输出 [0 0 0]
+</span></span></span></code></pre></div><p>在这个例子中，切片<code>slice</code>的长度是<code>3</code>，容量是<code>5</code>，所有元素初始化为<code>0</code>。</p>
+<h4 id="13-使用切片字面量创建切片">1.3 使用切片字面量创建切片<a hidden class="anchor" aria-hidden="true" href="#13-使用切片字面量创建切片">#</a></h4>
+<p>可以像数组一样使用字面量创建切片。不同的是，切片不需要指定长度，长度由初始值的个数决定。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">slice</span>) <span style="color:#75715e">// 输出 [1 2 3 4]
+</span></span></span></code></pre></div><h3 id="2-切片的长度和容量">2. 切片的长度和容量<a hidden class="anchor" aria-hidden="true" href="#2-切片的长度和容量">#</a></h3>
+<ul>
+<li><strong>长度</strong>：切片中的元素个数，通过<code>len()</code>函数可以获取切片的长度。</li>
+<li><strong>容量</strong>：切片从起始位置到底层数组末尾的元素数，通过<code>cap()</code>函数可以获取切片的容量。</li>
+</ul>
+<h4 id="示例查看切片的长度和容量">示例：查看切片的长度和容量<a hidden class="anchor" aria-hidden="true" href="#示例查看切片的长度和容量">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;长度:&#34;</span>, len(<span style="color:#a6e22e">slice</span>)) <span style="color:#75715e">// 输出 长度: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;容量:&#34;</span>, cap(<span style="color:#a6e22e">slice</span>)) <span style="color:#75715e">// 输出 容量: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">newSlice</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">slice</span>[<span style="color:#ae81ff">1</span>:<span style="color:#ae81ff">3</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;newSlice长度:&#34;</span>, len(<span style="color:#a6e22e">newSlice</span>)) <span style="color:#75715e">// 输出 newSlice长度: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;newSlice容量:&#34;</span>, cap(<span style="color:#a6e22e">newSlice</span>)) <span style="color:#75715e">// 输出 newSlice容量: 4
+</span></span></span></code></pre></div><p>在这个例子中，<code>newSlice</code>从<code>slice</code>的第 2 个元素开始，到第 3 个元素结束。其长度为 2，但容量为 4，因为<code>newSlice</code>引用的是<code>slice</code>底层数组的部分，包含从<code>slice[1]</code>到<code>slice</code>末尾的所有元素。</p>
+<h3 id="3-切片的扩容和追加">3. 切片的扩容和追加<a hidden class="anchor" aria-hidden="true" href="#3-切片的扩容和追加">#</a></h3>
+<p>切片的长度是动态的，可以使用<code>append()</code>函数向切片中添加元素。当向切片中追加元素时，如果切片的容量不足以容纳新元素，Go 会自动为切片分配一个更大的底层数组并复制数据。</p>
+<h4 id="示例使用append追加元素">示例：使用<code>append</code>追加元素<a hidden class="anchor" aria-hidden="true" href="#示例使用append追加元素">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> = append(<span style="color:#a6e22e">slice</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">slice</span>) <span style="color:#75715e">// 输出 [1 2 3 4 5]
+</span></span></span></code></pre></div><p>当切片容量不足时，Go 会自动为切片分配一个更大的数组。</p>
+<h4 id="切片的扩容机制">切片的扩容机制<a hidden class="anchor" aria-hidden="true" href="#切片的扩容机制">#</a></h4>
+<p>Go 语言切片的扩容机制是指数增长的。当切片的容量不足时，Go 会为切片分配新的底层数组，容量通常是当前容量的两倍。例如，如果容量从 4 增加到 8，那么再一次扩容时，容量可能会增加到 16。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;len=%d cap=%d slice=%v\n&#34;</span>, len(<span style="color:#a6e22e">slice</span>), cap(<span style="color:#a6e22e">slice</span>), <span style="color:#a6e22e">slice</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">slice</span> = append(<span style="color:#a6e22e">slice</span>, <span style="color:#a6e22e">i</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;len=%d cap=%d slice=%v\n&#34;</span>, len(<span style="color:#a6e22e">slice</span>), cap(<span style="color:#a6e22e">slice</span>), <span style="color:#a6e22e">slice</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>输出结果展示了切片的容量在不断扩充。</p>
+<h3 id="4-切片的零值">4. 切片的零值<a hidden class="anchor" aria-hidden="true" href="#4-切片的零值">#</a></h3>
+<p>切片的零值是<code>nil</code>，一个<code>nil</code>切片的长度和容量都是<code>0</code>，但它可以安全地使用<code>append()</code>函数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> []<span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>, len(<span style="color:#a6e22e">s</span>), cap(<span style="color:#a6e22e">s</span>)) <span style="color:#75715e">// 输出 [] 0 0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">s</span> = append(<span style="color:#a6e22e">s</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>) <span style="color:#75715e">// 输出 [1 2 3]
+</span></span></span></code></pre></div><h3 id="5-切片是引用类型">5. 切片是引用类型<a hidden class="anchor" aria-hidden="true" href="#5-切片是引用类型">#</a></h3>
+<p>与数组不同，切片是引用类型。将一个切片赋值给另一个切片时，它们指向的是同一个底层数组，因此对一个切片的修改会影响到另一个切片。</p>
+<h4 id="示例切片是引用类型">示例：切片是引用类型<a hidden class="anchor" aria-hidden="true" href="#示例切片是引用类型">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">slice1</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slice2</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">slice1</span>  <span style="color:#75715e">// slice2和slice1共享同一个底层数组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">slice2</span>[<span style="color:#ae81ff">0</span>] = <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">slice1</span>)  <span style="color:#75715e">// 输出 [100 2 3]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">slice2</span>)  <span style="color:#75715e">// 输出 [100 2 3]
+</span></span></span></code></pre></div><p>在这个例子中，<code>slice1</code>和<code>slice2</code>指向同一个底层数组，因此修改<code>slice2</code>中的元素也会影响<code>slice1</code>。</p>
+<h3 id="6-切片的复制">6. 切片的复制<a hidden class="anchor" aria-hidden="true" href="#6-切片的复制">#</a></h3>
+<p>如果想要创建一个切片的副本，而不是引用同一个底层数组，可以使用内置的<code>copy()</code>函数。<code>copy()</code>函数将源切片的元素复制到目标切片中，并返回复制的元素个数。</p>
+<h4 id="示例复制切片">示例：复制切片<a hidden class="anchor" aria-hidden="true" href="#示例复制切片">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">src</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">dst</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">int</span>, len(<span style="color:#a6e22e">src</span>))  <span style="color:#75715e">// 创建一个新的切片来存储副本
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>copy(<span style="color:#a6e22e">dst</span>, <span style="color:#a6e22e">src</span>)  <span style="color:#75715e">// 复制src到dst
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">dst</span>[<span style="color:#ae81ff">0</span>] = <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">src</span>)  <span style="color:#75715e">// 输出 [1 2 3]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">dst</span>)  <span style="color:#75715e">// 输出 [100 2 3]
+</span></span></span></code></pre></div><p>在这个例子中，<code>src</code>和<code>dst</code>是两个独立的切片，修改<code>dst</code>不会影响<code>src</code>。</p>
+<h3 id="7-切片与数组的关系">7. 切片与数组的关系<a hidden class="anchor" aria-hidden="true" href="#7-切片与数组的关系">#</a></h3>
+<p>切片是基于数组构建的，它的底层依赖数组。切片通过一个指向数组的指针来操作数组的一部分。切片可以引用整个数组，也可以引用数组的某一部分。</p>
+<h4 id="示例切片与数组的关系">示例：切片与数组的关系<a hidden class="anchor" aria-hidden="true" href="#示例切片与数组的关系">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">arr</span> <span style="color:#f92672">:=</span> [<span style="color:#ae81ff">5</span>]<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">arr</span>[<span style="color:#ae81ff">1</span>:<span style="color:#ae81ff">4</span>]  <span style="color:#75715e">// 创建一个引用数组部分元素的切片
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">slice</span>) <span style="color:#75715e">// 输出 [2 3 4]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">slice</span>[<span style="color:#ae81ff">0</span>] = <span style="color:#ae81ff">100</span>     <span style="color:#75715e">// 修改切片中的元素
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">arr</span>)   <span style="color:#75715e">// 输出 [1 100 3 4 5]
+</span></span></span></code></pre></div><p>在这个例子中，<code>slice</code>引用了数组<code>arr</code>的一部分，因此修改切片的元素也会影响数组的内容。</p>
+<h3 id="8-多维切片">8. 多维切片<a hidden class="anchor" aria-hidden="true" href="#8-多维切片">#</a></h3>
+<p>切片可以是多维的，即可以创建切片的切片。多维切片的定义和使用与多维数组类似，但更为灵活。</p>
+<h4 id="示例多维切片">示例：多维切片<a hidden class="anchor" aria-hidden="true" href="#示例多维切片">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">matrix</span> <span style="color:#f92672">:=</span> [][]<span style="color:#66d9ef">int</span>{
+</span></span><span style="display:flex;"><span>    {<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">6</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">9</span>},
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">matrix</span>)         <span style="color:#75715e">// 输出 [[1 2 3] [4 5 6] [7 8 9]]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">matrix</span>[<span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">2</span>])   <span style="color:#75715e">// 输出 6
+</span></span></span></code></pre></div><h3 id="9-切片的性能考虑">9. 切片的性能考虑<a hidden class="anchor" aria-hidden="true" href="#9-切片的性能考虑">#</a></h3>
+<p>由于切片是基于底层数组的引用，因此操作切片不会拷贝数据，这使得切片的操作比数组更加高效。然而，由于切片的动态扩容机制，频繁的追加操作可能导致性能开销，特别是在切片频繁扩容时，可能会触发底层数组的重新分配和数据的复制。</p>
+<h3 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h3>
+<ul>
+<li><strong>定义和创建</strong>：切片是对数组的抽象，长度和容量是动态的，可以通过<code>make</code>或字面量创建。</li>
+<li><strong>切片的长度和容量</strong>：通过<code>len()</code>获取长度，<code>cap()</code>获取容量，切片的容量是从当前索引位置到底层数组末尾的元素数。</li>
+<li><strong>切片的扩容</strong>：通过<code>append()</code>可以向切片中追加元素，</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

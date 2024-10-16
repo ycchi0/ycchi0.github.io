@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>ETCD应用场景 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="前置知识 ETCD的租约机制 租约是ETCD中的一种抽象，它可以关联到一个或多个键值对，当租约过期时，与其关联的所有键值对都会被自动删除。
+以下是ETCD租约机制的主要特性和使用方式：
+创建租约：客户端可以通过调用ETCD的API创建一个新的租约。创建租约时需要指定一个TTL（Time To Live），表示租约的有效期。创建成功后，ETCD会返回一个唯一的租约ID。
+关联键值对：客户端在创建或修改键值对时，可以指定一个租约ID，将键值对关联到这个租约。这样，当租约过期时，这个键值对会被自动删除。
+续租：客户端可以通过调用ETCD的API来续租一个租约，即重新设置租约的TTL。这样可以防止租约过期，与其关联的键值对被删除。
+撤销租约：客户端可以通过调用ETCD的API来撤销一个租约。撤销租约会导致与其关联的所有键值对被立即删除。
+租约超时：如果客户端在租约的TTL时间内没有进行续租操作，那么租约会自动过期，与其关联的所有键值对都会被ETCD自动删除。
+一个租约可以挂多个key，一个key只能挂一个租约
+应用场景 服务发现 服务注册与发现(Service Discovery)是ETCD最常见的使用场景，解决的是如何在同一个分布式集群中的进程或服务找到目标服务的IP地址并建立连接。
+在分布式系统中，服务提供者都是以集群的方式对外提供服务，集群中服务的IP随时都可能发生变化，因此服务提供者需要将自己的服务注册到ETCD中去。这样，服务使用者通过ETCD可以获取到实际服务提供者的ip信息，连接到服务提供者，进行后续操作。
+消息发布与订阅 使用ETCD进行消息发布与订阅，实际上就是构建一个配置共享中心
+消息发布方在将消息存储到对应的key上，消息订阅者在ETCD节点上注册一个Watcher并等待，以后每次配置有更新的适合，ETCD都会实时通知订阅者，以此达到获取最新配置信息的目的。
+分布式锁 ETCD实现分布式锁的关键在于其Compare-and-Swap（CAS）操作和TTL（Time To Live）特性。
+以下是ETCD实现分布式锁的详细步骤：
+获取锁：客户端尝试获取锁，通过调用ETCD的CAS操作。在这个操作中，客户端会尝试创建一个键值对，键是锁的名称，值是一个唯一标识（例如，客户端的ID或者UUID）。同时，这个键值对会设置一个TTL，表示锁的过期时间。如果这个键值对创建成功，那么就表示客户端成功获取到了锁。如果键值对创建失败（通常是因为键已经存在，即锁已经被其他客户端持有），那么客户端就没有获取到锁。
+持有锁：一旦客户端获取到锁，就可以执行需要同步的操作。在这个过程中，其他客户端无法获取到锁，也就无法执行相同的操作。
+释放锁：客户端在完成需要同步的操作后，需要释放锁，让其他客户端有机会获取锁。释放锁是通过调用ETCD的Delete操作，删除对应的键值对来实现的。
+锁的过期：如果客户端在持有锁的过程中崩溃，可能无法正常释放锁。这时，ETCD的TTL特性就会发挥作用。ETCD会在键值对的TTL时间到达后，自动删除这个键值对，从而释放锁。这样可以防止因为客户端崩溃导致的锁无法释放，阻塞其他客户端的问题。
+等待锁：如果客户端尝试获取锁失败（即锁已经被其他客户端持有），那么客户端可以选择等待锁被释放。这通常是通过轮询的方式实现的，客户端会定期尝试获取锁，直到成功为止。
+通过这种方式，ETCD可以在分布式环境下实现锁的同步，保证在同一时刻，只有一个客户端能够执行需要同步的操作。这对于保证分布式系统的数据一致性非常重要。">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/etcd%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/etcd%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="ETCD应用场景" />
+<meta property="og:description" content="前置知识 ETCD的租约机制 租约是ETCD中的一种抽象，它可以关联到一个或多个键值对，当租约过期时，与其关联的所有键值对都会被自动删除。
+以下是ETCD租约机制的主要特性和使用方式：
+创建租约：客户端可以通过调用ETCD的API创建一个新的租约。创建租约时需要指定一个TTL（Time To Live），表示租约的有效期。创建成功后，ETCD会返回一个唯一的租约ID。
+关联键值对：客户端在创建或修改键值对时，可以指定一个租约ID，将键值对关联到这个租约。这样，当租约过期时，这个键值对会被自动删除。
+续租：客户端可以通过调用ETCD的API来续租一个租约，即重新设置租约的TTL。这样可以防止租约过期，与其关联的键值对被删除。
+撤销租约：客户端可以通过调用ETCD的API来撤销一个租约。撤销租约会导致与其关联的所有键值对被立即删除。
+租约超时：如果客户端在租约的TTL时间内没有进行续租操作，那么租约会自动过期，与其关联的所有键值对都会被ETCD自动删除。
+一个租约可以挂多个key，一个key只能挂一个租约
+应用场景 服务发现 服务注册与发现(Service Discovery)是ETCD最常见的使用场景，解决的是如何在同一个分布式集群中的进程或服务找到目标服务的IP地址并建立连接。
+在分布式系统中，服务提供者都是以集群的方式对外提供服务，集群中服务的IP随时都可能发生变化，因此服务提供者需要将自己的服务注册到ETCD中去。这样，服务使用者通过ETCD可以获取到实际服务提供者的ip信息，连接到服务提供者，进行后续操作。
+消息发布与订阅 使用ETCD进行消息发布与订阅，实际上就是构建一个配置共享中心
+消息发布方在将消息存储到对应的key上，消息订阅者在ETCD节点上注册一个Watcher并等待，以后每次配置有更新的适合，ETCD都会实时通知订阅者，以此达到获取最新配置信息的目的。
+分布式锁 ETCD实现分布式锁的关键在于其Compare-and-Swap（CAS）操作和TTL（Time To Live）特性。
+以下是ETCD实现分布式锁的详细步骤：
+获取锁：客户端尝试获取锁，通过调用ETCD的CAS操作。在这个操作中，客户端会尝试创建一个键值对，键是锁的名称，值是一个唯一标识（例如，客户端的ID或者UUID）。同时，这个键值对会设置一个TTL，表示锁的过期时间。如果这个键值对创建成功，那么就表示客户端成功获取到了锁。如果键值对创建失败（通常是因为键已经存在，即锁已经被其他客户端持有），那么客户端就没有获取到锁。
+持有锁：一旦客户端获取到锁，就可以执行需要同步的操作。在这个过程中，其他客户端无法获取到锁，也就无法执行相同的操作。
+释放锁：客户端在完成需要同步的操作后，需要释放锁，让其他客户端有机会获取锁。释放锁是通过调用ETCD的Delete操作，删除对应的键值对来实现的。
+锁的过期：如果客户端在持有锁的过程中崩溃，可能无法正常释放锁。这时，ETCD的TTL特性就会发挥作用。ETCD会在键值对的TTL时间到达后，自动删除这个键值对，从而释放锁。这样可以防止因为客户端崩溃导致的锁无法释放，阻塞其他客户端的问题。
+等待锁：如果客户端尝试获取锁失败（即锁已经被其他客户端持有），那么客户端可以选择等待锁被释放。这通常是通过轮询的方式实现的，客户端会定期尝试获取锁，直到成功为止。
+通过这种方式，ETCD可以在分布式环境下实现锁的同步，保证在同一时刻，只有一个客户端能够执行需要同步的操作。这对于保证分布式系统的数据一致性非常重要。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/etcd%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-05-30T17:37:32+00:00" />
+<meta property="article:modified_time" content="2024-05-30T17:37:32+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ETCD应用场景"/>
+<meta name="twitter:description" content="前置知识 ETCD的租约机制 租约是ETCD中的一种抽象，它可以关联到一个或多个键值对，当租约过期时，与其关联的所有键值对都会被自动删除。
+以下是ETCD租约机制的主要特性和使用方式：
+创建租约：客户端可以通过调用ETCD的API创建一个新的租约。创建租约时需要指定一个TTL（Time To Live），表示租约的有效期。创建成功后，ETCD会返回一个唯一的租约ID。
+关联键值对：客户端在创建或修改键值对时，可以指定一个租约ID，将键值对关联到这个租约。这样，当租约过期时，这个键值对会被自动删除。
+续租：客户端可以通过调用ETCD的API来续租一个租约，即重新设置租约的TTL。这样可以防止租约过期，与其关联的键值对被删除。
+撤销租约：客户端可以通过调用ETCD的API来撤销一个租约。撤销租约会导致与其关联的所有键值对被立即删除。
+租约超时：如果客户端在租约的TTL时间内没有进行续租操作，那么租约会自动过期，与其关联的所有键值对都会被ETCD自动删除。
+一个租约可以挂多个key，一个key只能挂一个租约
+应用场景 服务发现 服务注册与发现(Service Discovery)是ETCD最常见的使用场景，解决的是如何在同一个分布式集群中的进程或服务找到目标服务的IP地址并建立连接。
+在分布式系统中，服务提供者都是以集群的方式对外提供服务，集群中服务的IP随时都可能发生变化，因此服务提供者需要将自己的服务注册到ETCD中去。这样，服务使用者通过ETCD可以获取到实际服务提供者的ip信息，连接到服务提供者，进行后续操作。
+消息发布与订阅 使用ETCD进行消息发布与订阅，实际上就是构建一个配置共享中心
+消息发布方在将消息存储到对应的key上，消息订阅者在ETCD节点上注册一个Watcher并等待，以后每次配置有更新的适合，ETCD都会实时通知订阅者，以此达到获取最新配置信息的目的。
+分布式锁 ETCD实现分布式锁的关键在于其Compare-and-Swap（CAS）操作和TTL（Time To Live）特性。
+以下是ETCD实现分布式锁的详细步骤：
+获取锁：客户端尝试获取锁，通过调用ETCD的CAS操作。在这个操作中，客户端会尝试创建一个键值对，键是锁的名称，值是一个唯一标识（例如，客户端的ID或者UUID）。同时，这个键值对会设置一个TTL，表示锁的过期时间。如果这个键值对创建成功，那么就表示客户端成功获取到了锁。如果键值对创建失败（通常是因为键已经存在，即锁已经被其他客户端持有），那么客户端就没有获取到锁。
+持有锁：一旦客户端获取到锁，就可以执行需要同步的操作。在这个过程中，其他客户端无法获取到锁，也就无法执行相同的操作。
+释放锁：客户端在完成需要同步的操作后，需要释放锁，让其他客户端有机会获取锁。释放锁是通过调用ETCD的Delete操作，删除对应的键值对来实现的。
+锁的过期：如果客户端在持有锁的过程中崩溃，可能无法正常释放锁。这时，ETCD的TTL特性就会发挥作用。ETCD会在键值对的TTL时间到达后，自动删除这个键值对，从而释放锁。这样可以防止因为客户端崩溃导致的锁无法释放，阻塞其他客户端的问题。
+等待锁：如果客户端尝试获取锁失败（即锁已经被其他客户端持有），那么客户端可以选择等待锁被释放。这通常是通过轮询的方式实现的，客户端会定期尝试获取锁，直到成功为止。
+通过这种方式，ETCD可以在分布式环境下实现锁的同步，保证在同一时刻，只有一个客户端能够执行需要同步的操作。这对于保证分布式系统的数据一致性非常重要。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "ETCD应用场景",
+      "item": "https://ycchi0.github.io/posts/etcd%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ETCD应用场景",
+  "name": "ETCD应用场景",
+  "description": "前置知识 ETCD的租约机制 租约是ETCD中的一种抽象，它可以关联到一个或多个键值对，当租约过期时，与其关联的所有键值对都会被自动删除。\n以下是ETCD租约机制的主要特性和使用方式：\n创建租约：客户端可以通过调用ETCD的API创建一个新的租约。创建租约时需要指定一个TTL（Time To Live），表示租约的有效期。创建成功后，ETCD会返回一个唯一的租约ID。\n关联键值对：客户端在创建或修改键值对时，可以指定一个租约ID，将键值对关联到这个租约。这样，当租约过期时，这个键值对会被自动删除。\n续租：客户端可以通过调用ETCD的API来续租一个租约，即重新设置租约的TTL。这样可以防止租约过期，与其关联的键值对被删除。\n撤销租约：客户端可以通过调用ETCD的API来撤销一个租约。撤销租约会导致与其关联的所有键值对被立即删除。\n租约超时：如果客户端在租约的TTL时间内没有进行续租操作，那么租约会自动过期，与其关联的所有键值对都会被ETCD自动删除。\n一个租约可以挂多个key，一个key只能挂一个租约\n应用场景 服务发现 服务注册与发现(Service Discovery)是ETCD最常见的使用场景，解决的是如何在同一个分布式集群中的进程或服务找到目标服务的IP地址并建立连接。\n在分布式系统中，服务提供者都是以集群的方式对外提供服务，集群中服务的IP随时都可能发生变化，因此服务提供者需要将自己的服务注册到ETCD中去。这样，服务使用者通过ETCD可以获取到实际服务提供者的ip信息，连接到服务提供者，进行后续操作。\n消息发布与订阅 使用ETCD进行消息发布与订阅，实际上就是构建一个配置共享中心\n消息发布方在将消息存储到对应的key上，消息订阅者在ETCD节点上注册一个Watcher并等待，以后每次配置有更新的适合，ETCD都会实时通知订阅者，以此达到获取最新配置信息的目的。\n分布式锁 ETCD实现分布式锁的关键在于其Compare-and-Swap（CAS）操作和TTL（Time To Live）特性。\n以下是ETCD实现分布式锁的详细步骤：\n获取锁：客户端尝试获取锁，通过调用ETCD的CAS操作。在这个操作中，客户端会尝试创建一个键值对，键是锁的名称，值是一个唯一标识（例如，客户端的ID或者UUID）。同时，这个键值对会设置一个TTL，表示锁的过期时间。如果这个键值对创建成功，那么就表示客户端成功获取到了锁。如果键值对创建失败（通常是因为键已经存在，即锁已经被其他客户端持有），那么客户端就没有获取到锁。\n持有锁：一旦客户端获取到锁，就可以执行需要同步的操作。在这个过程中，其他客户端无法获取到锁，也就无法执行相同的操作。\n释放锁：客户端在完成需要同步的操作后，需要释放锁，让其他客户端有机会获取锁。释放锁是通过调用ETCD的Delete操作，删除对应的键值对来实现的。\n锁的过期：如果客户端在持有锁的过程中崩溃，可能无法正常释放锁。这时，ETCD的TTL特性就会发挥作用。ETCD会在键值对的TTL时间到达后，自动删除这个键值对，从而释放锁。这样可以防止因为客户端崩溃导致的锁无法释放，阻塞其他客户端的问题。\n等待锁：如果客户端尝试获取锁失败（即锁已经被其他客户端持有），那么客户端可以选择等待锁被释放。这通常是通过轮询的方式实现的，客户端会定期尝试获取锁，直到成功为止。\n通过这种方式，ETCD可以在分布式环境下实现锁的同步，保证在同一时刻，只有一个客户端能够执行需要同步的操作。这对于保证分布式系统的数据一致性非常重要。",
+  "keywords": [
+    
+  ],
+  "articleBody": "前置知识 ETCD的租约机制 租约是ETCD中的一种抽象，它可以关联到一个或多个键值对，当租约过期时，与其关联的所有键值对都会被自动删除。\n以下是ETCD租约机制的主要特性和使用方式：\n创建租约：客户端可以通过调用ETCD的API创建一个新的租约。创建租约时需要指定一个TTL（Time To Live），表示租约的有效期。创建成功后，ETCD会返回一个唯一的租约ID。\n关联键值对：客户端在创建或修改键值对时，可以指定一个租约ID，将键值对关联到这个租约。这样，当租约过期时，这个键值对会被自动删除。\n续租：客户端可以通过调用ETCD的API来续租一个租约，即重新设置租约的TTL。这样可以防止租约过期，与其关联的键值对被删除。\n撤销租约：客户端可以通过调用ETCD的API来撤销一个租约。撤销租约会导致与其关联的所有键值对被立即删除。\n租约超时：如果客户端在租约的TTL时间内没有进行续租操作，那么租约会自动过期，与其关联的所有键值对都会被ETCD自动删除。\n一个租约可以挂多个key，一个key只能挂一个租约\n应用场景 服务发现 服务注册与发现(Service Discovery)是ETCD最常见的使用场景，解决的是如何在同一个分布式集群中的进程或服务找到目标服务的IP地址并建立连接。\n在分布式系统中，服务提供者都是以集群的方式对外提供服务，集群中服务的IP随时都可能发生变化，因此服务提供者需要将自己的服务注册到ETCD中去。这样，服务使用者通过ETCD可以获取到实际服务提供者的ip信息，连接到服务提供者，进行后续操作。\n消息发布与订阅 使用ETCD进行消息发布与订阅，实际上就是构建一个配置共享中心\n消息发布方在将消息存储到对应的key上，消息订阅者在ETCD节点上注册一个Watcher并等待，以后每次配置有更新的适合，ETCD都会实时通知订阅者，以此达到获取最新配置信息的目的。\n分布式锁 ETCD实现分布式锁的关键在于其Compare-and-Swap（CAS）操作和TTL（Time To Live）特性。\n以下是ETCD实现分布式锁的详细步骤：\n获取锁：客户端尝试获取锁，通过调用ETCD的CAS操作。在这个操作中，客户端会尝试创建一个键值对，键是锁的名称，值是一个唯一标识（例如，客户端的ID或者UUID）。同时，这个键值对会设置一个TTL，表示锁的过期时间。如果这个键值对创建成功，那么就表示客户端成功获取到了锁。如果键值对创建失败（通常是因为键已经存在，即锁已经被其他客户端持有），那么客户端就没有获取到锁。\n持有锁：一旦客户端获取到锁，就可以执行需要同步的操作。在这个过程中，其他客户端无法获取到锁，也就无法执行相同的操作。\n释放锁：客户端在完成需要同步的操作后，需要释放锁，让其他客户端有机会获取锁。释放锁是通过调用ETCD的Delete操作，删除对应的键值对来实现的。\n锁的过期：如果客户端在持有锁的过程中崩溃，可能无法正常释放锁。这时，ETCD的TTL特性就会发挥作用。ETCD会在键值对的TTL时间到达后，自动删除这个键值对，从而释放锁。这样可以防止因为客户端崩溃导致的锁无法释放，阻塞其他客户端的问题。\n等待锁：如果客户端尝试获取锁失败（即锁已经被其他客户端持有），那么客户端可以选择等待锁被释放。这通常是通过轮询的方式实现的，客户端会定期尝试获取锁，直到成功为止。\n通过这种方式，ETCD可以在分布式环境下实现锁的同步，保证在同一时刻，只有一个客户端能够执行需要同步的操作。这对于保证分布式系统的数据一致性非常重要。\n",
+  "wordCount" : "31",
+  "inLanguage": "en",
+  "datePublished": "2024-05-30T17:37:32Z",
+  "dateModified": "2024-05-30T17:37:32Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/etcd%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      ETCD应用场景
+    </h1>
+    <div class="post-meta"><span title='2024-05-30 17:37:32 +0000 UTC'>May 30, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="前置知识">前置知识<a hidden class="anchor" aria-hidden="true" href="#前置知识">#</a></h2>
+<ul>
+<li>ETCD的租约机制</li>
+</ul>
+<p>租约是ETCD中的一种抽象，它可以关联到一个或多个键值对，当租约过期时，与其关联的所有键值对都会被自动删除。</p>
+<p>以下是ETCD租约机制的主要特性和使用方式：</p>
+<p><strong>创建租约</strong>：客户端可以通过调用ETCD的API创建一个新的租约。创建租约时需要指定一个TTL（Time To Live），表示租约的有效期。创建成功后，ETCD会返回一个唯一的租约ID。</p>
+<p><strong>关联键值对</strong>：客户端在创建或修改键值对时，可以指定一个租约ID，将键值对关联到这个租约。这样，当租约过期时，这个键值对会被自动删除。</p>
+<p><strong>续租</strong>：客户端可以通过调用ETCD的API来续租一个租约，即重新设置租约的TTL。这样可以防止租约过期，与其关联的键值对被删除。</p>
+<p><strong>撤销租约</strong>：客户端可以通过调用ETCD的API来撤销一个租约。撤销租约会导致与其关联的所有键值对被立即删除。</p>
+<p><strong>租约超时</strong>：如果客户端在租约的TTL时间内没有进行续租操作，那么租约会自动过期，与其关联的所有键值对都会被ETCD自动删除。</p>
+<p>一个租约可以挂多个key，一个key只能挂一个租约</p>
+<h2 id="应用场景">应用场景<a hidden class="anchor" aria-hidden="true" href="#应用场景">#</a></h2>
+<h3 id="服务发现">服务发现<a hidden class="anchor" aria-hidden="true" href="#服务发现">#</a></h3>
+<p>服务注册与发现(Service Discovery)是ETCD最常见的使用场景，解决的是如何在同一个分布式集群中的进程或服务找到目标服务的IP地址并建立连接。</p>
+<p>在分布式系统中，服务提供者都是以集群的方式对外提供服务，集群中服务的IP随时都可能发生变化，因此服务提供者需要将自己的服务注册到ETCD中去。这样，服务使用者通过ETCD可以获取到实际服务提供者的ip信息，连接到服务提供者，进行后续操作。</p>
+<h3 id="消息发布与订阅">消息发布与订阅<a hidden class="anchor" aria-hidden="true" href="#消息发布与订阅">#</a></h3>
+<p>使用ETCD进行消息发布与订阅，实际上就是构建一个配置共享中心</p>
+<p>消息发布方在将消息存储到对应的key上，消息订阅者在ETCD节点上注册一个Watcher并等待，以后每次配置有更新的适合，ETCD都会实时通知订阅者，以此达到获取最新配置信息的目的。</p>
+<h3 id="分布式锁">分布式锁<a hidden class="anchor" aria-hidden="true" href="#分布式锁">#</a></h3>
+<p>ETCD实现分布式锁的关键在于其Compare-and-Swap（CAS）操作和TTL（Time To Live）特性。</p>
+<p>以下是ETCD实现分布式锁的详细步骤：</p>
+<ol>
+<li>
+<p><strong>获取锁</strong>：客户端尝试获取锁，通过调用ETCD的CAS操作。在这个操作中，客户端会尝试创建一个键值对，键是锁的名称，值是一个唯一标识（例如，客户端的ID或者UUID）。同时，这个键值对会设置一个TTL，表示锁的过期时间。如果这个键值对创建成功，那么就表示客户端成功获取到了锁。如果键值对创建失败（通常是因为键已经存在，即锁已经被其他客户端持有），那么客户端就没有获取到锁。</p>
+</li>
+<li>
+<p><strong>持有锁</strong>：一旦客户端获取到锁，就可以执行需要同步的操作。在这个过程中，其他客户端无法获取到锁，也就无法执行相同的操作。</p>
+</li>
+<li>
+<p><strong>释放锁</strong>：客户端在完成需要同步的操作后，需要释放锁，让其他客户端有机会获取锁。释放锁是通过调用ETCD的Delete操作，删除对应的键值对来实现的。</p>
+</li>
+<li>
+<p><strong>锁的过期</strong>：如果客户端在持有锁的过程中崩溃，可能无法正常释放锁。这时，ETCD的TTL特性就会发挥作用。ETCD会在键值对的TTL时间到达后，自动删除这个键值对，从而释放锁。这样可以防止因为客户端崩溃导致的锁无法释放，阻塞其他客户端的问题。</p>
+</li>
+<li>
+<p><strong>等待锁</strong>：如果客户端尝试获取锁失败（即锁已经被其他客户端持有），那么客户端可以选择等待锁被释放。这通常是通过轮询的方式实现的，客户端会定期尝试获取锁，直到成功为止。</p>
+</li>
+</ol>
+<p>通过这种方式，ETCD可以在分布式环境下实现锁的同步，保证在同一时刻，只有一个客户端能够执行需要同步的操作。这对于保证分布式系统的数据一致性非常重要。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

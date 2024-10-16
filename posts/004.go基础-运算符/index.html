@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>004.GO基础 运算符 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Go 语言的运算符主要分为以下几大类：算术运算符、关系运算符、逻辑运算符、位运算符、赋值运算符和其他运算符。每类运算符都用于特定的操作，帮助程序完成各种计算和逻辑判断。下面是详细介绍：
+1. 算术运算符（Arithmetic Operators） 算术运算符用于执行基本的数学运算。
+运算符 描述 示例 结果 &#43; 加法 5 &#43; 3 8 - 减法 5 - 3 2 * 乘法 5 * 3 15 / 除法 5 / 2 2（整除） % 取余 5 % 2 1 &#43;&#43; 自增 a&#43;&#43; 等同于 a = a &#43; 1 -- 自减 a-- 等同于 a = a - 1 注意：
+&#43;&#43; 和 -- 是 后缀运算符，即先返回当前值，再自增或自减。 整数除法会丢弃小数部分，例如 5 / 2 的结果为 2，而不是 2.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/004.go%E5%9F%BA%E7%A1%80-%E8%BF%90%E7%AE%97%E7%AC%A6/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/004.go%E5%9F%BA%E7%A1%80-%E8%BF%90%E7%AE%97%E7%AC%A6/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="004.GO基础 运算符" />
+<meta property="og:description" content="Go 语言的运算符主要分为以下几大类：算术运算符、关系运算符、逻辑运算符、位运算符、赋值运算符和其他运算符。每类运算符都用于特定的操作，帮助程序完成各种计算和逻辑判断。下面是详细介绍：
+1. 算术运算符（Arithmetic Operators） 算术运算符用于执行基本的数学运算。
+运算符 描述 示例 结果 &#43; 加法 5 &#43; 3 8 - 减法 5 - 3 2 * 乘法 5 * 3 15 / 除法 5 / 2 2（整除） % 取余 5 % 2 1 &#43;&#43; 自增 a&#43;&#43; 等同于 a = a &#43; 1 -- 自减 a-- 等同于 a = a - 1 注意：
+&#43;&#43; 和 -- 是 后缀运算符，即先返回当前值，再自增或自减。 整数除法会丢弃小数部分，例如 5 / 2 的结果为 2，而不是 2." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/004.go%E5%9F%BA%E7%A1%80-%E8%BF%90%E7%AE%97%E7%AC%A6/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-10-16T12:52:59+00:00" />
+<meta property="article:modified_time" content="2024-10-16T12:52:59+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="004.GO基础 运算符"/>
+<meta name="twitter:description" content="Go 语言的运算符主要分为以下几大类：算术运算符、关系运算符、逻辑运算符、位运算符、赋值运算符和其他运算符。每类运算符都用于特定的操作，帮助程序完成各种计算和逻辑判断。下面是详细介绍：
+1. 算术运算符（Arithmetic Operators） 算术运算符用于执行基本的数学运算。
+运算符 描述 示例 结果 &#43; 加法 5 &#43; 3 8 - 减法 5 - 3 2 * 乘法 5 * 3 15 / 除法 5 / 2 2（整除） % 取余 5 % 2 1 &#43;&#43; 自增 a&#43;&#43; 等同于 a = a &#43; 1 -- 自减 a-- 等同于 a = a - 1 注意：
+&#43;&#43; 和 -- 是 后缀运算符，即先返回当前值，再自增或自减。 整数除法会丢弃小数部分，例如 5 / 2 的结果为 2，而不是 2."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "004.GO基础 运算符",
+      "item": "https://ycchi0.github.io/posts/004.go%E5%9F%BA%E7%A1%80-%E8%BF%90%E7%AE%97%E7%AC%A6/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "004.GO基础 运算符",
+  "name": "004.GO基础 运算符",
+  "description": "Go 语言的运算符主要分为以下几大类：算术运算符、关系运算符、逻辑运算符、位运算符、赋值运算符和其他运算符。每类运算符都用于特定的操作，帮助程序完成各种计算和逻辑判断。下面是详细介绍：\n1. 算术运算符（Arithmetic Operators） 算术运算符用于执行基本的数学运算。\n运算符 描述 示例 结果 + 加法 5 + 3 8 - 减法 5 - 3 2 * 乘法 5 * 3 15 / 除法 5 / 2 2（整除） % 取余 5 % 2 1 ++ 自增 a++ 等同于 a = a + 1 -- 自减 a-- 等同于 a = a - 1 注意：\n++ 和 -- 是 后缀运算符，即先返回当前值，再自增或自减。 整数除法会丢弃小数部分，例如 5 / 2 的结果为 2，而不是 2.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Go 语言的运算符主要分为以下几大类：算术运算符、关系运算符、逻辑运算符、位运算符、赋值运算符和其他运算符。每类运算符都用于特定的操作，帮助程序完成各种计算和逻辑判断。下面是详细介绍：\n1. 算术运算符（Arithmetic Operators） 算术运算符用于执行基本的数学运算。\n运算符 描述 示例 结果 + 加法 5 + 3 8 - 减法 5 - 3 2 * 乘法 5 * 3 15 / 除法 5 / 2 2（整除） % 取余 5 % 2 1 ++ 自增 a++ 等同于 a = a + 1 -- 自减 a-- 等同于 a = a - 1 注意：\n++ 和 -- 是 后缀运算符，即先返回当前值，再自增或自减。 整数除法会丢弃小数部分，例如 5 / 2 的结果为 2，而不是 2.5。 2. 关系运算符（Relational Operators） 关系运算符用于比较两个值，返回 true 或 false。\n运算符 描述 示例 结果 == 等于 5 == 5 true != 不等于 5 != 3 true \u003e 大于 5 \u003e 3 true \u003c 小于 5 \u003c 3 false \u003e= 大于等于 5 \u003e= 5 true \u003c= 小于等于 3 \u003c= 5 true 3. 逻辑运算符（Logical Operators） 逻辑运算符用于布尔值之间的逻辑判断。\n运算符 描述 示例 结果 \u0026\u0026 逻辑与（AND） true \u0026\u0026 false false || 逻辑或（OR） true || false true ! 逻辑非（NOT） !true false 注意：\n\u0026\u0026 和 || 是短路运算符，当第一个表达式已经确定整个表达式的值时，第二个表达式将不会被执行。 4. 位运算符（Bitwise Operators） 位运算符用于对整数类型的位进行操作。\n运算符 描述 示例 结果 \u0026 按位与 5 \u0026 3 1（二进制：101 \u0026 011 = 001） | | 按位或 5 | 3 7（二进制：101 | 011 = 111） ^ 按位异或 5 ^ 3 6（二进制：101 ^ 011 = 110） \u0026^ 按位清空（AND NOT） 5 \u0026^ 3 4（二进制：101 \u0026^ 011 = 100） \u003c\u003c 左移 5 \u003c\u003c 1 10（二进制：101 « 1 = 1010） \u003e\u003e 右移 5 \u003e\u003e 1 2（二进制：101 » 1 = 10） 解释：\n按位与（\u0026）：对应位都为 1 时结果才为 1。 按位或（|）：对应位有一个为 1 时结果为 1。 按位异或（^）：对应位相异时结果为 1。 按位清空（\u0026^）：将第一个操作数中对应第二个操作数为 1 的位清零。 左移（\u003c\u003c）：将二进制位向左移动指定的位数，右侧补 0。 右移（\u003e\u003e）：将二进制位向右移动指定的位数，左侧补 0（对无符号整数）或补符号位（对有符号整数）。 5. 赋值运算符（Assignment Operators） 赋值运算符用于给变量赋值，可以与其他运算符组合使用。\n运算符 描述 示例 等价表达式 = 赋值 x = 5 x = 5 += 加后赋值 x += 3 x = x + 3 -= 减后赋值 x -= 2 x = x - 2 *= 乘后赋值 x *= 2 x = x * 2 /= 除后赋值 x /= 2 x = x / 2 %= 取余后赋值 x %= 2 x = x % 2 \u003c\u003c= 左移后赋值 x \u003c\u003c= 2 x = x \u003c\u003c 2 \u003e\u003e= 右移后赋值 x \u003e\u003e= 2 x = x \u003e\u003e 2 \u0026= 按位与后赋值 x \u0026= 2 x = x \u0026 2 = 按位或后赋值 x = 2 x = x 2 ^= 按位异或后赋值 x ^= 2 x = x ^ 2 \u0026^= 按位清空后赋值 x \u0026^= 2 x = x \u0026^ 2 6. 其他运算符 6.1. 地址运算符（Address Operator） \u0026：取变量的内存地址。 var x int = 42 var ptr *int = \u0026x // ptr 存储 x 的地址 6.2. 指针解引用运算符（Pointer Dereference Operator） *：访问指针指向的值。 var x int = 42 var ptr *int = \u0026x fmt.Println(*ptr) // 输出 42 6.3. 长度和容量运算符 len：返回数组、切片、字符串或映射的长度。 str := \"hello\" fmt.Println(len(str)) // 输出 5 cap：返回数组或切片的容量。 slice := make([]int, 5, 10) fmt.Println(cap(slice)) // 输出 10 总结 Go 语言提供了丰富的运算符，涵盖了基本的算术操作、逻辑操作、位操作和赋值操作。通过这些运算符，可以高效地执行各种计算和操作，编写简洁明了的代码。\n",
+  "wordCount" : "423",
+  "inLanguage": "en",
+  "datePublished": "2024-10-16T12:52:59Z",
+  "dateModified": "2024-10-16T12:52:59Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/004.go%E5%9F%BA%E7%A1%80-%E8%BF%90%E7%AE%97%E7%AC%A6/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      004.GO基础 运算符
+    </h1>
+    <div class="post-meta"><span title='2024-10-16 12:52:59 +0000 UTC'>October 16, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>Go 语言的运算符主要分为以下几大类：<strong>算术运算符</strong>、<strong>关系运算符</strong>、<strong>逻辑运算符</strong>、<strong>位运算符</strong>、<strong>赋值运算符</strong>和<strong>其他运算符</strong>。每类运算符都用于特定的操作，帮助程序完成各种计算和逻辑判断。下面是详细介绍：</p>
+<hr>
+<h3 id="1-算术运算符arithmetic-operators">1. 算术运算符（Arithmetic Operators）<a hidden class="anchor" aria-hidden="true" href="#1-算术运算符arithmetic-operators">#</a></h3>
+<p>算术运算符用于执行基本的数学运算。</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+</code></td>
+<td>加法</td>
+<td><code>5 + 3</code></td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>-</code></td>
+<td>减法</td>
+<td><code>5 - 3</code></td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>乘法</td>
+<td><code>5 * 3</code></td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>除法</td>
+<td><code>5 / 2</code></td>
+<td>2（整除）</td>
+</tr>
+<tr>
+<td><code>%</code></td>
+<td>取余</td>
+<td><code>5 % 2</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>++</code></td>
+<td>自增</td>
+<td><code>a++</code></td>
+<td>等同于 <code>a = a + 1</code></td>
+</tr>
+<tr>
+<td><code>--</code></td>
+<td>自减</td>
+<td><code>a--</code></td>
+<td>等同于 <code>a = a - 1</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意：</strong></p>
+<ul>
+<li><code>++</code> 和 <code>--</code> 是 <strong>后缀运算符</strong>，即先返回当前值，再自增或自减。</li>
+<li>整数除法会丢弃小数部分，例如 <code>5 / 2</code> 的结果为 <code>2</code>，而不是 <code>2.5</code>。</li>
+</ul>
+<hr>
+<h3 id="2-关系运算符relational-operators">2. 关系运算符（Relational Operators）<a hidden class="anchor" aria-hidden="true" href="#2-关系运算符relational-operators">#</a></h3>
+<p>关系运算符用于比较两个值，返回 <code>true</code> 或 <code>false</code>。</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>==</code></td>
+<td>等于</td>
+<td><code>5 == 5</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>!=</code></td>
+<td>不等于</td>
+<td><code>5 != 3</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>&gt;</code></td>
+<td>大于</td>
+<td><code>5 &gt; 3</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>&lt;</code></td>
+<td>小于</td>
+<td><code>5 &lt; 3</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>&gt;=</code></td>
+<td>大于等于</td>
+<td><code>5 &gt;= 5</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>&lt;=</code></td>
+<td>小于等于</td>
+<td><code>3 &lt;= 5</code></td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="3-逻辑运算符logical-operators">3. 逻辑运算符（Logical Operators）<a hidden class="anchor" aria-hidden="true" href="#3-逻辑运算符logical-operators">#</a></h3>
+<p>逻辑运算符用于布尔值之间的逻辑判断。</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;&amp;</code></td>
+<td>逻辑与（AND）</td>
+<td><code>true &amp;&amp; false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>||</td>
+<td>逻辑或（OR）</td>
+<td><code>true</code> || <code>false</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>!</code></td>
+<td>逻辑非（NOT）</td>
+<td><code>!true</code></td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意：</strong></p>
+<ul>
+<li><code>&amp;&amp;</code> 和 <code>||</code> 是短路运算符，当第一个表达式已经确定整个表达式的值时，第二个表达式将不会被执行。</li>
+</ul>
+<hr>
+<h3 id="4-位运算符bitwise-operators">4. 位运算符（Bitwise Operators）<a hidden class="anchor" aria-hidden="true" href="#4-位运算符bitwise-operators">#</a></h3>
+<p>位运算符用于对整数类型的位进行操作。</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;</code></td>
+<td>按位与</td>
+<td><code>5 &amp; 3</code></td>
+<td><code>1</code>（二进制：101 &amp; 011 = 001）</td>
+</tr>
+<tr>
+<td>| |</td>
+<td>按位或</td>
+<td><code>5</code> | <code> 3</code></td>
+<td><code>7</code>（二进制：101 | 011 = 111）</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>按位异或</td>
+<td><code>5 ^ 3</code></td>
+<td><code>6</code>（二进制：101 ^ 011 = 110）</td>
+</tr>
+<tr>
+<td><code>&amp;^</code></td>
+<td>按位清空（AND NOT）</td>
+<td><code>5 &amp;^ 3</code></td>
+<td><code>4</code>（二进制：101 &amp;^ 011 = 100）</td>
+</tr>
+<tr>
+<td><code>&lt;&lt;</code></td>
+<td>左移</td>
+<td><code>5 &lt;&lt; 1</code></td>
+<td><code>10</code>（二进制：101 &laquo; 1 = 1010）</td>
+</tr>
+<tr>
+<td><code>&gt;&gt;</code></td>
+<td>右移</td>
+<td><code>5 &gt;&gt; 1</code></td>
+<td><code>2</code>（二进制：101 &raquo; 1 = 10）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>解释：</strong></p>
+<ul>
+<li><strong>按位与（<code>&amp;</code>）</strong>：对应位都为 1 时结果才为 1。</li>
+<li><strong>按位或（<code>|</code>）</strong>：对应位有一个为 1 时结果为 1。</li>
+<li><strong>按位异或（<code>^</code>）</strong>：对应位相异时结果为 1。</li>
+<li><strong>按位清空（<code>&amp;^</code>）</strong>：将第一个操作数中对应第二个操作数为 1 的位清零。</li>
+<li><strong>左移（<code>&lt;&lt;</code>）</strong>：将二进制位向左移动指定的位数，右侧补 0。</li>
+<li><strong>右移（<code>&gt;&gt;</code>）</strong>：将二进制位向右移动指定的位数，左侧补 0（对无符号整数）或补符号位（对有符号整数）。</li>
+</ul>
+<hr>
+<h3 id="5-赋值运算符assignment-operators">5. 赋值运算符（Assignment Operators）<a hidden class="anchor" aria-hidden="true" href="#5-赋值运算符assignment-operators">#</a></h3>
+<p>赋值运算符用于给变量赋值，可以与其他运算符组合使用。</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>等价表达式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>=</code></td>
+<td>赋值</td>
+<td><code>x = 5</code></td>
+<td><code>x = 5</code></td>
+</tr>
+<tr>
+<td><code>+=</code></td>
+<td>加后赋值</td>
+<td><code>x += 3</code></td>
+<td><code>x = x + 3</code></td>
+</tr>
+<tr>
+<td><code>-=</code></td>
+<td>减后赋值</td>
+<td><code>x -= 2</code></td>
+<td><code>x = x - 2</code></td>
+</tr>
+<tr>
+<td><code>*=</code></td>
+<td>乘后赋值</td>
+<td><code>x *= 2</code></td>
+<td><code>x = x * 2</code></td>
+</tr>
+<tr>
+<td><code>/=</code></td>
+<td>除后赋值</td>
+<td><code>x /= 2</code></td>
+<td><code>x = x / 2</code></td>
+</tr>
+<tr>
+<td><code>%=</code></td>
+<td>取余后赋值</td>
+<td><code>x %= 2</code></td>
+<td><code>x = x % 2</code></td>
+</tr>
+<tr>
+<td><code>&lt;&lt;=</code></td>
+<td>左移后赋值</td>
+<td><code>x &lt;&lt;= 2</code></td>
+<td><code>x = x &lt;&lt; 2</code></td>
+</tr>
+<tr>
+<td><code>&gt;&gt;=</code></td>
+<td>右移后赋值</td>
+<td><code>x &gt;&gt;= 2</code></td>
+<td><code>x = x &gt;&gt; 2</code></td>
+</tr>
+<tr>
+<td><code>&amp;=</code></td>
+<td>按位与后赋值</td>
+<td><code>x &amp;= 2</code></td>
+<td><code>x = x &amp; 2</code></td>
+</tr>
+<tr>
+<td><code>=</code></td>
+<td>按位或后赋值</td>
+<td><code>x    = 2</code></td>
+<td><code>x = x      2</code></td>
+</tr>
+<tr>
+<td><code>^=</code></td>
+<td>按位异或后赋值</td>
+<td><code>x ^= 2</code></td>
+<td><code>x = x ^ 2</code></td>
+</tr>
+<tr>
+<td><code>&amp;^=</code></td>
+<td>按位清空后赋值</td>
+<td><code>x &amp;^= 2</code></td>
+<td><code>x = x &amp;^ 2</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="6-其他运算符">6. 其他运算符<a hidden class="anchor" aria-hidden="true" href="#6-其他运算符">#</a></h3>
+<h4 id="61-地址运算符address-operator">6.1. 地址运算符（Address Operator）<a hidden class="anchor" aria-hidden="true" href="#61-地址运算符address-operator">#</a></h4>
+<ul>
+<li><code>&amp;</code>：取变量的内存地址。
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span> = <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ptr</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>  <span style="color:#75715e">// ptr 存储 x 的地址
+</span></span></span></code></pre></div></li>
+</ul>
+<h4 id="62-指针解引用运算符pointer-dereference-operator">6.2. 指针解引用运算符（Pointer Dereference Operator）<a hidden class="anchor" aria-hidden="true" href="#62-指针解引用运算符pointer-dereference-operator">#</a></h4>
+<ul>
+<li><code>*</code>：访问指针指向的值。
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span> = <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ptr</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">ptr</span>)  <span style="color:#75715e">// 输出 42
+</span></span></span></code></pre></div></li>
+</ul>
+<h4 id="63-长度和容量运算符">6.3. 长度和容量运算符<a hidden class="anchor" aria-hidden="true" href="#63-长度和容量运算符">#</a></h4>
+<ul>
+<li><code>len</code>：返回数组、切片、字符串或映射的长度。
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">str</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;hello&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(len(<span style="color:#a6e22e">str</span>))  <span style="color:#75715e">// 输出 5
+</span></span></span></code></pre></div></li>
+<li><code>cap</code>：返回数组或切片的容量。
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">slice</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(cap(<span style="color:#a6e22e">slice</span>))  <span style="color:#75715e">// 输出 10
+</span></span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h3>
+<p>Go 语言提供了丰富的运算符，涵盖了基本的算术操作、逻辑操作、位操作和赋值操作。通过这些运算符，可以高效地执行各种计算和操作，编写简洁明了的代码。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

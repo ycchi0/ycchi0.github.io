@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>008.Go基础 函数 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="在 Go 语言中，函数是程序的基本构建块之一。函数定义了可复用的代码块，通过传递参数和返回值来实现逻辑封装。Go 语言的函数具有灵活和强大的特性，如支持多返回值、匿名函数、闭包以及延迟执行（defer）等。接下来，我将介绍 Go 语言中的函数特性及其使用方式。
+1. 基本函数定义 Go 语言中，函数的定义使用关键字func，并且参数和返回值的类型必须显式声明。
+func 函数名(参数列表) 返回值类型 { // 函数体 } 示例：基本函数 func add(x int, y int) int { return x &#43; y } func main() { result := add(3, 4) fmt.Println(result) // 输出 7 } 在这个示例中，add函数接受两个int类型的参数，并返回它们的和。
+2. 多返回值函数 Go 语言允许函数返回多个值。这在需要返回结果和错误状态的情况下特别有用。
+示例：多返回值 func swap(x, y string) (string, string) { return y, x } func main() { a, b := swap(&#34;hello&#34;, &#34;world&#34;) fmt.Println(a, b) // 输出 world hello } 在这个示例中，swap函数返回两个字符串，通过多重赋值操作接收返回值。">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/008.go%E5%9F%BA%E7%A1%80-%E5%87%BD%E6%95%B0/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/008.go%E5%9F%BA%E7%A1%80-%E5%87%BD%E6%95%B0/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="008.Go基础 函数" />
+<meta property="og:description" content="在 Go 语言中，函数是程序的基本构建块之一。函数定义了可复用的代码块，通过传递参数和返回值来实现逻辑封装。Go 语言的函数具有灵活和强大的特性，如支持多返回值、匿名函数、闭包以及延迟执行（defer）等。接下来，我将介绍 Go 语言中的函数特性及其使用方式。
+1. 基本函数定义 Go 语言中，函数的定义使用关键字func，并且参数和返回值的类型必须显式声明。
+func 函数名(参数列表) 返回值类型 { // 函数体 } 示例：基本函数 func add(x int, y int) int { return x &#43; y } func main() { result := add(3, 4) fmt.Println(result) // 输出 7 } 在这个示例中，add函数接受两个int类型的参数，并返回它们的和。
+2. 多返回值函数 Go 语言允许函数返回多个值。这在需要返回结果和错误状态的情况下特别有用。
+示例：多返回值 func swap(x, y string) (string, string) { return y, x } func main() { a, b := swap(&#34;hello&#34;, &#34;world&#34;) fmt.Println(a, b) // 输出 world hello } 在这个示例中，swap函数返回两个字符串，通过多重赋值操作接收返回值。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/008.go%E5%9F%BA%E7%A1%80-%E5%87%BD%E6%95%B0/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-10-16T12:54:38+00:00" />
+<meta property="article:modified_time" content="2024-10-16T12:54:38+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="008.Go基础 函数"/>
+<meta name="twitter:description" content="在 Go 语言中，函数是程序的基本构建块之一。函数定义了可复用的代码块，通过传递参数和返回值来实现逻辑封装。Go 语言的函数具有灵活和强大的特性，如支持多返回值、匿名函数、闭包以及延迟执行（defer）等。接下来，我将介绍 Go 语言中的函数特性及其使用方式。
+1. 基本函数定义 Go 语言中，函数的定义使用关键字func，并且参数和返回值的类型必须显式声明。
+func 函数名(参数列表) 返回值类型 { // 函数体 } 示例：基本函数 func add(x int, y int) int { return x &#43; y } func main() { result := add(3, 4) fmt.Println(result) // 输出 7 } 在这个示例中，add函数接受两个int类型的参数，并返回它们的和。
+2. 多返回值函数 Go 语言允许函数返回多个值。这在需要返回结果和错误状态的情况下特别有用。
+示例：多返回值 func swap(x, y string) (string, string) { return y, x } func main() { a, b := swap(&#34;hello&#34;, &#34;world&#34;) fmt.Println(a, b) // 输出 world hello } 在这个示例中，swap函数返回两个字符串，通过多重赋值操作接收返回值。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "008.Go基础 函数",
+      "item": "https://ycchi0.github.io/posts/008.go%E5%9F%BA%E7%A1%80-%E5%87%BD%E6%95%B0/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "008.Go基础 函数",
+  "name": "008.Go基础 函数",
+  "description": "在 Go 语言中，函数是程序的基本构建块之一。函数定义了可复用的代码块，通过传递参数和返回值来实现逻辑封装。Go 语言的函数具有灵活和强大的特性，如支持多返回值、匿名函数、闭包以及延迟执行（defer）等。接下来，我将介绍 Go 语言中的函数特性及其使用方式。\n1. 基本函数定义 Go 语言中，函数的定义使用关键字func，并且参数和返回值的类型必须显式声明。\nfunc 函数名(参数列表) 返回值类型 { // 函数体 } 示例：基本函数 func add(x int, y int) int { return x + y } func main() { result := add(3, 4) fmt.Println(result) // 输出 7 } 在这个示例中，add函数接受两个int类型的参数，并返回它们的和。\n2. 多返回值函数 Go 语言允许函数返回多个值。这在需要返回结果和错误状态的情况下特别有用。\n示例：多返回值 func swap(x, y string) (string, string) { return y, x } func main() { a, b := swap(\u0026#34;hello\u0026#34;, \u0026#34;world\u0026#34;) fmt.Println(a, b) // 输出 world hello } 在这个示例中，swap函数返回两个字符串，通过多重赋值操作接收返回值。",
+  "keywords": [
+    
+  ],
+  "articleBody": "在 Go 语言中，函数是程序的基本构建块之一。函数定义了可复用的代码块，通过传递参数和返回值来实现逻辑封装。Go 语言的函数具有灵活和强大的特性，如支持多返回值、匿名函数、闭包以及延迟执行（defer）等。接下来，我将介绍 Go 语言中的函数特性及其使用方式。\n1. 基本函数定义 Go 语言中，函数的定义使用关键字func，并且参数和返回值的类型必须显式声明。\nfunc 函数名(参数列表) 返回值类型 { // 函数体 } 示例：基本函数 func add(x int, y int) int { return x + y } func main() { result := add(3, 4) fmt.Println(result) // 输出 7 } 在这个示例中，add函数接受两个int类型的参数，并返回它们的和。\n2. 多返回值函数 Go 语言允许函数返回多个值。这在需要返回结果和错误状态的情况下特别有用。\n示例：多返回值 func swap(x, y string) (string, string) { return y, x } func main() { a, b := swap(\"hello\", \"world\") fmt.Println(a, b) // 输出 world hello } 在这个示例中，swap函数返回两个字符串，通过多重赋值操作接收返回值。\n3. 命名返回值 函数的返回值可以被命名，命名返回值相当于在函数开始时声明的变量，可以在函数体内直接使用。命名返回值可以使代码更简洁，并且在返回值上也能有更好的可读性。\n示例：命名返回值 func split(sum int) (x, y int) { x = sum * 4 / 9 y = sum - x return // 没有参数，返回命名的返回值 } func main() { fmt.Println(split(17)) // 输出 7 10 } 在这个例子中，x和y是命名返回值，函数体内对它们赋值后直接使用return返回。\n4. 变长参数 Go 语言支持变长参数（可变参数），也就是参数个数不固定的情况。使用...表示变长参数，变长参数实际被视作切片。\n示例：变长参数 func sum(nums ...int) int { total := 0 for _, num := range nums { total += num } return total } func main() { fmt.Println(sum(1, 2, 3)) // 输出 6 fmt.Println(sum(4, 5, 6, 7, 8)) // 输出 30 } 在这个例子中，函数sum可以接受任意数量的整数参数。\n5. 匿名函数和闭包 匿名函数是在没有名称的情况下定义的函数。匿名函数可以赋值给变量，作为参数传递，或者作为闭包捕获外部变量。\n示例：匿名函数 func main() { f := func(x, y int) int { return x + y } fmt.Println(f(3, 4)) // 输出 7 } 示例：闭包 闭包是一个函数值，它能够引用其外部作用域中的变量，即使这个变量在闭包执行时已经超出了其原本的作用范围。\nfunc adder() func(int) int { sum := 0 return func(x int) int { sum += x return sum } } func main() { pos := adder() fmt.Println(pos(1)) // 输出 1 fmt.Println(pos(2)) // 输出 3 fmt.Println(pos(3)) // 输出 6 } 在这个例子中，返回的匿名函数捕获了adder函数中的sum变量，即使adder函数已经返回，sum依然在每次调用时被更新。\n6. defer延迟执行 defer语句用于将函数调用延迟到当前函数执行完毕后再执行。常用于资源清理操作，例如关闭文件、释放锁等。\n示例：defer的基本用法 func main() { defer fmt.Println(\"world\") fmt.Println(\"hello\") } 在这个例子中，defer语句会在main函数即将返回时执行，因此输出顺序是hello之后才是world。\n示例：多个defer语句 多个defer语句会按后进先出的顺序执行：\nfunc main() { defer fmt.Println(\"1\") defer fmt.Println(\"2\") defer fmt.Println(\"3\") } 输出顺序为：\n3 2 1 7. 方法（Method） Go 语言的函数还可以与类型关联，这种函数称为方法。通过定义接收者（receiver），函数可以作用于某种类型的变量。\n示例：方法定义 type Person struct { Name string } func (p Person) SayHello() { fmt.Println(\"Hello, my name is\", p.Name) } func main() { p := Person{Name: \"Alice\"} p.SayHello() // 输出 Hello, my name is Alice } 在这个例子中，SayHello是Person类型的一个方法，p Person是方法的接收者。\n总结 基本函数：通过func关键字定义，支持参数和返回值。 多返回值：Go 支持函数返回多个值。 变长参数：使用...可以传递不定数量的参数。 匿名函数和闭包：匿名函数没有名称，可以形成闭包捕获外部变量。 defer延迟执行：常用于延迟清理操作。 方法：Go 语言的函数可以与类型关联，通过接收者定义方法。 Go 语言的函数功能灵活且强大，支持各种复杂的编程需求。\n",
+  "wordCount" : "305",
+  "inLanguage": "en",
+  "datePublished": "2024-10-16T12:54:38Z",
+  "dateModified": "2024-10-16T12:54:38Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/008.go%E5%9F%BA%E7%A1%80-%E5%87%BD%E6%95%B0/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      008.Go基础 函数
+    </h1>
+    <div class="post-meta"><span title='2024-10-16 12:54:38 +0000 UTC'>October 16, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>在 Go 语言中，函数是程序的基本构建块之一。函数定义了可复用的代码块，通过传递参数和返回值来实现逻辑封装。Go 语言的函数具有灵活和强大的特性，如支持多返回值、匿名函数、闭包以及延迟执行（<code>defer</code>）等。接下来，我将介绍 Go 语言中的函数特性及其使用方式。</p>
+<h3 id="1-基本函数定义">1. 基本函数定义<a hidden class="anchor" aria-hidden="true" href="#1-基本函数定义">#</a></h3>
+<p>Go 语言中，函数的定义使用关键字<code>func</code>，并且参数和返回值的类型必须显式声明。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">函数名</span>(<span style="color:#a6e22e">参数列表</span>) <span style="color:#a6e22e">返回值类型</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 函数体
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h4 id="示例基本函数">示例：基本函数<a hidden class="anchor" aria-hidden="true" href="#示例基本函数">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">y</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">y</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">result</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">result</span>)  <span style="color:#75715e">// 输出 7
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个示例中，<code>add</code>函数接受两个<code>int</code>类型的参数，并返回它们的和。</p>
+<h3 id="2-多返回值函数">2. 多返回值函数<a hidden class="anchor" aria-hidden="true" href="#2-多返回值函数">#</a></h3>
+<p>Go 语言允许函数返回多个值。这在需要返回结果和错误状态的情况下特别有用。</p>
+<h4 id="示例多返回值">示例：多返回值<a hidden class="anchor" aria-hidden="true" href="#示例多返回值">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">swap</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span> <span style="color:#66d9ef">string</span>) (<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">x</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">swap</span>(<span style="color:#e6db74">&#34;hello&#34;</span>, <span style="color:#e6db74">&#34;world&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>)  <span style="color:#75715e">// 输出 world hello
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个示例中，<code>swap</code>函数返回两个字符串，通过多重赋值操作接收返回值。</p>
+<h3 id="3-命名返回值">3. 命名返回值<a hidden class="anchor" aria-hidden="true" href="#3-命名返回值">#</a></h3>
+<p>函数的返回值可以被命名，命名返回值相当于在函数开始时声明的变量，可以在函数体内直接使用。命名返回值可以使代码更简洁，并且在返回值上也能有更好的可读性。</p>
+<h4 id="示例命名返回值">示例：命名返回值<a hidden class="anchor" aria-hidden="true" href="#示例命名返回值">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">split</span>(<span style="color:#a6e22e">sum</span> <span style="color:#66d9ef">int</span>) (<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span> <span style="color:#66d9ef">int</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span> = <span style="color:#a6e22e">sum</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">4</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">y</span> = <span style="color:#a6e22e">sum</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">x</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>  <span style="color:#75715e">// 没有参数，返回命名的返回值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">split</span>(<span style="color:#ae81ff">17</span>))  <span style="color:#75715e">// 输出 7 10
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个例子中，<code>x</code>和<code>y</code>是命名返回值，函数体内对它们赋值后直接使用<code>return</code>返回。</p>
+<h3 id="4-变长参数">4. 变长参数<a hidden class="anchor" aria-hidden="true" href="#4-变长参数">#</a></h3>
+<p>Go 语言支持变长参数（可变参数），也就是参数个数不固定的情况。使用<code>...</code>表示变长参数，变长参数实际被视作切片。</p>
+<h4 id="示例变长参数">示例：变长参数<a hidden class="anchor" aria-hidden="true" href="#示例变长参数">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sum</span>(<span style="color:#a6e22e">nums</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">total</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">num</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">nums</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">total</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">num</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">total</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">sum</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>))        <span style="color:#75715e">// 输出 6
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">sum</span>(<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">8</span>))  <span style="color:#75715e">// 输出 30
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个例子中，函数<code>sum</code>可以接受任意数量的整数参数。</p>
+<h3 id="5-匿名函数和闭包">5. 匿名函数和闭包<a hidden class="anchor" aria-hidden="true" href="#5-匿名函数和闭包">#</a></h3>
+<p>匿名函数是在没有名称的情况下定义的函数。匿名函数可以赋值给变量，作为参数传递，或者作为闭包捕获外部变量。</p>
+<h4 id="示例匿名函数">示例：匿名函数<a hidden class="anchor" aria-hidden="true" href="#示例匿名函数">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">f</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">y</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">f</span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>))  <span style="color:#75715e">// 输出 7
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h4 id="示例闭包">示例：闭包<a hidden class="anchor" aria-hidden="true" href="#示例闭包">#</a></h4>
+<p>闭包是一个函数值，它能够引用其外部作用域中的变量，即使这个变量在闭包执行时已经超出了其原本的作用范围。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">adder</span>() <span style="color:#66d9ef">func</span>(<span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sum</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">sum</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">x</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">sum</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pos</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">adder</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">pos</span>(<span style="color:#ae81ff">1</span>))  <span style="color:#75715e">// 输出 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">pos</span>(<span style="color:#ae81ff">2</span>))  <span style="color:#75715e">// 输出 3
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">pos</span>(<span style="color:#ae81ff">3</span>))  <span style="color:#75715e">// 输出 6
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个例子中，返回的匿名函数捕获了<code>adder</code>函数中的<code>sum</code>变量，即使<code>adder</code>函数已经返回，<code>sum</code>依然在每次调用时被更新。</p>
+<h3 id="6-defer延迟执行">6. <code>defer</code>延迟执行<a hidden class="anchor" aria-hidden="true" href="#6-defer延迟执行">#</a></h3>
+<p><code>defer</code>语句用于将函数调用延迟到当前函数执行完毕后再执行。常用于资源清理操作，例如关闭文件、释放锁等。</p>
+<h4 id="示例defer的基本用法">示例：<code>defer</code>的基本用法<a hidden class="anchor" aria-hidden="true" href="#示例defer的基本用法">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;world&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;hello&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在这个例子中，<code>defer</code>语句会在<code>main</code>函数即将返回时执行，因此输出顺序是<code>hello</code>之后才是<code>world</code>。</p>
+<h4 id="示例多个defer语句">示例：多个<code>defer</code>语句<a hidden class="anchor" aria-hidden="true" href="#示例多个defer语句">#</a></h4>
+<p>多个<code>defer</code>语句会按<strong>后进先出</strong>的顺序执行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;1&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;2&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;3&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>输出顺序为：</p>
+<pre tabindex="0"><code>3
+2
+1
+</code></pre><h3 id="7-方法method">7. 方法（Method）<a hidden class="anchor" aria-hidden="true" href="#7-方法method">#</a></h3>
+<p>Go 语言的函数还可以与类型关联，这种函数称为方法。通过定义接收者（receiver），函数可以作用于某种类型的变量。</p>
+<h4 id="示例方法定义">示例：方法定义<a hidden class="anchor" aria-hidden="true" href="#示例方法定义">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Person</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#a6e22e">Person</span>) <span style="color:#a6e22e">SayHello</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Hello, my name is&#34;</span>, <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Name</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Person</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;Alice&#34;</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">SayHello</span>()  <span style="color:#75715e">// 输出 Hello, my name is Alice
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在这个例子中，<code>SayHello</code>是<code>Person</code>类型的一个方法，<code>p Person</code>是方法的接收者。</p>
+<h3 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h3>
+<ul>
+<li><strong>基本函数</strong>：通过<code>func</code>关键字定义，支持参数和返回值。</li>
+<li><strong>多返回值</strong>：Go 支持函数返回多个值。</li>
+<li><strong>变长参数</strong>：使用<code>...</code>可以传递不定数量的参数。</li>
+<li><strong>匿名函数和闭包</strong>：匿名函数没有名称，可以形成闭包捕获外部变量。</li>
+<li><strong><code>defer</code>延迟执行</strong>：常用于延迟清理操作。</li>
+<li><strong>方法</strong>：Go 语言的函数可以与类型关联，通过接收者定义方法。</li>
+</ul>
+<p>Go 语言的函数功能灵活且强大，支持各种复杂的编程需求。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

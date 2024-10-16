@@ -59,7 +59,10 @@ type ValueError string func (ve ValueError) Error() string { return string(ve) }
         }
 
     </style>
-</noscript><meta property="og:title" content="Golang异常处理" />
+</noscript>
+  
+
+<meta property="og:title" content="Golang异常处理" />
 <meta property="og:description" content="从error的定义说起 type error interface { Error() string } Go 的error类型是一个接口。在Go中，只要实现了接口约定的方法，就等同于实现了这个接口。在日常的业务代码编写中，我们经常使用 errors 包下的New 方法来生成一个error对象。
 func main() { err := errors.New(&#34;a error&#34;) fmt.Println(reflect.TypeOf(err))//*errors.errorString } 可以发现，err 是一个指针类型，为什么这里的 err 需要是一个指针呢？
 // Each call to New returns a distinct error value even if the text is identical. func New(text string) error { return &amp;errorString{text} } 查看errors包的代码，我们知道返回指针是为了确保err的唯一性。

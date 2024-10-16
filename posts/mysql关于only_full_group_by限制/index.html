@@ -59,7 +59,10 @@ CREATE TABLE `mytable` ( `id` int unsigned NOT NULL, `a` varchar(10) COLLATE utf
         }
 
     </style>
-</noscript><meta property="og:title" content="MySQL关于only_full_group_by限制" />
+</noscript>
+  
+
+<meta property="og:title" content="MySQL关于only_full_group_by限制" />
 <meta property="og:description" content="先上结论
 如果 only_full_group_by 被启用，那么在查询时，如果某个列不在group by 列表中，此时如果不对该列进行聚合处理，则该列不能出现在 select 列表，having 条件中及order by 列表中
 MySQL 8.0 默认启用了sql_mode，我们可以通过 select @@session.sql_mode 查看会话中的 sql_mode 配置。

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>005.Go基础 分支语句 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Go 语言中的分支结构用于根据条件执行不同的代码路径。常见的分支结构有 if 语句、switch 语句和特殊的 select 语句。每种分支结构都有其适用场景，下面我将详细介绍它们。
+1. if 语句 if 语句是最常用的条件分支结构，依据一个布尔表达式的结果来决定是否执行某段代码。Go 语言的 if 语句语法简单，且支持可选的初始化语句。
+语法： if condition { // 当 condition 为 true 时执行 } 示例：基本 if 语句 package main import &#34;fmt&#34; func main() { x := 10 if x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } } 示例：带初始化语句的 if Go 语言的 if 语句支持在条件判断前执行一个短语句，这个特性通常用于声明和初始化局部变量。
+if x := 10; x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } x 只在 if 语句的作用域内可见。 if-else 语句 if condition { // 当 condition 为 true 时执行 } else { // 当 condition 为 false 时执行 } 示例：if-else 语句 x := 3 if x &gt; 5 { fmt.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/005.go%E5%9F%BA%E7%A1%80-%E5%88%86%E6%94%AF%E8%AF%AD%E5%8F%A5/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/005.go%E5%9F%BA%E7%A1%80-%E5%88%86%E6%94%AF%E8%AF%AD%E5%8F%A5/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="005.Go基础 分支语句" />
+<meta property="og:description" content="Go 语言中的分支结构用于根据条件执行不同的代码路径。常见的分支结构有 if 语句、switch 语句和特殊的 select 语句。每种分支结构都有其适用场景，下面我将详细介绍它们。
+1. if 语句 if 语句是最常用的条件分支结构，依据一个布尔表达式的结果来决定是否执行某段代码。Go 语言的 if 语句语法简单，且支持可选的初始化语句。
+语法： if condition { // 当 condition 为 true 时执行 } 示例：基本 if 语句 package main import &#34;fmt&#34; func main() { x := 10 if x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } } 示例：带初始化语句的 if Go 语言的 if 语句支持在条件判断前执行一个短语句，这个特性通常用于声明和初始化局部变量。
+if x := 10; x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } x 只在 if 语句的作用域内可见。 if-else 语句 if condition { // 当 condition 为 true 时执行 } else { // 当 condition 为 false 时执行 } 示例：if-else 语句 x := 3 if x &gt; 5 { fmt." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/005.go%E5%9F%BA%E7%A1%80-%E5%88%86%E6%94%AF%E8%AF%AD%E5%8F%A5/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-10-16T12:53:27+00:00" />
+<meta property="article:modified_time" content="2024-10-16T12:53:27+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="005.Go基础 分支语句"/>
+<meta name="twitter:description" content="Go 语言中的分支结构用于根据条件执行不同的代码路径。常见的分支结构有 if 语句、switch 语句和特殊的 select 语句。每种分支结构都有其适用场景，下面我将详细介绍它们。
+1. if 语句 if 语句是最常用的条件分支结构，依据一个布尔表达式的结果来决定是否执行某段代码。Go 语言的 if 语句语法简单，且支持可选的初始化语句。
+语法： if condition { // 当 condition 为 true 时执行 } 示例：基本 if 语句 package main import &#34;fmt&#34; func main() { x := 10 if x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } } 示例：带初始化语句的 if Go 语言的 if 语句支持在条件判断前执行一个短语句，这个特性通常用于声明和初始化局部变量。
+if x := 10; x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } x 只在 if 语句的作用域内可见。 if-else 语句 if condition { // 当 condition 为 true 时执行 } else { // 当 condition 为 false 时执行 } 示例：if-else 语句 x := 3 if x &gt; 5 { fmt."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "005.Go基础 分支语句",
+      "item": "https://ycchi0.github.io/posts/005.go%E5%9F%BA%E7%A1%80-%E5%88%86%E6%94%AF%E8%AF%AD%E5%8F%A5/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "005.Go基础 分支语句",
+  "name": "005.Go基础 分支语句",
+  "description": "Go 语言中的分支结构用于根据条件执行不同的代码路径。常见的分支结构有 if 语句、switch 语句和特殊的 select 语句。每种分支结构都有其适用场景，下面我将详细介绍它们。\n1. if 语句 if 语句是最常用的条件分支结构，依据一个布尔表达式的结果来决定是否执行某段代码。Go 语言的 if 语句语法简单，且支持可选的初始化语句。\n语法： if condition { // 当 condition 为 true 时执行 } 示例：基本 if 语句 package main import \u0026#34;fmt\u0026#34; func main() { x := 10 if x \u0026gt; 5 { fmt.Println(\u0026#34;x 大于 5\u0026#34;) } } 示例：带初始化语句的 if Go 语言的 if 语句支持在条件判断前执行一个短语句，这个特性通常用于声明和初始化局部变量。\nif x := 10; x \u0026gt; 5 { fmt.Println(\u0026#34;x 大于 5\u0026#34;) } x 只在 if 语句的作用域内可见。 if-else 语句 if condition { // 当 condition 为 true 时执行 } else { // 当 condition 为 false 时执行 } 示例：if-else 语句 x := 3 if x \u0026gt; 5 { fmt.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Go 语言中的分支结构用于根据条件执行不同的代码路径。常见的分支结构有 if 语句、switch 语句和特殊的 select 语句。每种分支结构都有其适用场景，下面我将详细介绍它们。\n1. if 语句 if 语句是最常用的条件分支结构，依据一个布尔表达式的结果来决定是否执行某段代码。Go 语言的 if 语句语法简单，且支持可选的初始化语句。\n语法： if condition { // 当 condition 为 true 时执行 } 示例：基本 if 语句 package main import \"fmt\" func main() { x := 10 if x \u003e 5 { fmt.Println(\"x 大于 5\") } } 示例：带初始化语句的 if Go 语言的 if 语句支持在条件判断前执行一个短语句，这个特性通常用于声明和初始化局部变量。\nif x := 10; x \u003e 5 { fmt.Println(\"x 大于 5\") } x 只在 if 语句的作用域内可见。 if-else 语句 if condition { // 当 condition 为 true 时执行 } else { // 当 condition 为 false 时执行 } 示例：if-else 语句 x := 3 if x \u003e 5 { fmt.Println(\"x 大于 5\") } else { fmt.Println(\"x 小于或等于 5\") } if-else if-else 语句 多个条件可以通过 else if 组合，来实现多分支的逻辑判断。\nif condition1 { // 当 condition1 为 true 时执行 } else if condition2 { // 当 condition2 为 true 时执行 } else { // 当以上条件均不满足时执行 } 示例：if-else if-else 语句 x := 8 if x \u003c 5 { fmt.Println(\"x 小于 5\") } else if x \u003c 10 { fmt.Println(\"x 小于 10\") } else { fmt.Println(\"x 大于或等于 10\") } 2. switch 语句 switch 语句用于替代多个 if-else if 判断，常用于对单个变量或表达式的多个值进行判断。与其他语言不同，Go 的 switch 语句无需显式使用 break 关键字来终止一个分支。\n语法： switch expression { case value1: // 当 expression 等于 value1 时执行 case value2: // 当 expression 等于 value2 时执行 default: // 当 expression 不匹配任何 case 时执行 } 示例：基本 switch 语句 package main import \"fmt\" func main() { x := 2 switch x { case 1: fmt.Println(\"x 是 1\") case 2: fmt.Println(\"x 是 2\") case 3: fmt.Println(\"x 是 3\") default: fmt.Println(\"x 不是 1、2 或 3\") } } 无表达式的 switch Go 的 switch 还可以不带表达式使用，这时它会将每个 case 视为布尔表达式，类似多个 if-else。\nswitch { case condition1: // condition1 为 true 时执行 case condition2: // condition2 为 true 时执行 default: // 所有条件为 false 时执行 } 示例：无表达式的 switch x := 10 switch { case x \u003c 5: fmt.Println(\"x 小于 5\") case x \u003c 10: fmt.Println(\"x 小于 10\") default: fmt.Println(\"x 大于等于 10\") } 多个值的 case 在一个 case 中可以同时匹配多个值。\nswitch x { case 1, 3, 5: fmt.Println(\"x 是奇数\") case 2, 4, 6: fmt.Println(\"x 是偶数\") } fallthrough 关键字 在 Go 的 switch 语句中，每个 case 执行完后会自动退出 switch，不需要 break。但如果希望在匹配成功后继续执行下一个 case，可以使用 fallthrough 关键字。\n示例：fallthrough 使用 x := 1 switch x { case 1: fmt.Println(\"x 是 1\") fallthrough case 2: fmt.Println(\"fallthrough 到 2\") } 输出：\nx 是 1 fallthrough 到 2 3. select 语句 select 语句是 Go 中用于处理多个通道操作的特殊分支结构。它会在多个通道操作中随机选择一个可以执行的分支。select 语句与 switch 类似，但用于通道的并发操作。\n语法： select { case \u003c-chan1: // 当 chan1 可读时执行 case chan2 \u003c- value: // 当 chan2 可写时执行 default: // 当没有通道可用时执行 } 示例：select 语句 package main import ( \"fmt\" \"time\" ) func main() { chan1 := make(chan string) chan2 := make(chan string) go func() { time.Sleep(1 * time.Second) chan1 \u003c- \"来自通道 1 的消息\" }() go func() { time.Sleep(2 * time.Second) chan2 \u003c- \"来自通道 2 的消息\" }() select { case msg1 := \u003c-chan1: fmt.Println(msg1) case msg2 := \u003c-chan2: fmt.Println(msg2) } } 在这个例子中，select 会等待任意一个通道变得可用，然后执行对应的 case 语句。\n总结 if 语句：用于根据条件判断来执行不同的代码块，可带初始化语句，支持 if-else 和 if-else if-else 的多分支逻辑。 switch 语句：简化了多个条件判断的写法，Go 的 switch 语句无需 break，且支持多值匹配、无表达式的情况以及 fallthrough 关键字。 select 语句：是专门为处理多个通道操作设计的分支结构，用于在并发程序中选择处理多个通道的操作。 ",
+  "wordCount" : "486",
+  "inLanguage": "en",
+  "datePublished": "2024-10-16T12:53:27Z",
+  "dateModified": "2024-10-16T12:53:27Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/005.go%E5%9F%BA%E7%A1%80-%E5%88%86%E6%94%AF%E8%AF%AD%E5%8F%A5/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      005.Go基础 分支语句
+    </h1>
+    <div class="post-meta"><span title='2024-10-16 12:53:27 +0000 UTC'>October 16, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>Go 语言中的分支结构用于根据条件执行不同的代码路径。常见的分支结构有 <code>if</code> 语句、<code>switch</code> 语句和特殊的 <code>select</code> 语句。每种分支结构都有其适用场景，下面我将详细介绍它们。</p>
+<hr>
+<h3 id="1-if-语句">1. <code>if</code> 语句<a hidden class="anchor" aria-hidden="true" href="#1-if-语句">#</a></h3>
+<p><code>if</code> 语句是最常用的条件分支结构，依据一个布尔表达式的结果来决定是否执行某段代码。Go 语言的 <code>if</code> 语句语法简单，且支持可选的初始化语句。</p>
+<h4 id="语法">语法：<a hidden class="anchor" aria-hidden="true" href="#语法">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">condition</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 condition 为 true 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h4 id="示例基本-if-语句">示例：基本 <code>if</code> 语句<a hidden class="anchor" aria-hidden="true" href="#示例基本-if-语句">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">x</span> &gt; <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 大于 5&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="示例带初始化语句的-if">示例：带初始化语句的 <code>if</code><a hidden class="anchor" aria-hidden="true" href="#示例带初始化语句的-if">#</a></h4>
+<p>Go 语言的 <code>if</code> 语句支持在条件判断前执行一个短语句，这个特性通常用于声明和初始化局部变量。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">x</span> &gt; <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 大于 5&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><code>x</code> 只在 <code>if</code> 语句的作用域内可见。</li>
+</ul>
+<h4 id="if-else-语句"><code>if-else</code> 语句<a hidden class="anchor" aria-hidden="true" href="#if-else-语句">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">condition</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 condition 为 true 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 condition 为 false 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h4 id="示例if-else-语句">示例：<code>if-else</code> 语句<a hidden class="anchor" aria-hidden="true" href="#示例if-else-语句">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">x</span> &gt; <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 大于 5&#34;</span>)
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 小于或等于 5&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="if-else-if-else-语句"><code>if-else if-else</code> 语句<a hidden class="anchor" aria-hidden="true" href="#if-else-if-else-语句">#</a></h4>
+<p>多个条件可以通过 <code>else if</code> 组合，来实现多分支的逻辑判断。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">condition1</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 condition1 为 true 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">condition2</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 condition2 为 true 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当以上条件均不满足时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h4 id="示例if-else-if-else-语句">示例：<code>if-else if-else</code> 语句<a hidden class="anchor" aria-hidden="true" href="#示例if-else-if-else-语句">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">8</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">x</span> &lt; <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 小于 5&#34;</span>)
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">x</span> &lt; <span style="color:#ae81ff">10</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 小于 10&#34;</span>)
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 大于或等于 10&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 id="2-switch-语句">2. <code>switch</code> 语句<a hidden class="anchor" aria-hidden="true" href="#2-switch-语句">#</a></h3>
+<p><code>switch</code> 语句用于替代多个 <code>if-else if</code> 判断，常用于对单个变量或表达式的多个值进行判断。与其他语言不同，Go 的 <code>switch</code> 语句无需显式使用 <code>break</code> 关键字来终止一个分支。</p>
+<h4 id="语法-1">语法：<a hidden class="anchor" aria-hidden="true" href="#语法-1">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">expression</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#a6e22e">value1</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 expression 等于 value1 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">case</span> <span style="color:#a6e22e">value2</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 expression 等于 value2 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 expression 不匹配任何 case 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h4 id="示例基本-switch-语句">示例：基本 <code>switch</code> 语句<a hidden class="anchor" aria-hidden="true" href="#示例基本-switch-语句">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">x</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 是 1&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 是 2&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">3</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 是 3&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 不是 1、2 或 3&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="无表达式的-switch">无表达式的 <code>switch</code><a hidden class="anchor" aria-hidden="true" href="#无表达式的-switch">#</a></h4>
+<p>Go 的 <code>switch</code> 还可以不带表达式使用，这时它会将每个 <code>case</code> 视为布尔表达式，类似多个 <code>if-else</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#a6e22e">condition1</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// condition1 为 true 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">case</span> <span style="color:#a6e22e">condition2</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// condition2 为 true 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 所有条件为 false 时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h4 id="示例无表达式的-switch">示例：无表达式的 <code>switch</code><a hidden class="anchor" aria-hidden="true" href="#示例无表达式的-switch">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#a6e22e">x</span> &lt; <span style="color:#ae81ff">5</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 小于 5&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#a6e22e">x</span> &lt; <span style="color:#ae81ff">10</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 小于 10&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 大于等于 10&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="多个值的-case">多个值的 <code>case</code><a hidden class="anchor" aria-hidden="true" href="#多个值的-case">#</a></h4>
+<p>在一个 <code>case</code> 中可以同时匹配多个值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">x</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">5</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 是奇数&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">6</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 是偶数&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="fallthrough-关键字"><code>fallthrough</code> 关键字<a hidden class="anchor" aria-hidden="true" href="#fallthrough-关键字">#</a></h4>
+<p>在 Go 的 <code>switch</code> 语句中，每个 <code>case</code> 执行完后会自动退出 <code>switch</code>，不需要 <code>break</code>。但如果希望在匹配成功后继续执行下一个 <code>case</code>，可以使用 <code>fallthrough</code> 关键字。</p>
+<h4 id="示例fallthrough-使用">示例：<code>fallthrough</code> 使用<a hidden class="anchor" aria-hidden="true" href="#示例fallthrough-使用">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">x</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;x 是 1&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fallthrough</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;fallthrough 到 2&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>输出：</p>
+<pre tabindex="0"><code>x 是 1
+fallthrough 到 2
+</code></pre><hr>
+<h3 id="3-select-语句">3. <code>select</code> 语句<a hidden class="anchor" aria-hidden="true" href="#3-select-语句">#</a></h3>
+<p><code>select</code> 语句是 Go 中用于处理<strong>多个通道</strong>操作的特殊分支结构。它会在多个通道操作中随机选择一个可以执行的分支。<code>select</code> 语句与 <code>switch</code> 类似，但用于通道的并发操作。</p>
+<h4 id="语法-2">语法：<a hidden class="anchor" aria-hidden="true" href="#语法-2">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">chan1</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 chan1 可读时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">case</span> <span style="color:#a6e22e">chan2</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">value</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当 chan2 可写时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当没有通道可用时执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h4 id="示例select-语句">示例：<code>select</code> 语句<a hidden class="anchor" aria-hidden="true" href="#示例select-语句">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;time&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">chan1</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">string</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">chan2</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">string</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">1</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">chan1</span> <span style="color:#f92672">&lt;-</span> <span style="color:#e6db74">&#34;来自通道 1 的消息&#34;</span>
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">chan2</span> <span style="color:#f92672">&lt;-</span> <span style="color:#e6db74">&#34;来自通道 2 的消息&#34;</span>
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">select</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">msg1</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">chan1</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">msg1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">msg2</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">chan2</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">msg2</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在这个例子中，<code>select</code> 会等待任意一个通道变得可用，然后执行对应的 <code>case</code> 语句。</p>
+<hr>
+<h3 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h3>
+<ul>
+<li><strong><code>if</code> 语句</strong>：用于根据条件判断来执行不同的代码块，可带初始化语句，支持 <code>if-else</code> 和 <code>if-else if-else</code> 的多分支逻辑。</li>
+<li><strong><code>switch</code> 语句</strong>：简化了多个条件判断的写法，Go 的 <code>switch</code> 语句无需 <code>break</code>，且支持多值匹配、无表达式的情况以及 <code>fallthrough</code> 关键字。</li>
+<li><strong><code>select</code> 语句</strong>：是专门为处理多个通道操作设计的分支结构，用于在并发程序中选择处理多个通道的操作。</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

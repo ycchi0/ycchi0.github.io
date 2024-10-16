@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>006.Go基础 循环语句 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="在 Go 语言中，循环语句主要通过for关键字实现。Go 语言不像其他一些编程语言（如 C、Java）有while和do-while循环，for是唯一的循环结构，但它非常灵活，可以实现多种类型的循环。以下是 Go 语言中几种常见的循环用法：
+1. 标准的for循环 这种for循环和 C 语言、Java 中的for循环类似，包含三个部分：初始化语句、条件表达式和后置语句。
+for i := 0; i &lt; 10; i&#43;&#43; { fmt.Println(i) } 初始化语句：在循环开始时执行一次（i := 0）。 条件表达式：每次循环前都会判断，条件为true时继续执行循环（i &lt; 10）。 后置语句：每次循环结束后执行（i&#43;&#43;）。 2. 类似while的循环 如果省略初始化语句和后置语句，for循环可以用来模拟while循环：
+i := 0 for i &lt; 10 { fmt.Println(i) i&#43;&#43; } 这种形式的for循环类似于其他语言中的while循环，在条件为true时持续执行。
+3. 无限循环 如果for的条件表达式也被省略，那么就变成了一个无限循环：
+for { fmt.Println(&#34;无限循环&#34;) } 这种循环通常与break或return配合使用，用于在特定条件下退出循环。
+4. range 关键字遍历集合 Go 语言的for循环还可以结合range关键字用于遍历数组、切片、映射和字符串：
+// 遍历数组 arr := []int{1, 2, 3, 4} for index, value := range arr { fmt.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/006.go%E5%9F%BA%E7%A1%80-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/006.go%E5%9F%BA%E7%A1%80-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="006.Go基础 循环语句" />
+<meta property="og:description" content="在 Go 语言中，循环语句主要通过for关键字实现。Go 语言不像其他一些编程语言（如 C、Java）有while和do-while循环，for是唯一的循环结构，但它非常灵活，可以实现多种类型的循环。以下是 Go 语言中几种常见的循环用法：
+1. 标准的for循环 这种for循环和 C 语言、Java 中的for循环类似，包含三个部分：初始化语句、条件表达式和后置语句。
+for i := 0; i &lt; 10; i&#43;&#43; { fmt.Println(i) } 初始化语句：在循环开始时执行一次（i := 0）。 条件表达式：每次循环前都会判断，条件为true时继续执行循环（i &lt; 10）。 后置语句：每次循环结束后执行（i&#43;&#43;）。 2. 类似while的循环 如果省略初始化语句和后置语句，for循环可以用来模拟while循环：
+i := 0 for i &lt; 10 { fmt.Println(i) i&#43;&#43; } 这种形式的for循环类似于其他语言中的while循环，在条件为true时持续执行。
+3. 无限循环 如果for的条件表达式也被省略，那么就变成了一个无限循环：
+for { fmt.Println(&#34;无限循环&#34;) } 这种循环通常与break或return配合使用，用于在特定条件下退出循环。
+4. range 关键字遍历集合 Go 语言的for循环还可以结合range关键字用于遍历数组、切片、映射和字符串：
+// 遍历数组 arr := []int{1, 2, 3, 4} for index, value := range arr { fmt." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/006.go%E5%9F%BA%E7%A1%80-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-10-16T12:53:56+00:00" />
+<meta property="article:modified_time" content="2024-10-16T12:53:56+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="006.Go基础 循环语句"/>
+<meta name="twitter:description" content="在 Go 语言中，循环语句主要通过for关键字实现。Go 语言不像其他一些编程语言（如 C、Java）有while和do-while循环，for是唯一的循环结构，但它非常灵活，可以实现多种类型的循环。以下是 Go 语言中几种常见的循环用法：
+1. 标准的for循环 这种for循环和 C 语言、Java 中的for循环类似，包含三个部分：初始化语句、条件表达式和后置语句。
+for i := 0; i &lt; 10; i&#43;&#43; { fmt.Println(i) } 初始化语句：在循环开始时执行一次（i := 0）。 条件表达式：每次循环前都会判断，条件为true时继续执行循环（i &lt; 10）。 后置语句：每次循环结束后执行（i&#43;&#43;）。 2. 类似while的循环 如果省略初始化语句和后置语句，for循环可以用来模拟while循环：
+i := 0 for i &lt; 10 { fmt.Println(i) i&#43;&#43; } 这种形式的for循环类似于其他语言中的while循环，在条件为true时持续执行。
+3. 无限循环 如果for的条件表达式也被省略，那么就变成了一个无限循环：
+for { fmt.Println(&#34;无限循环&#34;) } 这种循环通常与break或return配合使用，用于在特定条件下退出循环。
+4. range 关键字遍历集合 Go 语言的for循环还可以结合range关键字用于遍历数组、切片、映射和字符串：
+// 遍历数组 arr := []int{1, 2, 3, 4} for index, value := range arr { fmt."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "006.Go基础 循环语句",
+      "item": "https://ycchi0.github.io/posts/006.go%E5%9F%BA%E7%A1%80-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "006.Go基础 循环语句",
+  "name": "006.Go基础 循环语句",
+  "description": "在 Go 语言中，循环语句主要通过for关键字实现。Go 语言不像其他一些编程语言（如 C、Java）有while和do-while循环，for是唯一的循环结构，但它非常灵活，可以实现多种类型的循环。以下是 Go 语言中几种常见的循环用法：\n1. 标准的for循环 这种for循环和 C 语言、Java 中的for循环类似，包含三个部分：初始化语句、条件表达式和后置语句。\nfor i := 0; i \u0026lt; 10; i++ { fmt.Println(i) } 初始化语句：在循环开始时执行一次（i := 0）。 条件表达式：每次循环前都会判断，条件为true时继续执行循环（i \u0026lt; 10）。 后置语句：每次循环结束后执行（i++）。 2. 类似while的循环 如果省略初始化语句和后置语句，for循环可以用来模拟while循环：\ni := 0 for i \u0026lt; 10 { fmt.Println(i) i++ } 这种形式的for循环类似于其他语言中的while循环，在条件为true时持续执行。\n3. 无限循环 如果for的条件表达式也被省略，那么就变成了一个无限循环：\nfor { fmt.Println(\u0026#34;无限循环\u0026#34;) } 这种循环通常与break或return配合使用，用于在特定条件下退出循环。\n4. range 关键字遍历集合 Go 语言的for循环还可以结合range关键字用于遍历数组、切片、映射和字符串：\n// 遍历数组 arr := []int{1, 2, 3, 4} for index, value := range arr { fmt.",
+  "keywords": [
+    
+  ],
+  "articleBody": "在 Go 语言中，循环语句主要通过for关键字实现。Go 语言不像其他一些编程语言（如 C、Java）有while和do-while循环，for是唯一的循环结构，但它非常灵活，可以实现多种类型的循环。以下是 Go 语言中几种常见的循环用法：\n1. 标准的for循环 这种for循环和 C 语言、Java 中的for循环类似，包含三个部分：初始化语句、条件表达式和后置语句。\nfor i := 0; i \u003c 10; i++ { fmt.Println(i) } 初始化语句：在循环开始时执行一次（i := 0）。 条件表达式：每次循环前都会判断，条件为true时继续执行循环（i \u003c 10）。 后置语句：每次循环结束后执行（i++）。 2. 类似while的循环 如果省略初始化语句和后置语句，for循环可以用来模拟while循环：\ni := 0 for i \u003c 10 { fmt.Println(i) i++ } 这种形式的for循环类似于其他语言中的while循环，在条件为true时持续执行。\n3. 无限循环 如果for的条件表达式也被省略，那么就变成了一个无限循环：\nfor { fmt.Println(\"无限循环\") } 这种循环通常与break或return配合使用，用于在特定条件下退出循环。\n4. range 关键字遍历集合 Go 语言的for循环还可以结合range关键字用于遍历数组、切片、映射和字符串：\n// 遍历数组 arr := []int{1, 2, 3, 4} for index, value := range arr { fmt.Printf(\"index: %d, value: %d\\n\", index, value) } // 遍历字符串 str := \"hello\" for index, char := range str { fmt.Printf(\"index: %d, char: %c\\n\", index, char) } // 遍历map m := map[string]int{\"a\": 1, \"b\": 2} for key, value := range m { fmt.Printf(\"key: %s, value: %d\\n\", key, value) } range返回两个值：索引（或键）和对应的值。如果不需要索引或值，可以使用_来忽略它。 5. break 和 continue break：用于立即退出循环。 continue：用于跳过当前循环的剩余部分，直接进入下一次循环。 for i := 0; i \u003c 10; i++ { if i == 5 { break // 遇到5时退出循环 } if i%2 == 0 { continue // 跳过偶数 } fmt.Println(i) } 小结 Go 语言的for循环既可以用来处理固定次数的循环，也可以用作while和do-while等形式的循环。 通过range可以简便地遍历各种集合类型。 break和continue提供了对循环流程的更灵活控制。 ",
+  "wordCount" : "163",
+  "inLanguage": "en",
+  "datePublished": "2024-10-16T12:53:56Z",
+  "dateModified": "2024-10-16T12:53:56Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/006.go%E5%9F%BA%E7%A1%80-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      006.Go基础 循环语句
+    </h1>
+    <div class="post-meta"><span title='2024-10-16 12:53:56 +0000 UTC'>October 16, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>在 Go 语言中，循环语句主要通过<code>for</code>关键字实现。Go 语言不像其他一些编程语言（如 C、Java）有<code>while</code>和<code>do-while</code>循环，<code>for</code>是唯一的循环结构，但它非常灵活，可以实现多种类型的循环。以下是 Go 语言中几种常见的循环用法：</p>
+<h3 id="1-标准的for循环">1. 标准的<code>for</code>循环<a hidden class="anchor" aria-hidden="true" href="#1-标准的for循环">#</a></h3>
+<p>这种<code>for</code>循环和 C 语言、Java 中的<code>for</code>循环类似，包含三个部分：初始化语句、条件表达式和后置语句。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">i</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>初始化语句</strong>：在循环开始时执行一次（<code>i := 0</code>）。</li>
+<li><strong>条件表达式</strong>：每次循环前都会判断，条件为<code>true</code>时继续执行循环（<code>i &lt; 10</code>）。</li>
+<li><strong>后置语句</strong>：每次循环结束后执行（<code>i++</code>）。</li>
+</ul>
+<h3 id="2-类似while的循环">2. 类似<code>while</code>的循环<a hidden class="anchor" aria-hidden="true" href="#2-类似while的循环">#</a></h3>
+<p>如果省略初始化语句和后置语句，<code>for</code>循环可以用来模拟<code>while</code>循环：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">i</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这种形式的<code>for</code>循环类似于其他语言中的<code>while</code>循环，在条件为<code>true</code>时持续执行。</p>
+<h3 id="3-无限循环">3. 无限循环<a hidden class="anchor" aria-hidden="true" href="#3-无限循环">#</a></h3>
+<p>如果<code>for</code>的条件表达式也被省略，那么就变成了一个无限循环：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;无限循环&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这种循环通常与<code>break</code>或<code>return</code>配合使用，用于在特定条件下退出循环。</p>
+<h3 id="4-range-关键字遍历集合">4. <code>range</code> 关键字遍历集合<a hidden class="anchor" aria-hidden="true" href="#4-range-关键字遍历集合">#</a></h3>
+<p>Go 语言的<code>for</code>循环还可以结合<code>range</code>关键字用于遍历数组、切片、映射和字符串：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 遍历数组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">arr</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">arr</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;index: %d, value: %d\n&#34;</span>, <span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">value</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 遍历字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">str</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;hello&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">char</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">str</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;index: %d, char: %c\n&#34;</span>, <span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">char</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 遍历map
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">m</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">int</span>{<span style="color:#e6db74">&#34;a&#34;</span>: <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;b&#34;</span>: <span style="color:#ae81ff">2</span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">m</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;key: %s, value: %d\n&#34;</span>, <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">value</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><code>range</code>返回两个值：索引（或键）和对应的值。如果不需要索引或值，可以使用<code>_</code>来忽略它。</li>
+</ul>
+<h3 id="5-break-和-continue">5. <code>break</code> 和 <code>continue</code><a hidden class="anchor" aria-hidden="true" href="#5-break-和-continue">#</a></h3>
+<ul>
+<li><strong><code>break</code></strong>：用于立即退出循环。</li>
+<li><strong><code>continue</code></strong>：用于跳过当前循环的剩余部分，直接进入下一次循环。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">break</span>  <span style="color:#75715e">// 遇到5时退出循环
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">i</span><span style="color:#f92672">%</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">continue</span>  <span style="color:#75715e">// 跳过偶数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">i</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="小结">小结<a hidden class="anchor" aria-hidden="true" href="#小结">#</a></h3>
+<ul>
+<li>Go 语言的<code>for</code>循环既可以用来处理固定次数的循环，也可以用作<code>while</code>和<code>do-while</code>等形式的循环。</li>
+<li>通过<code>range</code>可以简便地遍历各种集合类型。</li>
+<li><code>break</code>和<code>continue</code>提供了对循环流程的更灵活控制。</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
