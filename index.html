@@ -131,6 +131,107 @@
 
 <article class="first-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">020.Go入门-并发编程
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Go 语言中的并发是其核心功能之一，它通过轻量级的 goroutine 和强大的通信机制（通道，channels）来支持高效的并发编程。Go 以简洁和高效的方式处理并发，而不是像传统语言那样依赖操作系统级线程。Go 的并发模型受到 CSP（Communicating Sequential Processes）模型的启发，注重通过消息传递来实现不同线程之间的协作。
+1. Goroutines（协程） Goroutine 是 Go 语言的并发执行单元。它类似于线程，但比线程更轻量。Go 的运行时会自动调度 goroutine，而不是依赖操作系统线程调度。一个 Go 程序可以同时运行成千上万个 goroutine，这得益于它的低开销。
+语法：只需要在函数调用前加上 go 关键字即可启动一个新的 goroutine。
+示例：
+package main import ( &#34;fmt&#34; &#34;time&#34; ) func say(s string) { for i := 0; i &lt; 5; i&#43;&#43; { fmt.Println(s) time.Sleep(100 * time.Millisecond) } } func main() { go say(&#34;Hello&#34;) // 启动一个新的 goroutine say(&#34;World&#34;) // 在主 goroutine 中运行 } 在这个例子中，say(&#34;Hello&#34;) 和 say(&#34;World&#34;) 运行在不同的 goroutine 中。这展示了 Go 的并发特性。...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-18 02:42:03 +0000 UTC'>October 18, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 020.Go入门-并发编程" href="https://ycchi0.github.io/posts/020.go%E5%85%A5%E9%97%A8-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">019.Go入门-错误处理
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在 Go 语言中，错误处理是通过显式返回错误值来实现的，而不是依赖像其他语言（如 Java、Python）中的异常机制。这种设计强调了错误处理的明确性和简洁性，使开发者在编写代码时可以更清晰地处理可能发生的错误。
+1. Go 中的错误处理机制 Go 使用内置的 error 类型来表示错误。error 是一个接口，定义如下：
+type error interface { Error() string } 任何实现了 Error() 方法的类型都可以作为错误类型。通常，Go 的函数会返回两个值：一个是正常的返回值，另一个是表示错误的 error。如果没有错误发生，error 通常会返回 nil。
+示例：
+package main import ( &#34;errors&#34; &#34;fmt&#34; ) // 定义一个简单的函数，返回一个错误 func divide(a, b int) (int, error) { if b == 0 { return 0, errors.New(&#34;cannot divide by zero&#34;) } return a / b, nil } func main() { result, err := divide(4, 2) if err !...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-18 02:32:30 +0000 UTC'>October 18, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 019.Go入门-错误处理" href="https://ycchi0.github.io/posts/019.go%E5%85%A5%E9%97%A8-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">017.Go入门-nil
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在 Go 语言中，nil 是一个特殊的标识符，用来表示变量没有值或空值。nil 类似于其他编程语言中的 null 或 None，但它在 Go 中具有特定的应用场景。nil 可以用于多个类型，包括指针、接口、切片、映射、通道、函数等。
+1. nil 的用途 Go 语言中的 nil 可用于以下几种类型：
+指针：表示指针不指向任何内存地址。 接口：表示接口的动态类型和值为空。 切片：表示切片不引用底层数组。 映射：表示映射未被初始化。 通道：表示通道未被初始化。 函数：表示函数变量未被赋值。 2. nil 的使用场景 2.1 指针与 nil 在 Go 中，指针是一种保存变量内存地址的类型，nil 可以表示指针不指向任何有效的内存地址。
+示例：
+package main import &#34;fmt&#34; func main() { var p *int = nil // 定义一个 nil 指针 fmt.Println(p) // 输出：&lt;nil&gt; var x int = 10 p = &amp;x // 将 p 指向变量 x fmt.Println(p) // 输出：x 的地址 fmt....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-18 01:37:32 +0000 UTC'>October 18, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 017.Go入门-nil" href="https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">016.Go入门-类型的内嵌
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Go 语言中的**类型内嵌（Type Embedding）是实现代码复用和简化类型设计的重要特性之一，它允许一个结构体或接口将另一个类型嵌入到自身中，而不需要通过显式继承来实现。内嵌类似于面向对象语言中的“继承”机制，但更灵活和简洁。通过类型内嵌，Go 实现了组合（Composition）**这一设计模式，提供了高效的代码复用方式。
+1. 结构体的内嵌 结构体可以直接嵌入另一个结构体，从而使得嵌入的类型的字段和方法可以直接在外层结构体中使用，而不需要显式引用嵌入的类型。这类似于传统的“继承”，但更加简化。
+结构体内嵌示例：
+package main import &#34;fmt&#34; // 定义一个基础结构体 type Animal struct { Name string } // 为 Animal 结构体定义方法 func (a Animal) Speak() { fmt.Println(a.Name, &#34;makes a sound&#34;) } // 定义一个新结构体，将 Animal 内嵌 type Dog struct { Animal // 内嵌 Animal 结构体 Breed string } func main() { d := Dog{ Animal: Animal{Name: &#34;Rex&#34;}, // 初始化内嵌的 Animal 类型 Breed: &#34;Labrador&#34;, } // 直接访问内嵌的 Animal 结构体的字段和方法 fmt....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-18 01:35:38 +0000 UTC'>October 18, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 016.Go入门-类型的内嵌" href="https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">015.Go入门-面向对象
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Go 语言虽然不完全符合传统的面向对象编程（OOP）模型，但它具有一些关键的 OOP 特性，例如封装、组合和多态，这些可以通过 Go 的**结构体（struct）和接口（interface）**来实现。
+在 Go 语言中，面向对象的概念不是通过继承和类来实现，而是通过组合与接口设计来模拟和实现多态性和扩展性。
+1. Go 语言的结构（struct） Go 中的结构体（struct）类似于其他语言中的类，但没有继承关系。struct 是一种聚合数据类型，用于将多个字段组织在一起。与类不同的是，Go 没有构造函数或析构函数的概念，也没有隐式的继承。
+定义结构体：
+type Person struct { Name string Age int } 使用结构体：
+func main() { p := Person{Name: &#34;Alice&#34;, Age: 25} fmt.Println(p.Name) // 输出：Alice fmt.Println(p.Age) // 输出：25 } 为结构体定义方法 Go 中的方法是绑定到类型（包括结构体）的。方法的接收者可以是值类型或指针类型，这取决于你想在方法中修改结构体还是只读取它的内容。
+type Person struct { Name string Age int } // 为结构体定义方法 func (p Person) Greet() { fmt.Println(&#34;Hello, my name is&#34;, p.Name) } func main() { p := Person{Name: &#34;Alice&#34;, Age: 25} p....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-18 01:20:40 +0000 UTC'>October 18, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 015.Go入门-面向对象" href="https://ycchi0.github.io/posts/015.go%E5%85%A5%E9%97%A8-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">014.Go入门-扩展类型
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在 Go 语言中，拓展已有类型的方式主要有两种：创建类型别名和定义新类型。通过这两种方式，你可以为已有类型添加新的行为或定义，尤其是在不想修改原有类型的情况下。下面分别解释这两种方式。
+1. 类型别名（Type Alias） 类型别名用于为现有类型创建一个新的名称。这实际上不会创建新的类型，只是为原有类型提供了一个新的名字。
+语法：
+type NewType = ExistingType 示例：
+package main import ( &#34;fmt&#34; ) type MyInt = int // MyInt 是 int 的别名 func main() { var a MyInt = 100 fmt.Println(a) // 输出：100 } 特点：
+别名类型和原始类型完全相同，可以相互赋值。 别名主要用于代码重构或增加代码可读性。 2. 定义新类型（Type Declaration） 通过定义新类型，你可以基于已有类型创建一个新的类型，并为这个新类型添加方法。新类型和原始类型在 Go 中被视为不同的类型，即使它们底层的表示相同。
+语法：
+type NewType ExistingType 示例：
+package main import ( &#34;fmt&#34; ) type MyInt int // 基于 int 定义了新类型 MyInt // 为 MyInt 类型定义一个方法 func (m MyInt) Print() { fmt....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-18 01:15:07 +0000 UTC'>October 18, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 014.Go入门-扩展类型" href="https://ycchi0.github.io/posts/014.go%E5%85%A5%E9%97%A8-%E6%89%A9%E5%B1%95%E7%B1%BB%E5%9E%8B/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">013.Go入门 Range
     </h2>
   </header>
@@ -199,104 +300,6 @@ slice := []int{1, 2, 3, 4} fmt.Println(slice) // 输出 [1 2 3 4] 2. 切片的�
   </div>
   <footer class="entry-footer"><span title='2024-10-16 12:55:16 +0000 UTC'>October 16, 2024</span></footer>
   <a class="entry-link" aria-label="post link to 010.Go基础 数组" href="https://ycchi0.github.io/posts/010.go%E5%9F%BA%E7%A1%80-%E6%95%B0%E7%BB%84/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">009.Go基础 指针
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>在 Go 语言中，指针是指向变量内存地址的变量。指针可以用来直接操作内存，并且可以通过指针共享数据，避免不必要的拷贝。在 Go 中，虽然没有像 C 语言那样的指针运算，但 Go 提供了简单且安全的指针功能，使开发者可以在安全的环境下进行内存操作。
-1. 指针的基本概念 指针是保存内存地址的变量。通过指针，我们可以间接地访问或修改变量的值。
-示例：指针的基本使用 var x int = 42 var p *int = &amp;x // 获取变量x的地址，并将其赋值给指针p fmt.Println(p) // 输出内存地址，例如：0xc0000140b0 fmt.Println(*p) // 输出指针p指向的值，即42 在这个例子中：
-&amp;x 是取变量x的地址，返回一个指向x的指针。 *p 是解引用操作，通过指针p访问其指向的变量的值。 2. 指针类型 Go 语言中的每种类型都有其对应的指针类型。例如：
-int类型的指针是*int float64类型的指针是*float64 自定义类型的指针也是类似的。 示例：不同类型的指针 var a int = 10 var b float64 = 25.5 var c string = &#34;hello&#34; var pA *int = &amp;a var pB *float64 = &amp;b var pC *string = &amp;c fmt....</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-10-16 12:54:55 +0000 UTC'>October 16, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 009.Go基础 指针" href="https://ycchi0.github.io/posts/009.go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">008.Go基础 函数
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>在 Go 语言中，函数是程序的基本构建块之一。函数定义了可复用的代码块，通过传递参数和返回值来实现逻辑封装。Go 语言的函数具有灵活和强大的特性，如支持多返回值、匿名函数、闭包以及延迟执行（defer）等。接下来，我将介绍 Go 语言中的函数特性及其使用方式。
-1. 基本函数定义 Go 语言中，函数的定义使用关键字func，并且参数和返回值的类型必须显式声明。
-func 函数名(参数列表) 返回值类型 { // 函数体 } 示例：基本函数 func add(x int, y int) int { return x &#43; y } func main() { result := add(3, 4) fmt.Println(result) // 输出 7 } 在这个示例中，add函数接受两个int类型的参数，并返回它们的和。
-2. 多返回值函数 Go 语言允许函数返回多个值。这在需要返回结果和错误状态的情况下特别有用。
-示例：多返回值 func swap(x, y string) (string, string) { return y, x } func main() { a, b := swap(&#34;hello&#34;, &#34;world&#34;) fmt.Println(a, b) // 输出 world hello } 在这个示例中，swap函数返回两个字符串，通过多重赋值操作接收返回值。...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-10-16 12:54:38 +0000 UTC'>October 16, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 008.Go基础 函数" href="https://ycchi0.github.io/posts/008.go%E5%9F%BA%E7%A1%80-%E5%87%BD%E6%95%B0/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">007.Go基础 Chan
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>在 Go 语言中，chan（通道）是一种用于在多个 Goroutine 之间传递数据的机制。Go 语言通过 Goroutines 实现并发，而通道（Channel）是这些 Goroutines 之间进行通信的工具。通道可以发送和接收数据，帮助程序在并发场景下保持数据的一致性和同步性。
-通道的定义与基本用法 通道在 Go 中是一个类型化的管道，声明时需要指定通道传输的数据类型。你可以创建一个传输不同类型数据的通道，比如传输整数、字符串或结构体。
-1. 通道的声明和初始化 使用make函数来创建通道：
-ch := make(chan int) // 创建一个传输int类型数据的通道 2. 发送和接收数据 发送数据到通道：使用&lt;-符号将数据发送到通道。 从通道接收数据：使用&lt;-符号从通道接收数据。 ch := make(chan int) // 向通道发送数据 go func() { ch &lt;- 42 }() // 从通道接收数据 value := &lt;-ch fmt.Println(value) // 输出 42 在上面的示例中，go func()是一个 Goroutine，运行在一个独立的线程中。它将42发送到通道ch中，主 Goroutine 则从通道中接收该值并打印。
-通道的同步特性 通道不仅仅用于传递数据，它还可以作为一种同步机制。当一个 Goroutine 尝试向通道发送数据时，除非另一个 Goroutine 正在从该通道接收数据，否则它会被阻塞。同样，接收操作会阻塞，直到有数据从通道发送过来。因此，通道可以用来确保多个 Goroutine 之间的操作同步。
-示例：同步两个 Goroutine ch := make(chan bool) go func() { fmt....</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-10-16 12:54:16 +0000 UTC'>October 16, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 007.Go基础 Chan" href="https://ycchi0.github.io/posts/007.go%E5%9F%BA%E7%A1%80-chan/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">006.Go基础 循环语句
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>在 Go 语言中，循环语句主要通过for关键字实现。Go 语言不像其他一些编程语言（如 C、Java）有while和do-while循环，for是唯一的循环结构，但它非常灵活，可以实现多种类型的循环。以下是 Go 语言中几种常见的循环用法：
-1. 标准的for循环 这种for循环和 C 语言、Java 中的for循环类似，包含三个部分：初始化语句、条件表达式和后置语句。
-for i := 0; i &lt; 10; i&#43;&#43; { fmt.Println(i) } 初始化语句：在循环开始时执行一次（i := 0）。 条件表达式：每次循环前都会判断，条件为true时继续执行循环（i &lt; 10）。 后置语句：每次循环结束后执行（i&#43;&#43;）。 2. 类似while的循环 如果省略初始化语句和后置语句，for循环可以用来模拟while循环：
-i := 0 for i &lt; 10 { fmt.Println(i) i&#43;&#43; } 这种形式的for循环类似于其他语言中的while循环，在条件为true时持续执行。
-3. 无限循环 如果for的条件表达式也被省略，那么就变成了一个无限循环：
-for { fmt.Println(&#34;无限循环&#34;) } 这种循环通常与break或return配合使用，用于在特定条件下退出循环。
-4. range 关键字遍历集合 Go 语言的for循环还可以结合range关键字用于遍历数组、切片、映射和字符串：
-// 遍历数组 arr := []int{1, 2, 3, 4} for index, value := range arr { fmt....</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-10-16 12:53:56 +0000 UTC'>October 16, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 006.Go基础 循环语句" href="https://ycchi0.github.io/posts/006.go%E5%9F%BA%E7%A1%80-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">005.Go基础 分支语句
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Go 语言中的分支结构用于根据条件执行不同的代码路径。常见的分支结构有 if 语句、switch 语句和特殊的 select 语句。每种分支结构都有其适用场景，下面我将详细介绍它们。
-1. if 语句 if 语句是最常用的条件分支结构，依据一个布尔表达式的结果来决定是否执行某段代码。Go 语言的 if 语句语法简单，且支持可选的初始化语句。
-语法： if condition { // 当 condition 为 true 时执行 } 示例：基本 if 语句 package main import &#34;fmt&#34; func main() { x := 10 if x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } } 示例：带初始化语句的 if Go 语言的 if 语句支持在条件判断前执行一个短语句，这个特性通常用于声明和初始化局部变量。
-if x := 10; x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } x 只在 if 语句的作用域内可见。 if-else 语句 if condition { // 当 condition 为 true 时执行 } else { // 当 condition 为 false 时执行 } 示例：if-else 语句 x := 3 if x &gt; 5 { fmt....</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-10-16 12:53:27 +0000 UTC'>October 16, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 005.Go基础 分支语句" href="https://ycchi0.github.io/posts/005.go%E5%9F%BA%E7%A1%80-%E5%88%86%E6%94%AF%E8%AF%AD%E5%8F%A5/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">004.GO基础 运算符
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Go 语言的运算符主要分为以下几大类：算术运算符、关系运算符、逻辑运算符、位运算符、赋值运算符和其他运算符。每类运算符都用于特定的操作，帮助程序完成各种计算和逻辑判断。下面是详细介绍：
-1. 算术运算符（Arithmetic Operators） 算术运算符用于执行基本的数学运算。
-运算符 描述 示例 结果 &#43; 加法 5 &#43; 3 8 - 减法 5 - 3 2 * 乘法 5 * 3 15 / 除法 5 / 2 2（整除） % 取余 5 % 2 1 &#43;&#43; 自增 a&#43;&#43; 等同于 a = a &#43; 1 -- 自减 a-- 等同于 a = a - 1 注意：
-&#43;&#43; 和 -- 是 后缀运算符，即先返回当前值，再自增或自减。 整数除法会丢弃小数部分，例如 5 / 2 的结果为 2，而不是 2....</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-10-16 12:52:59 +0000 UTC'>October 16, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 004.GO基础 运算符" href="https://ycchi0.github.io/posts/004.go%E5%9F%BA%E7%A1%80-%E8%BF%90%E7%AE%97%E7%AC%A6/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

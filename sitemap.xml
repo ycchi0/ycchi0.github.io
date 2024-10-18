@@ -2,13 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://ycchi0.github.io/posts/013.go%E5%85%A5%E9%97%A8-range/</loc>
-    <lastmod>2024-10-16T12:56:40+00:00</lastmod>
+    <loc>https://ycchi0.github.io/posts/020.go%E5%85%A5%E9%97%A8-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</loc>
+    <lastmod>2024-10-18T02:42:03+00:00</lastmod>
   </url><url>
     <loc>https://ycchi0.github.io/posts/</loc>
-    <lastmod>2024-10-16T12:56:40+00:00</lastmod>
+    <lastmod>2024-10-18T02:42:03+00:00</lastmod>
   </url><url>
     <loc>https://ycchi0.github.io/</loc>
+    <lastmod>2024-10-18T02:42:03+00:00</lastmod>
+  </url><url>
+    <loc>https://ycchi0.github.io/posts/019.go%E5%85%A5%E9%97%A8-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/</loc>
+    <lastmod>2024-10-18T02:32:30+00:00</lastmod>
+  </url><url>
+    <loc>https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/</loc>
+    <lastmod>2024-10-18T01:37:32+00:00</lastmod>
+  </url><url>
+    <loc>https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/</loc>
+    <lastmod>2024-10-18T01:35:38+00:00</lastmod>
+  </url><url>
+    <loc>https://ycchi0.github.io/posts/015.go%E5%85%A5%E9%97%A8-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</loc>
+    <lastmod>2024-10-18T01:20:40+00:00</lastmod>
+  </url><url>
+    <loc>https://ycchi0.github.io/posts/014.go%E5%85%A5%E9%97%A8-%E6%89%A9%E5%B1%95%E7%B1%BB%E5%9E%8B/</loc>
+    <lastmod>2024-10-18T01:15:07+00:00</lastmod>
+  </url><url>
+    <loc>https://ycchi0.github.io/posts/013.go%E5%85%A5%E9%97%A8-range/</loc>
     <lastmod>2024-10-16T12:56:40+00:00</lastmod>
   </url><url>
     <loc>https://ycchi0.github.io/posts/012.go%E5%9F%BA%E7%A1%80-map/</loc>

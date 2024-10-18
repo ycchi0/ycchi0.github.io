@@ -131,6 +131,104 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">009.Go基础 指针
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在 Go 语言中，指针是指向变量内存地址的变量。指针可以用来直接操作内存，并且可以通过指针共享数据，避免不必要的拷贝。在 Go 中，虽然没有像 C 语言那样的指针运算，但 Go 提供了简单且安全的指针功能，使开发者可以在安全的环境下进行内存操作。
+1. 指针的基本概念 指针是保存内存地址的变量。通过指针，我们可以间接地访问或修改变量的值。
+示例：指针的基本使用 var x int = 42 var p *int = &amp;x // 获取变量x的地址，并将其赋值给指针p fmt.Println(p) // 输出内存地址，例如：0xc0000140b0 fmt.Println(*p) // 输出指针p指向的值，即42 在这个例子中：
+&amp;x 是取变量x的地址，返回一个指向x的指针。 *p 是解引用操作，通过指针p访问其指向的变量的值。 2. 指针类型 Go 语言中的每种类型都有其对应的指针类型。例如：
+int类型的指针是*int float64类型的指针是*float64 自定义类型的指针也是类似的。 示例：不同类型的指针 var a int = 10 var b float64 = 25.5 var c string = &#34;hello&#34; var pA *int = &amp;a var pB *float64 = &amp;b var pC *string = &amp;c fmt....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-16 12:54:55 +0000 UTC'>October 16, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 009.Go基础 指针" href="https://ycchi0.github.io/posts/009.go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">008.Go基础 函数
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在 Go 语言中，函数是程序的基本构建块之一。函数定义了可复用的代码块，通过传递参数和返回值来实现逻辑封装。Go 语言的函数具有灵活和强大的特性，如支持多返回值、匿名函数、闭包以及延迟执行（defer）等。接下来，我将介绍 Go 语言中的函数特性及其使用方式。
+1. 基本函数定义 Go 语言中，函数的定义使用关键字func，并且参数和返回值的类型必须显式声明。
+func 函数名(参数列表) 返回值类型 { // 函数体 } 示例：基本函数 func add(x int, y int) int { return x &#43; y } func main() { result := add(3, 4) fmt.Println(result) // 输出 7 } 在这个示例中，add函数接受两个int类型的参数，并返回它们的和。
+2. 多返回值函数 Go 语言允许函数返回多个值。这在需要返回结果和错误状态的情况下特别有用。
+示例：多返回值 func swap(x, y string) (string, string) { return y, x } func main() { a, b := swap(&#34;hello&#34;, &#34;world&#34;) fmt.Println(a, b) // 输出 world hello } 在这个示例中，swap函数返回两个字符串，通过多重赋值操作接收返回值。...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-16 12:54:38 +0000 UTC'>October 16, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 008.Go基础 函数" href="https://ycchi0.github.io/posts/008.go%E5%9F%BA%E7%A1%80-%E5%87%BD%E6%95%B0/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">007.Go基础 Chan
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在 Go 语言中，chan（通道）是一种用于在多个 Goroutine 之间传递数据的机制。Go 语言通过 Goroutines 实现并发，而通道（Channel）是这些 Goroutines 之间进行通信的工具。通道可以发送和接收数据，帮助程序在并发场景下保持数据的一致性和同步性。
+通道的定义与基本用法 通道在 Go 中是一个类型化的管道，声明时需要指定通道传输的数据类型。你可以创建一个传输不同类型数据的通道，比如传输整数、字符串或结构体。
+1. 通道的声明和初始化 使用make函数来创建通道：
+ch := make(chan int) // 创建一个传输int类型数据的通道 2. 发送和接收数据 发送数据到通道：使用&lt;-符号将数据发送到通道。 从通道接收数据：使用&lt;-符号从通道接收数据。 ch := make(chan int) // 向通道发送数据 go func() { ch &lt;- 42 }() // 从通道接收数据 value := &lt;-ch fmt.Println(value) // 输出 42 在上面的示例中，go func()是一个 Goroutine，运行在一个独立的线程中。它将42发送到通道ch中，主 Goroutine 则从通道中接收该值并打印。
+通道的同步特性 通道不仅仅用于传递数据，它还可以作为一种同步机制。当一个 Goroutine 尝试向通道发送数据时，除非另一个 Goroutine 正在从该通道接收数据，否则它会被阻塞。同样，接收操作会阻塞，直到有数据从通道发送过来。因此，通道可以用来确保多个 Goroutine 之间的操作同步。
+示例：同步两个 Goroutine ch := make(chan bool) go func() { fmt....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-16 12:54:16 +0000 UTC'>October 16, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 007.Go基础 Chan" href="https://ycchi0.github.io/posts/007.go%E5%9F%BA%E7%A1%80-chan/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">006.Go基础 循环语句
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在 Go 语言中，循环语句主要通过for关键字实现。Go 语言不像其他一些编程语言（如 C、Java）有while和do-while循环，for是唯一的循环结构，但它非常灵活，可以实现多种类型的循环。以下是 Go 语言中几种常见的循环用法：
+1. 标准的for循环 这种for循环和 C 语言、Java 中的for循环类似，包含三个部分：初始化语句、条件表达式和后置语句。
+for i := 0; i &lt; 10; i&#43;&#43; { fmt.Println(i) } 初始化语句：在循环开始时执行一次（i := 0）。 条件表达式：每次循环前都会判断，条件为true时继续执行循环（i &lt; 10）。 后置语句：每次循环结束后执行（i&#43;&#43;）。 2. 类似while的循环 如果省略初始化语句和后置语句，for循环可以用来模拟while循环：
+i := 0 for i &lt; 10 { fmt.Println(i) i&#43;&#43; } 这种形式的for循环类似于其他语言中的while循环，在条件为true时持续执行。
+3. 无限循环 如果for的条件表达式也被省略，那么就变成了一个无限循环：
+for { fmt.Println(&#34;无限循环&#34;) } 这种循环通常与break或return配合使用，用于在特定条件下退出循环。
+4. range 关键字遍历集合 Go 语言的for循环还可以结合range关键字用于遍历数组、切片、映射和字符串：
+// 遍历数组 arr := []int{1, 2, 3, 4} for index, value := range arr { fmt....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-16 12:53:56 +0000 UTC'>October 16, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 006.Go基础 循环语句" href="https://ycchi0.github.io/posts/006.go%E5%9F%BA%E7%A1%80-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">005.Go基础 分支语句
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Go 语言中的分支结构用于根据条件执行不同的代码路径。常见的分支结构有 if 语句、switch 语句和特殊的 select 语句。每种分支结构都有其适用场景，下面我将详细介绍它们。
+1. if 语句 if 语句是最常用的条件分支结构，依据一个布尔表达式的结果来决定是否执行某段代码。Go 语言的 if 语句语法简单，且支持可选的初始化语句。
+语法： if condition { // 当 condition 为 true 时执行 } 示例：基本 if 语句 package main import &#34;fmt&#34; func main() { x := 10 if x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } } 示例：带初始化语句的 if Go 语言的 if 语句支持在条件判断前执行一个短语句，这个特性通常用于声明和初始化局部变量。
+if x := 10; x &gt; 5 { fmt.Println(&#34;x 大于 5&#34;) } x 只在 if 语句的作用域内可见。 if-else 语句 if condition { // 当 condition 为 true 时执行 } else { // 当 condition 为 false 时执行 } 示例：if-else 语句 x := 3 if x &gt; 5 { fmt....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-16 12:53:27 +0000 UTC'>October 16, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 005.Go基础 分支语句" href="https://ycchi0.github.io/posts/005.go%E5%9F%BA%E7%A1%80-%E5%88%86%E6%94%AF%E8%AF%AD%E5%8F%A5/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">004.GO基础 运算符
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Go 语言的运算符主要分为以下几大类：算术运算符、关系运算符、逻辑运算符、位运算符、赋值运算符和其他运算符。每类运算符都用于特定的操作，帮助程序完成各种计算和逻辑判断。下面是详细介绍：
+1. 算术运算符（Arithmetic Operators） 算术运算符用于执行基本的数学运算。
+运算符 描述 示例 结果 &#43; 加法 5 &#43; 3 8 - 减法 5 - 3 2 * 乘法 5 * 3 15 / 除法 5 / 2 2（整除） % 取余 5 % 2 1 &#43;&#43; 自增 a&#43;&#43; 等同于 a = a &#43; 1 -- 自减 a-- 等同于 a = a - 1 注意：
+&#43;&#43; 和 -- 是 后缀运算符，即先返回当前值，再自增或自减。 整数除法会丢弃小数部分，例如 5 / 2 的结果为 2，而不是 2....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-10-16 12:52:59 +0000 UTC'>October 16, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 004.GO基础 运算符" href="https://ycchi0.github.io/posts/004.go%E5%9F%BA%E7%A1%80-%E8%BF%90%E7%AE%97%E7%AC%A6/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">003.Go基础 代替枚举的方法
     </h2>
   </header>
@@ -202,167 +300,6 @@ var a, b, c int = 1, 2, 3 2. 常量（Constants） 声明和使用： 常量是�
   </div>
   <footer class="entry-footer"><span title='2024-05-30 17:37:32 +0000 UTC'>May 30, 2024</span></footer>
   <a class="entry-link" aria-label="post link to ETCD应用场景" href="https://ycchi0.github.io/posts/etcd%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">跨域问题处理方案
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>使用 Nginx 反向代理处理跨域问题 在 Nginx 配置文件中设置一个代理服务器，并添加一些额外的头信息。
-location /api/ { add_header &#39;Access-Control-Allow-Origin&#39; &#39;*&#39;; add_header &#39;Access-Control-Allow-Methods&#39; &#39;GET, POST, OPTIONS&#39;; add_header &#39;Access-Control-Allow-Headers&#39; &#39;DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range&#39;; add_header &#39;Access-Control-Expose-Headers&#39; &#39;Content-Length,Content-Range&#39;; proxy_pass http://target.com; } 然后重启 Nginx 以应用这些更改：
-在 Vue.js 项目中处理跨域问题 在vue.config.js文件中，配置 devServer.proxy 选项来设置代理规则。例如：
-module.exports = { devServer: { host: &#34;127.0.0.1&#34;, port: 8084, open: true, proxy: { &#34;/api&#34;: { // &#39;/api&#39;是代理标识，用于告诉node，url前面是/api的就是使用代理的 target: &#34;http://xxx.xxx.xx.xx:8080&#34;, //目标地址，一般是指后台服务器地址 changeOrigin: true, //是否跨域 pathRewrite: { // pathRewrite 的作用是把实际Request Url中的&#39;/api&#39;用&#34;&#34;代替 &#34;^/api&#34;: &#34;&#34;, }, }, }, }, }; 保存并重启 Vue 开发服务器，新的代理设置应该就生效了。 注意：这种方法只在开发环境中有效，因为它依赖于 Vue CLI 的开发服务器。在生产环境中，你可能需要在你的后端服务器上设置 CORS 或使用其他方法来处理跨域问题。</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-30 16:27:47 +0000 UTC'>May 30, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 跨域问题处理方案" href="https://ycchi0.github.io/posts/%E5%A4%84%E7%90%86%E8%B7%A8%E5%9F%9F/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Redis 缓存设计
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>典型 Web 应用缓存设计架构 在一个典型的 Web 应用中，从前端请求到 Nginx 再到后端服务的多级缓存设计可以如下：
-浏览器缓存：这是最接近用户的一级缓存。浏览器会根据 HTTP 的缓存控制头字段（如 Expires、Cache-Control、Last-Modified、ETag 等）来决定是否需要向服务器发送请求，还是直接从本地缓存中获取资源。
-CDN 缓存：内容分发网络（CDN）是一种常见的缓存策略，它可以将内容缓存到离用户最近的节点，从而减少网络延迟。当用户的请求到达 CDN 节点时，如果节点中有缓存的内容，就直接返回给用户；如果没有，就向源服务器请求内容，并将内容缓存到节点中。
-Nginx 缓存：Nginx 是一种常见的反向代理服务器，它可以将后端服务器的响应缓存起来，从而减少对后端服务器的请求。当用户的请求到达 Nginx 时，如果 Nginx 中有缓存的响应，就直接返回给用户；如果没有，就向后端服务器请求内容，并将响应缓存起来。
-应用服务器本地缓存：应用服务器可以使用本地内存作为缓存，存储经常访问的数据。这样，对于相同的请求，应用服务器可以直接从本地缓存中获取数据，而不需要访问数据库或者分布式缓存。这种缓存的优点是访问速度快，但是缺点是无法在多个应用服务器之间共享数据。
-分布式缓存：当数据不在应用服务器的本地缓存中时，应用服务器可以从分布式缓存（如 Redis 或 Memcached）中获取数据。分布式缓存可以在多个应用服务器之间共享数据，但是访问速度相对于本地缓存会慢一些。
-数据库缓存：数据库也有自己的缓存机制，例如 MySQL 的查询缓存。当收到相同的查询请求时，数据库可以直接从缓存中返回结果，而不需要再次执行查询。
-在这个过程中，每一级缓存都可以减少对下一级的访问，从而提高系统的性能。
-但是，也需要注意缓存的更新和失效问题，以保证数据的一致性。
-缓存设计 在设计缓存系统时，我们需要考虑以下几个问题：
-缓存穿透 缓存穿透是指用户查询的数据既不在缓存中，也不在数据库中，这样的查询请求就会“穿透”缓存层，直接请求数据库。这种情况通常发生在用户查询一些不存在的数据时。
-例如，假设我们有一个商品信息的系统，用户可以通过商品 ID 查询商品信息。
-当用户查询一个不存在的商品 ID 时，系统首先会在缓存中查找，如果没有找到，就会去数据库中查找。但是因为这个商品 ID 不存在，所以数据库中也找不到。这样，每次查询这个商品 ID，都会直接访问数据库，而不会利用到缓存。
-如果有大量这样的查询请求，就会给数据库带来很大的压力，可能导致数据库崩溃。这就是缓存穿透。
-为了防止缓存穿透，常见的解决方案有：
-过滤非法请求：在应用层增加校验，对于用户的输入进行校验，过滤掉不存在的查询。
-使用布隆过滤器：布隆过滤器是一种数据结构，它可以用来判断一个元素是否在一个集合中。我们可以将所有可能存在的数据哈希到布隆过滤器中，当用户查询数据时，先在布隆过滤器中查找，如果布隆过滤器判断数据不存在，就直接返回，不再查询缓存和数据库。
-缓存空对象：即使数据库中没有数据，也将“空”结果进行缓存，但是这种缓存的有效期通常设置得比较短。
-缓存击穿 缓存击穿是指当某个热点数据的缓存过期失效的瞬间，大量的请求同时涌入，这些请求都会穿透缓存直接请求数据库，可能会导致数据库瞬间压力过大。
-举个例子，假设一个电商网站的某个热销商品信息被大量用户频繁查询，这个商品信息在缓存中有对应的缓存项。
-然而，当这个缓存项到达过期时间，还没有来得及被更新，此时又有大量的请求涌入查询这个商品信息，这些请求会直接打到数据库上，可能会导致数据库压力过大，甚至崩溃，这就是缓存击穿。
-为了防止缓存击穿，常见的解决方案有：
-设置热点数据永不过期：对于一些访问非常频繁的热点数据，可以设置其在缓存中永不过期，或者在程序中控制在缓存失效后立即重新加载。
-使用互斥锁：当缓存失效的时候，不是立即去加载数据库，而是先使用缓存工具的某些带成功操作返回值的操作（比如 Redis 的 SETNX 或者 Memcached 的 ADD），当操作返回成功时，再去加载数据库，否则，就重试获取缓存。这样可以保证对于一个 key，数据库只会被加载一次。
-使用缓存预热策略：缓存预热就是系统上线后，将可能被用户访问的数据主动加载到缓存中，这样用户在访问数据时，就已经在缓存中了。可以通过定时任务，在非高峰时间对可能的热点数据进行预热，加载到缓存中。
-设置不同的过期时间：为了避免大量的缓存同时过期，可以为每个缓存设置不同的过期时间，比如在一个基础过期时间上加上一个随机值。
-缓存雪崩 缓存雪崩指的是缓存层支撑不住或宕掉后， 流量会像奔逃的野牛一样， 打向后端存储层。...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-30 09:55:49 +0000 UTC'>May 30, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to Redis 缓存设计" href="https://ycchi0.github.io/posts/redis%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Redis的单线程和高性能
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Redis是单线程吗？ Redis 的单线程主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外提供键值存储服务的主要流程。
-但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其 实是由额外的线程执行的。
-Redis 单线程如何处理那么多的并发客户端连接？ Redis的IO多路复用：redis利用epoll来实现IO多路复用，将连接信息和事件放到队列中，依次放到文件事件分派器，事件分派器将事件分发给事件处理器。
-Redis 单线程为什么还能这么快？ 因为它所有的数据都在内存中，所有的运算都是内存级别的运算，而且单线程避免了多线程的切换性能损耗问题。
-正因为 Redis 是单线程，所以要小心使用 Redis 指令，对于那些耗时的指令(比如keys)，一定要谨慎使用，一不小心就可能会导致 Redis 卡顿。
-Redis 遍历 keys 用来列出所有满足特定正则字符串规则的key，当redis数据量比较大时，性能比较差，要避免使用。
-在需要遍历的场景下，需要使用 scan 命令进行渐进式遍历
-SCAN cursor [MATCH pattern] [COUNT count] scan 参数提供了三个参数，第一个是 cursor 整数值(hash桶的索引值)，第二个是 key 的正则模式，第三个是一次遍历的key的数量(参考值，底层遍历的数量不一定)，并不是符合条件的结果数量。第一次遍历时，cursor 值为 0，然后将返回结果中第一个整数值作为下一次遍历的 cursor。一直遍历 到返回的 cursor 值为 0 时结束。
-注意：但是scan并非完美无瑕， 如果在scan的过程中如果有键的变化（增加、 删除、 修改） ，那么遍历效果可能会碰到如下问题： 新增的键可能没有遍历到， 遍历出了重复的键等情况， 也就是说scan并不能保证完整的遍历出来所有的键， 这些是我们在开发时需要考虑的。</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-30 09:12:51 +0000 UTC'>May 30, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to Redis的单线程和高性能" href="https://ycchi0.github.io/posts/redis%E7%9A%84%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%92%8C%E9%AB%98%E6%80%A7%E8%83%BD/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Redis核心数据结构及应用场景
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>五种核心数据结构及其应用场景 String 最基本的类型，一个 key 对应一个 value，value 其实不仅可以是 String，也可以是数字。常规 key-value 缓存应用。
-应用场景
-缓存： 如果我们有一个用户信息，用户 ID 为 123，用户信息为&#34;John&#34;，我们可以这样存储：
-SET user:123 &#34;John&#34; 当我们需要获取这个用户的信息时，我们可以这样获取：
-GET user:123 计数器：
-如果我们需要对一个网页的访问次数进行计数，我们可以这样操作：
-INCR page_view:1 每当有新的访问时，我们就执行上面的命令，这样就可以实时统计网页的访问次数。
-分布式锁：
-如果我们需要对一个资源进行加锁，我们可以这样操作：
-SET lock:resource_name &#34;lock_value&#34; NX EX 30 这个命令会尝试设置一个键，如果这个键不存在，那么设置成功，我们就获取到了锁，如果这个键已经存在，那么设置失败，我们就没有获取到锁。EX 参数表示这个键的过期时间，这样可以防止死锁。
-会话缓存：
-如果我们需要存储一个用户的会话信息，我们可以这样操作：
-SET session:123 &#34;session_info&#34; 当我们需要获取这个用户的会话信息时，我们可以这样获取：
-GET session:123 页面缓存：
-如果我们需要缓存一个网页的内容，我们可以这样操作：
-SET page:1 &#34;page_content&#34; 当我们需要获取这个网页的内容时，我们可以这样获取：
-GET page:1 分布式系统全局序列号
-redis 批量生成序列号提升性能
-INCRBY orderId 1000 Hash 用于存储对象，即多个字段及字段值，通过 key 和字段名（field）来唯一确定一个值。适合用于存储对象。
-应用场景
-存储对象：哈希表是存储对象的理想选择。例如，如果你有一个用户对象，你可以使用用户的 ID 作为键，用户的其他信息（如姓名、电子邮件等）作为值。
-示例：
-HSET user:1000 name &#34;John Doe&#34; HSET user:1000 email &#34;john....</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-30 08:00:45 +0000 UTC'>May 30, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to Redis核心数据结构及应用场景" href="https://ycchi0.github.io/posts/redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Explain详解与索引最佳实践
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Explain Explain是MySQL中的一个非常有用的工具，它可以帮助我们理解MySQL是如何执行SQL查询的。
-通过使用Explain，我们可以看到查询的执行计划，包括使用了哪些索引，表的连接顺序，预计要扫描的行数等信息。
-这些信息可以帮助我们优化查询，提高查询效率。
-EXPLAIN SELECT * FROM users WHERE id = 1; Explain的结果包含以下几个重要的列：
-id 查询的标识符，如果一个查询包含多个子查询，那么每个子查询都会有一个不同的id。
-select_type 表示对应行是简单还是复杂的查询。
-simple：简单查询。查询不包含子查询和union primary：复杂查询中最外层的 select subquery：包含在 select 中的子查询（不在 from 子句中） derived：包含在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表（derived的英文含义） CREATE TABLE customers ( id INT PRIMARY KEY, name VARCHAR(50) ); CREATE TABLE orders ( id INT PRIMARY KEY, customer_id INT, amount DECIMAL(10, 2) ); INSERT INTO customers (id, name) VALUES (1, &#39;John&#39;), (2, &#39;Jane&#39;), (3, &#39;Bob&#39;); INSERT INTO orders (id, customer_id, amount) VALUES (1, 1, 100....</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-30 06:44:34 +0000 UTC'>May 30, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to Explain详解与索引最佳实践" href="https://ycchi0.github.io/posts/explain%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">深入理解MySQL索引底层数据结构
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>索引是什么 索引是帮助MySQL高效获取数据的排好序的数据结构。
-InnoDB 索引实现 InnoDB 存储引擎使用一种称为 B&#43;Tree 的数据结构来实现其索引。B&#43;Tree 是 B-Tree 的一种变体，它在数据库索引中的应用非常广泛。
-B&#43;树是一种自平衡的树，可以保持数据有序。这种数据结构可以大大加快数据的检索速度，尤其是在处理大量数据时。
-在B&#43;树中，所有的数据都存储在叶子节点，而非叶子节点只存储关键字和子节点的指针。
-同时，叶子节点之间通过指针相连，这样可以提高范围查询的效率。MySQL 对b&#43; 树做了优化,叶子节点之间是双向连接，标准的 b&#43; 树是从左指向右,单向连接
-此外，MySQL还支持哈希索引，但是哈希索引只能满足&#34;=&#34;,“IN” 和&#34;&lt;=&gt;“查询，不能使用范围查询和排序，所以B&#43;树是MySQL的主要索引结构。
-InnoDB 存储引擎有两种类型的索引：主键索引（聚簇索引）和二级索引（非聚簇索引）。
-主键索引 InnoDB 的数据是按照主键顺序存放的，也就是说主键索引的叶子节点就是数据节点。因此，按照主键查询可以直接通过索引找到数据，效率非常高。
-二级索引 二级索引的叶子节点并不包含行记录的全部数据。相反，它的叶子节点包含的是对应行数据的主键值。当通过二级索引查找时，InnoDB 会先找到二级索引指向的主键，然后再通过主键索引找到完整的行数据。这就是所谓的“回表”。
-MyISAM 的索引 MyISAM索引文件和数据文件是分离的。在MyISAM存储引擎中，每个表被存储为三个文件。一个是表定义文件（.frm），一个是数据文件（.MYD），还有一个是索引文件（.MYI）。
-数据文件和索引文件是分离的，这也是MyISAM的一个特点。 数据文件存储了表的数据，而索引文件则存储了表的索引信息。这种分离的设计使得MyISAM在处理大量数据时具有一定的优势，因为索引和数据可以分别进行IO操作，提高了数据处理的效率。
-但是，这种设计也有一些缺点。例如，如果在操作过程中发生故障，可能会导致数据文件和索引文件之间的不一致，从而影响数据的完整性。此外，MyISAM不支持事务，这也是其在某些场景下被InnoDB等其他存储引擎所取代的原因。
-为什么建议InnoDB表必须建主键，并且推荐使用整型的自增主键？ InnoDB 存储引擎在存储数据时，会按照主键的顺序进行存储。
-如果没有主键，InnoDB 会选择一个唯一非空索引代替，如果这样的索引也没有，InnoDB 会生成一个隐藏的聚簇索引。
-这个隐藏的聚簇索引会占用额外的存储空间，而且由于它不是由用户定义的，所以在执行查询时可能会导致性能下降。
-使用整型的自增主键有以下几个优点：
-整型的自增主键可以保证数据的插入顺序，这样可以避免页面分裂，提高插入效率 整型的自增主键占用的空间小，可以减少索引的存储空间，提高查询效率。 自增主键可以避免主键的重复，保证数据的唯一性。 使用自增主键，可以避免在插入数据时需要手动指定主键值，简化了插入操作 为什么非主键索引结构叶子节点存储的是主键值？ 简单来说就是为了一致性和节省存储空间。
-在InnoDB存储引擎中，非主键索引（也称为二级索引）的叶子节点存储的是主键值，这是由InnoDB的存储结构决定的。
-InnoDB使用聚簇索引（也就是主键索引）来存储数据，这意味着表中的数据实际上是按照主键的顺序存储的。因此，主键值实际上就是数据行在物理存储上的地址。
-当我们通过非主键索引进行查询时，InnoDB首先会在非主键索引中查找到主键值，然后再通过主键值在聚簇索引中查找到实际的数据行。这个过程通常被称为“回表”。
-这样设计的好处是，非主键索引可以更小，因为它只需要存储主键值，而不需要存储整行数据。这可以节省存储空间，提高IO效率。同时，由于所有的非主键索引都引用了主键，所以在更新数据时，只需要更新聚簇索引，而不需要更新每一个非主键索引，这也可以提高更新操作的效率。
-但是，这也意味着如果频繁地进行非主键索引查询，可能会导致大量的“回表”操作，从而影响查询性能。因此，在设计数据库时，需要根据实际的查询需求来合理选择使用主键索引还是非主键索引。
-索引最左前缀原理 最左前缀原理，也被称为最左前缀匹配原则，是指在多列索引中，查询可以只使用索引的最左边的一部分，但必须是连续的部分。这是因为多列索引是按照列的顺序，从左到右进行排序的。
-例如，如果我们有一个包含三列（A，B，C）的索引，那么以下查询可以使用索引： 查询只涉及到 A 列。 查询涉及到 A 和 B 列。 查询涉及到 A，B 和 C 列。
-但是，如果查询只涉及到 B 列或者 C 列，或者涉及到 A 和 C 列（跳过了 B 列），那么索引将不会被使用。这就是最左前缀原理。...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-30 05:27:40 +0000 UTC'>May 30, 2024</span></footer>
-  <a class="entry-link" aria-label="post link to 深入理解MySQL索引底层数据结构" href="https://ycchi0.github.io/posts/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3mysql%E7%B4%A2%E5%BC%95%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

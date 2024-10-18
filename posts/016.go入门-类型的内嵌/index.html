@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>016.Go入门-类型的内嵌 | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Go 语言中的**类型内嵌（Type Embedding）是实现代码复用和简化类型设计的重要特性之一，它允许一个结构体或接口将另一个类型嵌入到自身中，而不需要通过显式继承来实现。内嵌类似于面向对象语言中的“继承”机制，但更灵活和简洁。通过类型内嵌，Go 实现了组合（Composition）**这一设计模式，提供了高效的代码复用方式。
+1. 结构体的内嵌 结构体可以直接嵌入另一个结构体，从而使得嵌入的类型的字段和方法可以直接在外层结构体中使用，而不需要显式引用嵌入的类型。这类似于传统的“继承”，但更加简化。
+结构体内嵌示例：
+package main import &#34;fmt&#34; // 定义一个基础结构体 type Animal struct { Name string } // 为 Animal 结构体定义方法 func (a Animal) Speak() { fmt.Println(a.Name, &#34;makes a sound&#34;) } // 定义一个新结构体，将 Animal 内嵌 type Dog struct { Animal // 内嵌 Animal 结构体 Breed string } func main() { d := Dog{ Animal: Animal{Name: &#34;Rex&#34;}, // 初始化内嵌的 Animal 类型 Breed: &#34;Labrador&#34;, } // 直接访问内嵌的 Animal 结构体的字段和方法 fmt.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="016.Go入门-类型的内嵌" />
+<meta property="og:description" content="Go 语言中的**类型内嵌（Type Embedding）是实现代码复用和简化类型设计的重要特性之一，它允许一个结构体或接口将另一个类型嵌入到自身中，而不需要通过显式继承来实现。内嵌类似于面向对象语言中的“继承”机制，但更灵活和简洁。通过类型内嵌，Go 实现了组合（Composition）**这一设计模式，提供了高效的代码复用方式。
+1. 结构体的内嵌 结构体可以直接嵌入另一个结构体，从而使得嵌入的类型的字段和方法可以直接在外层结构体中使用，而不需要显式引用嵌入的类型。这类似于传统的“继承”，但更加简化。
+结构体内嵌示例：
+package main import &#34;fmt&#34; // 定义一个基础结构体 type Animal struct { Name string } // 为 Animal 结构体定义方法 func (a Animal) Speak() { fmt.Println(a.Name, &#34;makes a sound&#34;) } // 定义一个新结构体，将 Animal 内嵌 type Dog struct { Animal // 内嵌 Animal 结构体 Breed string } func main() { d := Dog{ Animal: Animal{Name: &#34;Rex&#34;}, // 初始化内嵌的 Animal 类型 Breed: &#34;Labrador&#34;, } // 直接访问内嵌的 Animal 结构体的字段和方法 fmt." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-10-18T01:35:38+00:00" />
+<meta property="article:modified_time" content="2024-10-18T01:35:38+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="016.Go入门-类型的内嵌"/>
+<meta name="twitter:description" content="Go 语言中的**类型内嵌（Type Embedding）是实现代码复用和简化类型设计的重要特性之一，它允许一个结构体或接口将另一个类型嵌入到自身中，而不需要通过显式继承来实现。内嵌类似于面向对象语言中的“继承”机制，但更灵活和简洁。通过类型内嵌，Go 实现了组合（Composition）**这一设计模式，提供了高效的代码复用方式。
+1. 结构体的内嵌 结构体可以直接嵌入另一个结构体，从而使得嵌入的类型的字段和方法可以直接在外层结构体中使用，而不需要显式引用嵌入的类型。这类似于传统的“继承”，但更加简化。
+结构体内嵌示例：
+package main import &#34;fmt&#34; // 定义一个基础结构体 type Animal struct { Name string } // 为 Animal 结构体定义方法 func (a Animal) Speak() { fmt.Println(a.Name, &#34;makes a sound&#34;) } // 定义一个新结构体，将 Animal 内嵌 type Dog struct { Animal // 内嵌 Animal 结构体 Breed string } func main() { d := Dog{ Animal: Animal{Name: &#34;Rex&#34;}, // 初始化内嵌的 Animal 类型 Breed: &#34;Labrador&#34;, } // 直接访问内嵌的 Animal 结构体的字段和方法 fmt."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "016.Go入门-类型的内嵌",
+      "item": "https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "016.Go入门-类型的内嵌",
+  "name": "016.Go入门-类型的内嵌",
+  "description": "Go 语言中的**类型内嵌（Type Embedding）是实现代码复用和简化类型设计的重要特性之一，它允许一个结构体或接口将另一个类型嵌入到自身中，而不需要通过显式继承来实现。内嵌类似于面向对象语言中的“继承”机制，但更灵活和简洁。通过类型内嵌，Go 实现了组合（Composition）**这一设计模式，提供了高效的代码复用方式。\n1. 结构体的内嵌 结构体可以直接嵌入另一个结构体，从而使得嵌入的类型的字段和方法可以直接在外层结构体中使用，而不需要显式引用嵌入的类型。这类似于传统的“继承”，但更加简化。\n结构体内嵌示例：\npackage main import \u0026#34;fmt\u0026#34; // 定义一个基础结构体 type Animal struct { Name string } // 为 Animal 结构体定义方法 func (a Animal) Speak() { fmt.Println(a.Name, \u0026#34;makes a sound\u0026#34;) } // 定义一个新结构体，将 Animal 内嵌 type Dog struct { Animal // 内嵌 Animal 结构体 Breed string } func main() { d := Dog{ Animal: Animal{Name: \u0026#34;Rex\u0026#34;}, // 初始化内嵌的 Animal 类型 Breed: \u0026#34;Labrador\u0026#34;, } // 直接访问内嵌的 Animal 结构体的字段和方法 fmt.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Go 语言中的**类型内嵌（Type Embedding）是实现代码复用和简化类型设计的重要特性之一，它允许一个结构体或接口将另一个类型嵌入到自身中，而不需要通过显式继承来实现。内嵌类似于面向对象语言中的“继承”机制，但更灵活和简洁。通过类型内嵌，Go 实现了组合（Composition）**这一设计模式，提供了高效的代码复用方式。\n1. 结构体的内嵌 结构体可以直接嵌入另一个结构体，从而使得嵌入的类型的字段和方法可以直接在外层结构体中使用，而不需要显式引用嵌入的类型。这类似于传统的“继承”，但更加简化。\n结构体内嵌示例：\npackage main import \"fmt\" // 定义一个基础结构体 type Animal struct { Name string } // 为 Animal 结构体定义方法 func (a Animal) Speak() { fmt.Println(a.Name, \"makes a sound\") } // 定义一个新结构体，将 Animal 内嵌 type Dog struct { Animal // 内嵌 Animal 结构体 Breed string } func main() { d := Dog{ Animal: Animal{Name: \"Rex\"}, // 初始化内嵌的 Animal 类型 Breed: \"Labrador\", } // 直接访问内嵌的 Animal 结构体的字段和方法 fmt.Println(d.Name) // 输出：Rex d.Speak() // 输出：Rex makes a sound } 解释：\nDog 结构体内嵌了 Animal 结构体，通过这种方式，Dog 自动继承了 Animal 的所有字段和方法。 在使用时，可以直接访问 Dog 结构体中的 Name 字段和 Speak() 方法，而不需要通过 d.Animal.Name 或 d.Animal.Speak() 来引用。 这种模式简化了嵌套类型的访问方式，让代码看起来更加简洁。 2. 方法的提升 当结构体内嵌其他类型时，被内嵌类型的方法会**提升（promote）**到外层类型。这样，外层类型的实例可以直接调用内嵌类型的方法，像是自己的方法一样。\n方法提升示例：\npackage main import \"fmt\" type Engine struct { Power int } func (e Engine) Start() { fmt.Println(\"Engine starting with power:\", e.Power) } type Car struct { Engine // 内嵌 Engine 类型 Brand string } func main() { c := Car{ Engine: Engine{Power: 100}, Brand: \"Toyota\", } c.Start() // 调用内嵌 Engine 类型的方法，输出：Engine starting with power: 100 } 特点：\n在 Car 结构体中内嵌了 Engine，因此 Car 可以直接调用 Engine 的 Start() 方法，而不需要显式访问 Engine。 内嵌类型的方法自动提升，成为外层类型的可用方法。 3. 类型内嵌与字段名冲突 如果两个内嵌类型中存在相同的字段或方法名，则需要显式指定使用哪个内嵌类型的字段或方法。这避免了命名冲突。\n字段名冲突示例：\npackage main import \"fmt\" type Animal struct { Name string } type Dog struct { Animal // 内嵌 Animal Name string // 自定义的字段，与内嵌类型冲突 } func main() { d := Dog{ Animal: Animal{Name: \"Animal Name\"}, Name: \"Dog Name\", } fmt.Println(d.Name) // 输出：Dog Name fmt.Println(d.Animal.Name) // 访问内嵌的 Animal 的 Name 字段，输出：Animal Name } 解释：\nDog 结构体中既有自己的 Name 字段，又有内嵌 Animal 类型的 Name 字段。Go 允许这种重名情况，但在访问时需要显式区分。 d.Name 指的是 Dog 结构体自己的 Name 字段，而 d.Animal.Name 指的是 Animal 中的 Name 字段。 4. 接口的内嵌 Go 的接口同样支持内嵌，通过内嵌其他接口，可以将多个接口组合在一起，形成一个更大的接口。内嵌的接口方法将提升到外层接口中。\n接口内嵌示例：\npackage main import \"fmt\" // 定义两个接口 type Walker interface { Walk() } type Runner interface { Run() } // 定义一个组合接口 type Athlete interface { Walker // 内嵌 Walker 接口 Runner // 内嵌 Runner 接口 } // 实现接口的结构体 type Person struct { Name string } func (p Person) Walk() { fmt.Println(p.Name, \"is walking\") } func (p Person) Run() { fmt.Println(p.Name, \"is running\") } func main() { var a Athlete p := Person{Name: \"Alice\"} a = p // Person 实现了 Athlete 接口 a.Walk() // 输出：Alice is walking a.Run() // 输出：Alice is running } 解释：\nAthlete 接口内嵌了 Walker 和 Runner 接口，因此任何实现了 Walker 和 Runner 的类型也自动实现了 Athlete 接口。 Person 实现了 Walk 和 Run 方法，所以它实现了 Athlete 接口。 5. 内嵌 vs 继承 虽然类型内嵌在表面上看起来类似于面向对象语言中的继承，但 Go 语言并没有传统的继承机制。相比继承，内嵌的设计更加灵活：\n组合优于继承：Go 强调组合而非继承，通过内嵌类型复用代码，而不会引入复杂的继承层次。 没有隐式继承关系：Go 的内嵌不会创建子类或父类关系，内嵌的类型也不会自动继承修改后的行为。 显式方法重载：如果想重载某个方法，直接在外层类型中定义该方法即可，而不需要通过复杂的继承机制。 6. 小结 Go 的类型内嵌提供了一种简洁且灵活的方式来实现代码复用，避免了传统面向对象语言中的复杂继承机制。通过内嵌，Go 开发者可以将多个类型组合在一起，简化代码结构，减少冗余。同时，内嵌机制允许在不牺牲类型安全的前提下实现强大的组合模式，保持代码的清晰和可维护性。\n总结 Go 的内嵌机制具有以下特点：\n简单直观的代码复用方式，无需继承。 提升内嵌类型的字段和方法，减少显式引用。 灵活应对命名冲突，支持通过组合实现接口的扩展。 ",
+  "wordCount" : "391",
+  "inLanguage": "en",
+  "datePublished": "2024-10-18T01:35:38Z",
+  "dateModified": "2024-10-18T01:35:38Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      016.Go入门-类型的内嵌
+    </h1>
+    <div class="post-meta"><span title='2024-10-18 01:35:38 +0000 UTC'>October 18, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>Go 语言中的**类型内嵌（Type Embedding）<strong>是实现代码复用和简化类型设计的重要特性之一，它允许一个结构体或接口将另一个类型嵌入到自身中，而不需要通过显式继承来实现。内嵌类似于面向对象语言中的“<strong>继承</strong>”机制，但更灵活和简洁。通过类型内嵌，Go 实现了</strong>组合（Composition）**这一设计模式，提供了高效的代码复用方式。</p>
+<h3 id="1-结构体的内嵌">1. 结构体的内嵌<a hidden class="anchor" aria-hidden="true" href="#1-结构体的内嵌">#</a></h3>
+<p>结构体可以直接嵌入另一个结构体，从而使得嵌入的类型的字段和方法可以直接在外层结构体中使用，而不需要显式引用嵌入的类型。这类似于传统的“继承”，但更加简化。</p>
+<p><strong>结构体内嵌示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义一个基础结构体
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Animal</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 为 Animal 结构体定义方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">a</span> <span style="color:#a6e22e">Animal</span>) <span style="color:#a6e22e">Speak</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#e6db74">&#34;makes a sound&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义一个新结构体，将 Animal 内嵌
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Dog</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Animal</span>   <span style="color:#75715e">// 内嵌 Animal 结构体
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Breed</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">d</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Dog</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Animal</span>: <span style="color:#a6e22e">Animal</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;Rex&#34;</span>},  <span style="color:#75715e">// 初始化内嵌的 Animal 类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Breed</span>:  <span style="color:#e6db74">&#34;Labrador&#34;</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 直接访问内嵌的 Animal 结构体的字段和方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">Name</span>)   <span style="color:#75715e">// 输出：Rex
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">Speak</span>()             <span style="color:#75715e">// 输出：Rex makes a sound
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p><strong>解释</strong>：</p>
+<ul>
+<li><code>Dog</code> 结构体内嵌了 <code>Animal</code> 结构体，通过这种方式，<code>Dog</code> 自动继承了 <code>Animal</code> 的所有字段和方法。</li>
+<li>在使用时，可以直接访问 <code>Dog</code> 结构体中的 <code>Name</code> 字段和 <code>Speak()</code> 方法，而不需要通过 <code>d.Animal.Name</code> 或 <code>d.Animal.Speak()</code> 来引用。</li>
+<li>这种模式简化了嵌套类型的访问方式，让代码看起来更加简洁。</li>
+</ul>
+<h3 id="2-方法的提升">2. 方法的提升<a hidden class="anchor" aria-hidden="true" href="#2-方法的提升">#</a></h3>
+<p>当结构体内嵌其他类型时，被内嵌类型的方法会**提升（promote）**到外层类型。这样，外层类型的实例可以直接调用内嵌类型的方法，像是自己的方法一样。</p>
+<p><strong>方法提升示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Engine</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Power</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">e</span> <span style="color:#a6e22e">Engine</span>) <span style="color:#a6e22e">Start</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Engine starting with power:&#34;</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">Power</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Car</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Engine</span>  <span style="color:#75715e">// 内嵌 Engine 类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Brand</span>   <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Car</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Engine</span>: <span style="color:#a6e22e">Engine</span>{<span style="color:#a6e22e">Power</span>: <span style="color:#ae81ff">100</span>},
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Brand</span>:  <span style="color:#e6db74">&#34;Toyota&#34;</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Start</span>()  <span style="color:#75715e">// 调用内嵌 Engine 类型的方法，输出：Engine starting with power: 100
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p><strong>特点</strong>：</p>
+<ul>
+<li>在 <code>Car</code> 结构体中内嵌了 <code>Engine</code>，因此 <code>Car</code> 可以直接调用 <code>Engine</code> 的 <code>Start()</code> 方法，而不需要显式访问 <code>Engine</code>。</li>
+<li>内嵌类型的方法自动提升，成为外层类型的可用方法。</li>
+</ul>
+<h3 id="3-类型内嵌与字段名冲突">3. 类型内嵌与字段名冲突<a hidden class="anchor" aria-hidden="true" href="#3-类型内嵌与字段名冲突">#</a></h3>
+<p>如果两个内嵌类型中存在相同的字段或方法名，则需要显式指定使用哪个内嵌类型的字段或方法。这避免了命名冲突。</p>
+<p><strong>字段名冲突示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Animal</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Dog</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Animal</span>  <span style="color:#75715e">// 内嵌 Animal
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Name</span>    <span style="color:#66d9ef">string</span>  <span style="color:#75715e">// 自定义的字段，与内嵌类型冲突
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">d</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Dog</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Animal</span>: <span style="color:#a6e22e">Animal</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;Animal Name&#34;</span>},
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Name</span>:   <span style="color:#e6db74">&#34;Dog Name&#34;</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">Name</span>)        <span style="color:#75715e">// 输出：Dog Name
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">Animal</span>.<span style="color:#a6e22e">Name</span>) <span style="color:#75715e">// 访问内嵌的 Animal 的 Name 字段，输出：Animal Name
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p><strong>解释</strong>：</p>
+<ul>
+<li><code>Dog</code> 结构体中既有自己的 <code>Name</code> 字段，又有内嵌 <code>Animal</code> 类型的 <code>Name</code> 字段。Go 允许这种重名情况，但在访问时需要显式区分。</li>
+<li><code>d.Name</code> 指的是 <code>Dog</code> 结构体自己的 <code>Name</code> 字段，而 <code>d.Animal.Name</code> 指的是 <code>Animal</code> 中的 <code>Name</code> 字段。</li>
+</ul>
+<h3 id="4-接口的内嵌">4. 接口的内嵌<a hidden class="anchor" aria-hidden="true" href="#4-接口的内嵌">#</a></h3>
+<p>Go 的接口同样支持内嵌，通过内嵌其他接口，可以将多个接口组合在一起，形成一个更大的接口。内嵌的接口方法将提升到外层接口中。</p>
+<p><strong>接口内嵌示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义两个接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Walker</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Walk</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Runner</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Run</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义一个组合接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Athlete</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Walker</span>  <span style="color:#75715e">// 内嵌 Walker 接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Runner</span>  <span style="color:#75715e">// 内嵌 Runner 接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 实现接口的结构体
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Person</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#a6e22e">Person</span>) <span style="color:#a6e22e">Walk</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#e6db74">&#34;is walking&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#a6e22e">Person</span>) <span style="color:#a6e22e">Run</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#e6db74">&#34;is running&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#a6e22e">Athlete</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Person</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;Alice&#34;</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">a</span> = <span style="color:#a6e22e">p</span>  <span style="color:#75715e">// Person 实现了 Athlete 接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">Walk</span>()  <span style="color:#75715e">// 输出：Alice is walking
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">Run</span>()   <span style="color:#75715e">// 输出：Alice is running
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p><strong>解释</strong>：</p>
+<ul>
+<li><code>Athlete</code> 接口内嵌了 <code>Walker</code> 和 <code>Runner</code> 接口，因此任何实现了 <code>Walker</code> 和 <code>Runner</code> 的类型也自动实现了 <code>Athlete</code> 接口。</li>
+<li><code>Person</code> 实现了 <code>Walk</code> 和 <code>Run</code> 方法，所以它实现了 <code>Athlete</code> 接口。</li>
+</ul>
+<h3 id="5-内嵌-vs-继承">5. 内嵌 vs 继承<a hidden class="anchor" aria-hidden="true" href="#5-内嵌-vs-继承">#</a></h3>
+<p>虽然类型内嵌在表面上看起来类似于面向对象语言中的继承，但 Go 语言并没有传统的继承机制。相比继承，内嵌的设计更加灵活：</p>
+<ul>
+<li><strong>组合优于继承</strong>：Go 强调组合而非继承，通过内嵌类型复用代码，而不会引入复杂的继承层次。</li>
+<li><strong>没有隐式继承关系</strong>：Go 的内嵌不会创建子类或父类关系，内嵌的类型也不会自动继承修改后的行为。</li>
+<li><strong>显式方法重载</strong>：如果想重载某个方法，直接在外层类型中定义该方法即可，而不需要通过复杂的继承机制。</li>
+</ul>
+<h3 id="6-小结">6. 小结<a hidden class="anchor" aria-hidden="true" href="#6-小结">#</a></h3>
+<p>Go 的类型内嵌提供了一种简洁且灵活的方式来实现代码复用，避免了传统面向对象语言中的复杂继承机制。通过内嵌，Go 开发者可以将多个类型组合在一起，简化代码结构，减少冗余。同时，内嵌机制允许在不牺牲类型安全的前提下实现强大的组合模式，保持代码的清晰和可维护性。</p>
+<p>总结 Go 的内嵌机制具有以下特点：</p>
+<ul>
+<li>简单直观的代码复用方式，无需继承。</li>
+<li>提升内嵌类型的字段和方法，减少显式引用。</li>
+<li>灵活应对命名冲突，支持通过组合实现接口的扩展。</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

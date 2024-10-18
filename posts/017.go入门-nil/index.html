@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>017.Go入门-nil | Ycchi0 Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="在 Go 语言中，nil 是一个特殊的标识符，用来表示变量没有值或空值。nil 类似于其他编程语言中的 null 或 None，但它在 Go 中具有特定的应用场景。nil 可以用于多个类型，包括指针、接口、切片、映射、通道、函数等。
+1. nil 的用途 Go 语言中的 nil 可用于以下几种类型：
+指针：表示指针不指向任何内存地址。 接口：表示接口的动态类型和值为空。 切片：表示切片不引用底层数组。 映射：表示映射未被初始化。 通道：表示通道未被初始化。 函数：表示函数变量未被赋值。 2. nil 的使用场景 2.1 指针与 nil 在 Go 中，指针是一种保存变量内存地址的类型，nil 可以表示指针不指向任何有效的内存地址。
+示例：
+package main import &#34;fmt&#34; func main() { var p *int = nil // 定义一个 nil 指针 fmt.Println(p) // 输出：&lt;nil&gt; var x int = 10 p = &amp;x // 将 p 指向变量 x fmt.Println(p) // 输出：x 的地址 fmt.">
+<meta name="author" content="">
+<link rel="canonical" href="https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b609c58d5c11bb90b1a54e04005d74ad1ddf22165eb79f5533967e57df9c3b50.css" integrity="sha256-tgnFjVwRu5CxpU4EAF10rR3fIhZet59VM5Z&#43;V9&#43;cO1A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://ycchi0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ycchi0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ycchi0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://ycchi0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://ycchi0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:title" content="017.Go入门-nil" />
+<meta property="og:description" content="在 Go 语言中，nil 是一个特殊的标识符，用来表示变量没有值或空值。nil 类似于其他编程语言中的 null 或 None，但它在 Go 中具有特定的应用场景。nil 可以用于多个类型，包括指针、接口、切片、映射、通道、函数等。
+1. nil 的用途 Go 语言中的 nil 可用于以下几种类型：
+指针：表示指针不指向任何内存地址。 接口：表示接口的动态类型和值为空。 切片：表示切片不引用底层数组。 映射：表示映射未被初始化。 通道：表示通道未被初始化。 函数：表示函数变量未被赋值。 2. nil 的使用场景 2.1 指针与 nil 在 Go 中，指针是一种保存变量内存地址的类型，nil 可以表示指针不指向任何有效的内存地址。
+示例：
+package main import &#34;fmt&#34; func main() { var p *int = nil // 定义一个 nil 指针 fmt.Println(p) // 输出：&lt;nil&gt; var x int = 10 p = &amp;x // 将 p 指向变量 x fmt.Println(p) // 输出：x 的地址 fmt." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-10-18T01:37:32+00:00" />
+<meta property="article:modified_time" content="2024-10-18T01:37:32+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="017.Go入门-nil"/>
+<meta name="twitter:description" content="在 Go 语言中，nil 是一个特殊的标识符，用来表示变量没有值或空值。nil 类似于其他编程语言中的 null 或 None，但它在 Go 中具有特定的应用场景。nil 可以用于多个类型，包括指针、接口、切片、映射、通道、函数等。
+1. nil 的用途 Go 语言中的 nil 可用于以下几种类型：
+指针：表示指针不指向任何内存地址。 接口：表示接口的动态类型和值为空。 切片：表示切片不引用底层数组。 映射：表示映射未被初始化。 通道：表示通道未被初始化。 函数：表示函数变量未被赋值。 2. nil 的使用场景 2.1 指针与 nil 在 Go 中，指针是一种保存变量内存地址的类型，nil 可以表示指针不指向任何有效的内存地址。
+示例：
+package main import &#34;fmt&#34; func main() { var p *int = nil // 定义一个 nil 指针 fmt.Println(p) // 输出：&lt;nil&gt; var x int = 10 p = &amp;x // 将 p 指向变量 x fmt.Println(p) // 输出：x 的地址 fmt."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://ycchi0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "017.Go入门-nil",
+      "item": "https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "017.Go入门-nil",
+  "name": "017.Go入门-nil",
+  "description": "在 Go 语言中，nil 是一个特殊的标识符，用来表示变量没有值或空值。nil 类似于其他编程语言中的 null 或 None，但它在 Go 中具有特定的应用场景。nil 可以用于多个类型，包括指针、接口、切片、映射、通道、函数等。\n1. nil 的用途 Go 语言中的 nil 可用于以下几种类型：\n指针：表示指针不指向任何内存地址。 接口：表示接口的动态类型和值为空。 切片：表示切片不引用底层数组。 映射：表示映射未被初始化。 通道：表示通道未被初始化。 函数：表示函数变量未被赋值。 2. nil 的使用场景 2.1 指针与 nil 在 Go 中，指针是一种保存变量内存地址的类型，nil 可以表示指针不指向任何有效的内存地址。\n示例：\npackage main import \u0026#34;fmt\u0026#34; func main() { var p *int = nil // 定义一个 nil 指针 fmt.Println(p) // 输出：\u0026lt;nil\u0026gt; var x int = 10 p = \u0026amp;x // 将 p 指向变量 x fmt.Println(p) // 输出：x 的地址 fmt.",
+  "keywords": [
+    
+  ],
+  "articleBody": "在 Go 语言中，nil 是一个特殊的标识符，用来表示变量没有值或空值。nil 类似于其他编程语言中的 null 或 None，但它在 Go 中具有特定的应用场景。nil 可以用于多个类型，包括指针、接口、切片、映射、通道、函数等。\n1. nil 的用途 Go 语言中的 nil 可用于以下几种类型：\n指针：表示指针不指向任何内存地址。 接口：表示接口的动态类型和值为空。 切片：表示切片不引用底层数组。 映射：表示映射未被初始化。 通道：表示通道未被初始化。 函数：表示函数变量未被赋值。 2. nil 的使用场景 2.1 指针与 nil 在 Go 中，指针是一种保存变量内存地址的类型，nil 可以表示指针不指向任何有效的内存地址。\n示例：\npackage main import \"fmt\" func main() { var p *int = nil // 定义一个 nil 指针 fmt.Println(p) // 输出： var x int = 10 p = \u0026x // 将 p 指向变量 x fmt.Println(p) // 输出：x 的地址 fmt.Println(*p) // 输出：10 } 在未初始化指针时，指针的默认值为 nil。试图通过 nil 指针解引用将导致运行时崩溃（panic）。\n2.2 接口与 nil 接口也是可以是 nil 的。当接口既没有动态类型，也没有动态值时，接口等于 nil。\n示例：\npackage main import \"fmt\" type Speaker interface { Speak() } func main() { var s Speaker = nil // 未分配具体实现，接口等于 nil fmt.Println(s) // 输出： var p *Person = nil // 定义一个 nil 指针 s = p // 接口 s 的动态类型是 *Person，但值是 nil fmt.Println(s) // 输出： } 注意：对于接口变量，如果它的动态类型不为 nil，而其动态值为 nil，则接口变量本身不等于 nil，这是一个需要注意的地方。\n2.3 切片与 nil 切片的默认值也是 nil。当切片未被初始化或被赋值为 nil 时，表示它不引用任何底层数组。\n示例：\npackage main import \"fmt\" func main() { var s []int = nil // 未初始化的切片 fmt.Println(s) // 输出：[] fmt.Println(len(s)) // 输出：0 fmt.Println(s == nil) // 输出：true s = []int{} // 空切片，指向有效的底层数组 fmt.Println(s == nil) // 输出：false } 区别：\nnil 切片不指向底层数组，长度和容量都是 0。 空切片（[]int{}）则有指向的底层数组，尽管数组为空，切片的长度和容量也是 0。 2.4 映射与 nil 映射（map）是引用类型，默认值为 nil。在对 nil 映射进行读取操作时不会引发 panic，但试图写入 nil 映射将导致运行时错误。\n示例：\npackage main import \"fmt\" func main() { var m map[string]int = nil fmt.Println(m) // 输出：map[] // 读取 nil map 是安全的 fmt.Println(m[\"key\"]) // 输出：0 // 尝试向 nil map 写入将导致 panic // m[\"key\"] = 1 // panic: assignment to entry in nil map } 在使用映射时，通常会使用 make() 来初始化映射。\n2.5 通道与 nil 通道的默认值是 nil，表示该通道没有被初始化。向一个 nil 通道发送或接收数据会导致阻塞。\n示例：\npackage main import \"fmt\" func main() { var ch chan int = nil fmt.Println(ch) // 输出： // 向 nil 通道发送数据会导致永久阻塞 // ch \u003c- 1 // 程序将卡在这里 } 因此，在创建通道时必须使用 make() 来初始化。\n2.6 函数与 nil 函数变量未被赋值时，其默认值为 nil。调用 nil 函数变量将导致运行时错误。\n示例：\npackage main import \"fmt\" func main() { var f func() = nil fmt.Println(f) // 输出： // 调用 nil 函数将导致 panic // f() // panic: call of nil function } 3. nil 检查 由于 nil 可以应用于多种类型，因此在使用这些类型时需要进行 nil 检查，以避免运行时错误。\n示例：指针的 nil 检查：\npackage main import \"fmt\" func PrintPointer(p *int) { if p == nil { fmt.Println(\"Pointer is nil\") } else { fmt.Println(\"Pointer value:\", *p) } } func main() { var p *int = nil PrintPointer(p) // 输出：Pointer is nil x := 42 p = \u0026x PrintPointer(p) // 输出：Pointer value: 42 } 4. nil 与零值 在 Go 语言中，零值是未初始化变量的默认值。对于引用类型（指针、切片、映射、通道、函数和接口），它们的零值就是 nil。需要注意的是，对于基础类型（如 int、float、bool），零值是类型的默认值，而不是 nil。例如，int 的零值是 0，bool 的零值是 false。\n5. 总结 指针：nil 表示指针不指向任何内存地址。 接口：当接口的动态类型和值都为 nil 时，接口等于 nil。 切片：nil 切片没有底层数组，长度和容量为 0。 映射：nil 映射未被初始化，不能向其写入数据。 通道：nil 通道未被初始化，无法正常收发数据。 函数：未被赋值的函数变量是 nil，调用 nil 函数会导致错误。 nil 是 Go 语言中用于表示空值的重要概念，它在引用类型中起到关键作用。在编写代码时，尤其是在处理引用类型时，必须谨慎处理 nil，避免因未初始化或不正确使用 nil 导致的程序错误或崩溃。\n",
+  "wordCount" : "417",
+  "inLanguage": "en",
+  "datePublished": "2024-10-18T01:37:32Z",
+  "dateModified": "2024-10-18T01:37:32Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ycchi0 Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ycchi0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://ycchi0.github.io/" accesskey="h" title="Ycchi0 Blog (Alt + H)">Ycchi0 Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      017.Go入门-nil
+    </h1>
+    <div class="post-meta"><span title='2024-10-18 01:37:32 +0000 UTC'>October 18, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>在 Go 语言中，<code>nil</code> 是一个特殊的标识符，用来表示变量<strong>没有值</strong>或<strong>空值</strong>。<code>nil</code> 类似于其他编程语言中的 <code>null</code> 或 <code>None</code>，但它在 Go 中具有特定的应用场景。<code>nil</code> 可以用于多个类型，包括指针、接口、切片、映射、通道、函数等。</p>
+<h3 id="1-nil-的用途">1. <code>nil</code> 的用途<a hidden class="anchor" aria-hidden="true" href="#1-nil-的用途">#</a></h3>
+<p>Go 语言中的 <code>nil</code> 可用于以下几种类型：</p>
+<ul>
+<li><strong>指针</strong>：表示指针不指向任何内存地址。</li>
+<li><strong>接口</strong>：表示接口的动态类型和值为空。</li>
+<li><strong>切片</strong>：表示切片不引用底层数组。</li>
+<li><strong>映射</strong>：表示映射未被初始化。</li>
+<li><strong>通道</strong>：表示通道未被初始化。</li>
+<li><strong>函数</strong>：表示函数变量未被赋值。</li>
+</ul>
+<h3 id="2-nil-的使用场景">2. <code>nil</code> 的使用场景<a hidden class="anchor" aria-hidden="true" href="#2-nil-的使用场景">#</a></h3>
+<h4 id="21-指针与-nil">2.1 指针与 <code>nil</code><a hidden class="anchor" aria-hidden="true" href="#21-指针与-nil">#</a></h4>
+<p>在 Go 中，指针是一种保存变量内存地址的类型，<code>nil</code> 可以表示指针不指向任何有效的内存地址。</p>
+<p><strong>示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span> = <span style="color:#66d9ef">nil</span>  <span style="color:#75715e">// 定义一个 nil 指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p</span>)    <span style="color:#75715e">// 输出：&lt;nil&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span> = <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">p</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>            <span style="color:#75715e">// 将 p 指向变量 x
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p</span>)    <span style="color:#75715e">// 输出：x 的地址
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">p</span>)   <span style="color:#75715e">// 输出：10
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在未初始化指针时，指针的默认值为 <code>nil</code>。试图通过 <code>nil</code> 指针解引用将导致运行时崩溃（<code>panic</code>）。</p>
+<h4 id="22-接口与-nil">2.2 接口与 <code>nil</code><a hidden class="anchor" aria-hidden="true" href="#22-接口与-nil">#</a></h4>
+<p>接口也是可以是 <code>nil</code> 的。当接口既没有动态类型，也没有动态值时，接口等于 <code>nil</code>。</p>
+<p><strong>示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Speaker</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Speak</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> <span style="color:#a6e22e">Speaker</span> = <span style="color:#66d9ef">nil</span>  <span style="color:#75715e">// 未分配具体实现，接口等于 nil
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>)       <span style="color:#75715e">// 输出：&lt;nil&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Person</span> = <span style="color:#66d9ef">nil</span>  <span style="color:#75715e">// 定义一个 nil 指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">s</span> = <span style="color:#a6e22e">p</span>                <span style="color:#75715e">// 接口 s 的动态类型是 *Person，但值是 nil
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>)       <span style="color:#75715e">// 输出：&lt;nil&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p><strong>注意</strong>：对于接口变量，如果它的动态类型不为 <code>nil</code>，而其动态值为 <code>nil</code>，则接口变量本身<strong>不等于 <code>nil</code></strong>，这是一个需要注意的地方。</p>
+<h4 id="23-切片与-nil">2.3 切片与 <code>nil</code><a hidden class="anchor" aria-hidden="true" href="#23-切片与-nil">#</a></h4>
+<p>切片的默认值也是 <code>nil</code>。当切片未被初始化或被赋值为 <code>nil</code> 时，表示它不引用任何底层数组。</p>
+<p><strong>示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> []<span style="color:#66d9ef">int</span> = <span style="color:#66d9ef">nil</span>  <span style="color:#75715e">// 未初始化的切片
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>)     <span style="color:#75715e">// 输出：[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(len(<span style="color:#a6e22e">s</span>)) <span style="color:#75715e">// 输出：0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span>) <span style="color:#75715e">// 输出：true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">s</span> = []<span style="color:#66d9ef">int</span>{}  <span style="color:#75715e">// 空切片，指向有效的底层数组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span>) <span style="color:#75715e">// 输出：false
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p><strong>区别</strong>：</p>
+<ul>
+<li><code>nil</code> 切片不指向底层数组，长度和容量都是 0。</li>
+<li>空切片（<code>[]int{}</code>）则有指向的底层数组，尽管数组为空，切片的长度和容量也是 0。</li>
+</ul>
+<h4 id="24-映射与-nil">2.4 映射与 <code>nil</code><a hidden class="anchor" aria-hidden="true" href="#24-映射与-nil">#</a></h4>
+<p>映射（<code>map</code>）是引用类型，默认值为 <code>nil</code>。在对 <code>nil</code> 映射进行读取操作时不会引发 <code>panic</code>，但试图写入 <code>nil</code> 映射将导致运行时错误。</p>
+<p><strong>示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">int</span> = <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">m</span>)  <span style="color:#75715e">// 输出：map[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 读取 nil map 是安全的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">m</span>[<span style="color:#e6db74">&#34;key&#34;</span>])  <span style="color:#75715e">// 输出：0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 尝试向 nil map 写入将导致 panic
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// m[&#34;key&#34;] = 1  // panic: assignment to entry in nil map
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在使用映射时，通常会使用 <code>make()</code> 来初始化映射。</p>
+<h4 id="25-通道与-nil">2.5 通道与 <code>nil</code><a hidden class="anchor" aria-hidden="true" href="#25-通道与-nil">#</a></h4>
+<p>通道的默认值是 <code>nil</code>，表示该通道没有被初始化。向一个 <code>nil</code> 通道发送或接收数据会导致<strong>阻塞</strong>。</p>
+<p><strong>示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ch</span> <span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span> = <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">ch</span>) <span style="color:#75715e">// 输出：&lt;nil&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 向 nil 通道发送数据会导致永久阻塞
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// ch &lt;- 1  // 程序将卡在这里
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>因此，在创建通道时必须使用 <code>make()</code> 来初始化。</p>
+<h4 id="26-函数与-nil">2.6 函数与 <code>nil</code><a hidden class="anchor" aria-hidden="true" href="#26-函数与-nil">#</a></h4>
+<p>函数变量未被赋值时，其默认值为 <code>nil</code>。调用 <code>nil</code> 函数变量将导致运行时错误。</p>
+<p><strong>示例</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">f</span> <span style="color:#66d9ef">func</span>() = <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">f</span>)  <span style="color:#75715e">// 输出：&lt;nil&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用 nil 函数将导致 panic
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// f()  // panic: call of nil function
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="3-nil-检查">3. <code>nil</code> 检查<a hidden class="anchor" aria-hidden="true" href="#3-nil-检查">#</a></h3>
+<p>由于 <code>nil</code> 可以应用于多种类型，因此在使用这些类型时需要进行 <code>nil</code> 检查，以避免运行时错误。</p>
+<p><strong>示例：指针的 <code>nil</code> 检查</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">PrintPointer</span>(<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Pointer is nil&#34;</span>)
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Pointer value:&#34;</span>, <span style="color:#f92672">*</span><span style="color:#a6e22e">p</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span> = <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">PrintPointer</span>(<span style="color:#a6e22e">p</span>)  <span style="color:#75715e">// 输出：Pointer is nil
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">p</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">PrintPointer</span>(<span style="color:#a6e22e">p</span>)  <span style="color:#75715e">// 输出：Pointer value: 42
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="4-nil-与零值">4. <code>nil</code> 与零值<a hidden class="anchor" aria-hidden="true" href="#4-nil-与零值">#</a></h3>
+<p>在 Go 语言中，<strong>零值</strong>是未初始化变量的默认值。对于引用类型（指针、切片、映射、通道、函数和接口），它们的零值就是 <code>nil</code>。需要注意的是，对于基础类型（如 <code>int</code>、<code>float</code>、<code>bool</code>），零值是类型的默认值，而不是 <code>nil</code>。例如，<code>int</code> 的零值是 <code>0</code>，<code>bool</code> 的零值是 <code>false</code>。</p>
+<h3 id="5-总结">5. 总结<a hidden class="anchor" aria-hidden="true" href="#5-总结">#</a></h3>
+<ul>
+<li><strong>指针</strong>：<code>nil</code> 表示指针不指向任何内存地址。</li>
+<li><strong>接口</strong>：当接口的动态类型和值都为 <code>nil</code> 时，接口等于 <code>nil</code>。</li>
+<li><strong>切片</strong>：<code>nil</code> 切片没有底层数组，长度和容量为 0。</li>
+<li><strong>映射</strong>：<code>nil</code> 映射未被初始化，不能向其写入数据。</li>
+<li><strong>通道</strong>：<code>nil</code> 通道未被初始化，无法正常收发数据。</li>
+<li><strong>函数</strong>：未被赋值的函数变量是 <code>nil</code>，调用 <code>nil</code> 函数会导致错误。</li>
+</ul>
+<p><code>nil</code> 是 Go 语言中用于表示空值的重要概念，它在引用类型中起到关键作用。在编写代码时，尤其是在处理引用类型时，必须谨慎处理 <code>nil</code>，避免因未初始化或不正确使用 <code>nil</code> 导致的程序错误或崩溃。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="https://ycchi0.github.io/">Ycchi0 Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -6,8 +6,79 @@
     <description>Recent content in Posts on Ycchi0 Blog</description>
     <generator>Hugo -- 0.129.0</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 16 Oct 2024 12:56:40 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 18 Oct 2024 02:42:03 +0000</lastBuildDate>
     <atom:link href="https://ycchi0.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>020.Go入门-并发编程</title>
+      <link>https://ycchi0.github.io/posts/020.go%E5%85%A5%E9%97%A8-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Fri, 18 Oct 2024 02:42:03 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/020.go%E5%85%A5%E9%97%A8-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</guid>
+      <description>Go 语言中的并发是其核心功能之一，它通过轻量级的 goroutine 和强大的通信机制（通道，channels）来支持高效的并发编程。Go 以简洁和高效的方式处理并发，而不是像传统语言那样依赖操作系统级线程。Go 的并发模型受到 CSP（Communicating Sequential Processes）模型的启发，注重通过消息传递来实现不同线程之间的协作。
+1. Goroutines（协程） Goroutine 是 Go 语言的并发执行单元。它类似于线程，但比线程更轻量。Go 的运行时会自动调度 goroutine，而不是依赖操作系统线程调度。一个 Go 程序可以同时运行成千上万个 goroutine，这得益于它的低开销。
+语法：只需要在函数调用前加上 go 关键字即可启动一个新的 goroutine。
+示例：
+package main import ( &amp;#34;fmt&amp;#34; &amp;#34;time&amp;#34; ) func say(s string) { for i := 0; i &amp;lt; 5; i++ { fmt.Println(s) time.Sleep(100 * time.Millisecond) } } func main() { go say(&amp;#34;Hello&amp;#34;) // 启动一个新的 goroutine say(&amp;#34;World&amp;#34;) // 在主 goroutine 中运行 } 在这个例子中，say(&amp;quot;Hello&amp;quot;) 和 say(&amp;quot;World&amp;quot;) 运行在不同的 goroutine 中。这展示了 Go 的并发特性。</description>
+    </item>
+    <item>
+      <title>019.Go入门-错误处理</title>
+      <link>https://ycchi0.github.io/posts/019.go%E5%85%A5%E9%97%A8-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/</link>
+      <pubDate>Fri, 18 Oct 2024 02:32:30 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/019.go%E5%85%A5%E9%97%A8-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/</guid>
+      <description>在 Go 语言中，错误处理是通过显式返回错误值来实现的，而不是依赖像其他语言（如 Java、Python）中的异常机制。这种设计强调了错误处理的明确性和简洁性，使开发者在编写代码时可以更清晰地处理可能发生的错误。
+1. Go 中的错误处理机制 Go 使用内置的 error 类型来表示错误。error 是一个接口，定义如下：
+type error interface { Error() string } 任何实现了 Error() 方法的类型都可以作为错误类型。通常，Go 的函数会返回两个值：一个是正常的返回值，另一个是表示错误的 error。如果没有错误发生，error 通常会返回 nil。
+示例：
+package main import ( &amp;#34;errors&amp;#34; &amp;#34;fmt&amp;#34; ) // 定义一个简单的函数，返回一个错误 func divide(a, b int) (int, error) { if b == 0 { return 0, errors.New(&amp;#34;cannot divide by zero&amp;#34;) } return a / b, nil } func main() { result, err := divide(4, 2) if err !</description>
+    </item>
+    <item>
+      <title>017.Go入门-nil</title>
+      <link>https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/</link>
+      <pubDate>Fri, 18 Oct 2024 01:37:32 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/017.go%E5%85%A5%E9%97%A8-nil/</guid>
+      <description>在 Go 语言中，nil 是一个特殊的标识符，用来表示变量没有值或空值。nil 类似于其他编程语言中的 null 或 None，但它在 Go 中具有特定的应用场景。nil 可以用于多个类型，包括指针、接口、切片、映射、通道、函数等。
+1. nil 的用途 Go 语言中的 nil 可用于以下几种类型：
+指针：表示指针不指向任何内存地址。 接口：表示接口的动态类型和值为空。 切片：表示切片不引用底层数组。 映射：表示映射未被初始化。 通道：表示通道未被初始化。 函数：表示函数变量未被赋值。 2. nil 的使用场景 2.1 指针与 nil 在 Go 中，指针是一种保存变量内存地址的类型，nil 可以表示指针不指向任何有效的内存地址。
+示例：
+package main import &amp;#34;fmt&amp;#34; func main() { var p *int = nil // 定义一个 nil 指针 fmt.Println(p) // 输出：&amp;lt;nil&amp;gt; var x int = 10 p = &amp;amp;x // 将 p 指向变量 x fmt.Println(p) // 输出：x 的地址 fmt.</description>
+    </item>
+    <item>
+      <title>016.Go入门-类型的内嵌</title>
+      <link>https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/</link>
+      <pubDate>Fri, 18 Oct 2024 01:35:38 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/016.go%E5%85%A5%E9%97%A8-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%86%85%E5%B5%8C/</guid>
+      <description>Go 语言中的**类型内嵌（Type Embedding）是实现代码复用和简化类型设计的重要特性之一，它允许一个结构体或接口将另一个类型嵌入到自身中，而不需要通过显式继承来实现。内嵌类似于面向对象语言中的“继承”机制，但更灵活和简洁。通过类型内嵌，Go 实现了组合（Composition）**这一设计模式，提供了高效的代码复用方式。
+1. 结构体的内嵌 结构体可以直接嵌入另一个结构体，从而使得嵌入的类型的字段和方法可以直接在外层结构体中使用，而不需要显式引用嵌入的类型。这类似于传统的“继承”，但更加简化。
+结构体内嵌示例：
+package main import &amp;#34;fmt&amp;#34; // 定义一个基础结构体 type Animal struct { Name string } // 为 Animal 结构体定义方法 func (a Animal) Speak() { fmt.Println(a.Name, &amp;#34;makes a sound&amp;#34;) } // 定义一个新结构体，将 Animal 内嵌 type Dog struct { Animal // 内嵌 Animal 结构体 Breed string } func main() { d := Dog{ Animal: Animal{Name: &amp;#34;Rex&amp;#34;}, // 初始化内嵌的 Animal 类型 Breed: &amp;#34;Labrador&amp;#34;, } // 直接访问内嵌的 Animal 结构体的字段和方法 fmt.</description>
+    </item>
+    <item>
+      <title>015.Go入门-面向对象</title>
+      <link>https://ycchi0.github.io/posts/015.go%E5%85%A5%E9%97%A8-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</link>
+      <pubDate>Fri, 18 Oct 2024 01:20:40 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/015.go%E5%85%A5%E9%97%A8-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</guid>
+      <description>Go 语言虽然不完全符合传统的面向对象编程（OOP）模型，但它具有一些关键的 OOP 特性，例如封装、组合和多态，这些可以通过 Go 的**结构体（struct）和接口（interface）**来实现。
+在 Go 语言中，面向对象的概念不是通过继承和类来实现，而是通过组合与接口设计来模拟和实现多态性和扩展性。
+1. Go 语言的结构（struct） Go 中的结构体（struct）类似于其他语言中的类，但没有继承关系。struct 是一种聚合数据类型，用于将多个字段组织在一起。与类不同的是，Go 没有构造函数或析构函数的概念，也没有隐式的继承。
+定义结构体：
+type Person struct { Name string Age int } 使用结构体：
+func main() { p := Person{Name: &amp;#34;Alice&amp;#34;, Age: 25} fmt.Println(p.Name) // 输出：Alice fmt.Println(p.Age) // 输出：25 } 为结构体定义方法 Go 中的方法是绑定到类型（包括结构体）的。方法的接收者可以是值类型或指针类型，这取决于你想在方法中修改结构体还是只读取它的内容。
+type Person struct { Name string Age int } // 为结构体定义方法 func (p Person) Greet() { fmt.Println(&amp;#34;Hello, my name is&amp;#34;, p.Name) } func main() { p := Person{Name: &amp;#34;Alice&amp;#34;, Age: 25} p.</description>
+    </item>
+    <item>
+      <title>014.Go入门-扩展类型</title>
+      <link>https://ycchi0.github.io/posts/014.go%E5%85%A5%E9%97%A8-%E6%89%A9%E5%B1%95%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Fri, 18 Oct 2024 01:15:07 +0000</pubDate>
+      <guid>https://ycchi0.github.io/posts/014.go%E5%85%A5%E9%97%A8-%E6%89%A9%E5%B1%95%E7%B1%BB%E5%9E%8B/</guid>
+      <description>在 Go 语言中，拓展已有类型的方式主要有两种：创建类型别名和定义新类型。通过这两种方式，你可以为已有类型添加新的行为或定义，尤其是在不想修改原有类型的情况下。下面分别解释这两种方式。
+1. 类型别名（Type Alias） 类型别名用于为现有类型创建一个新的名称。这实际上不会创建新的类型，只是为原有类型提供了一个新的名字。
+语法：
+type NewType = ExistingType 示例：
+package main import ( &amp;#34;fmt&amp;#34; ) type MyInt = int // MyInt 是 int 的别名 func main() { var a MyInt = 100 fmt.Println(a) // 输出：100 } 特点：
+别名类型和原始类型完全相同，可以相互赋值。 别名主要用于代码重构或增加代码可读性。 2. 定义新类型（Type Declaration） 通过定义新类型，你可以基于已有类型创建一个新的类型，并为这个新类型添加方法。新类型和原始类型在 Go 中被视为不同的类型，即使它们底层的表示相同。
+语法：
+type NewType ExistingType 示例：
+package main import ( &amp;#34;fmt&amp;#34; ) type MyInt int // 基于 int 定义了新类型 MyInt // 为 MyInt 类型定义一个方法 func (m MyInt) Print() { fmt.</description>
+    </item>
     <item>
       <title>013.Go入门 Range</title>
       <link>https://ycchi0.github.io/posts/013.go%E5%85%A5%E9%97%A8-range/</link>
